@@ -50,6 +50,9 @@ jobs:
         working-directory: frontend
         run: npm run build
 
+      - name: Export static files
+        run: npm run export
+
       - name: Deploy with gh-pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
