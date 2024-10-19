@@ -1,40 +1,40 @@
-import babelParser from "@babel/eslint-parser"
-import next from "@next/eslint-plugin-next"
-import prettierConfig from "eslint-config-prettier"
-import prettierPlugin from "eslint-plugin-prettier"
-import react from "eslint-plugin-react"
-import globals from "globals"
+import next from '@next/eslint-plugin-next';
+import prettierConfig from 'eslint-config-prettier';
+import prettierPlugin from 'eslint-plugin-prettier';
+import react from 'eslint-plugin-react';
+import * as espree from 'espree';
+import globals from 'globals';
 
 export default [
   {
-    ignores: ["node_modules", "dist", "public", ".next", "out"], 
+    ignores: ['node_modules', 'dist', 'public', '.next', 'out']
   },
   {
-    files: ["**/*.js", "**/*.jsx"],
+    files: ['**/*.js', '**/*.jsx'],
     languageOptions: {
-      ecmaVersion: "latest",
-      sourceType: "module",
+      ecmaVersion: 'latest',
+      sourceType: 'module',
       globals: {
-        ...globals.browser,
+        ...globals.browser
       },
-      parser: babelParser, 
-      parserOptions: { ecmaFeatures: { jsx: true } },
+      parser: espree,
+      parserOptions: { ecmaFeatures: { jsx: true } }
     },
     plugins: {
       react,
       next,
-      prettier: prettierPlugin,
+      prettier: prettierPlugin
     },
     settings: {
       react: {
-        version: "detect",
-      },
+        version: 'detect'
+      }
     },
     rules: {
-      "prettier/prettier": "error",
-      "react/react-in-jsx-scope": "off",
-      "react/jsx-filename-extension": [1, { extensions: [".js", ".jsx"] }],
-    },
+      'prettier/prettier': 'error',
+      'react/react-in-jsx-scope': 'off',
+      'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx'] }]
+    }
   },
-  prettierConfig,
+  prettierConfig
 ];
