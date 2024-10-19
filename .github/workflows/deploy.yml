@@ -51,6 +51,7 @@ jobs:
         run: npm run build
 
       - name: Export static files
+        working-directory: frontend
         run: npm run export
 
       - name: Deploy with gh-pages
