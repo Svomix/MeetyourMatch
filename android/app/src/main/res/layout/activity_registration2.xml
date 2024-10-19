@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    tools:context=".RegistrationActivity2">
+
+    <Button
+        android:id="@+id/buttonCompleteReg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="48dp"
+        android:background="@drawable/button_background"
+        android:backgroundTint="#F9B53F"
+        android:enabled="false"
+        android:fontFamily="@font/pt_sans"
+        android:shadowColor="#7B000000"
+        android:shadowDx="4"
+        android:shadowDy="4"
+        android:shadowRadius="5"
+        android:text="Продолжить"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonSendCode"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/button_background"
+        android:backgroundTint="#2E2E36"
+        android:enabled="false"
+        android:fontFamily="@font/pt_sans"
+        android:shadowColor="#7B000000"
+        android:shadowDx="4"
+        android:shadowDy="4"
+        android:shadowRadius="5"
+        android:text="Отправть повторно"
+        android:textAllCaps="false"
+        android:textColor="#F7B43F"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/buttonCompleteReg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="64dp"
+        android:fontFamily="@font/pt_sans"
+        android:text="4-х значный код был отправлен на youremail@email.com"
+        android:textAlignment="center"
+        android:textColor="#8D8DA9"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="135dp"
+        android:layout_marginEnd="32dp"
+        android:fontFamily="@font/pt_sans_caption_bold"
+        android:text="Введите код подтверждения"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/buttonClose2"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:backgroundTint="#00FFFFFF"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_close_24" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView6">
+
+        <EditText
+            android:id="@+id/etDigit1"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/round_border_background"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:padding="8dp"
+            android:textColor="#F7B43F"
+            android:textSize="24sp" />
+
+        <EditText
+            android:id="@+id/etDigit2"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/round_border_background"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:padding="8dp"
+            android:textColor="#F7B43F"
+            android:textSize="24sp" />
+
+        <EditText
+            android:id="@+id/etDigit3"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/round_border_background"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:padding="8dp"
+            android:textColor="#F7B43F"
+            android:textSize="24sp" />
+
+        <EditText
+            android:id="@+id/etDigit4"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/round_border_background"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:padding="8dp"
+            android:textColor="#F7B43F"
+            android:textSize="24sp" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

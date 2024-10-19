@@ -4,9 +4,13 @@
     <color name="white">#FFFFFFFF</color>
     <color name="startColor">#34343D</color>
     <color name="endColor">#232329</color>
-    <color name="buttonColor">#FBB63F</color>
     <color name="messageAndButtonBackground">#1E1F22</color>
     <color name="message">#AFB0BA</color>
     <color name="bars">#141414</color>
     <color name="icons">#898989</color>
+    <color name="buttonColorDefault">#FBB63F</color>
+    <color name="buttonColorPressed">#D39212</color>
+    <color name="buttonColorDisabled">#41FBB63F</color>
+    <color name="buttonColorFocused">#00FBB63F</color>
+    <color name="button_ripple_mask">#FFFFFF</color>
 </resources>

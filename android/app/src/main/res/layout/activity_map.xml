@@ -56,7 +56,7 @@
 
         <Button
             style="@style/NavigationButtons"
-            android:drawableTop="@drawable/chosen_chat"
+            android:drawableTop="@drawable/chat"
             android:text="@string/chat"/>
 
         <Button
@@ -71,7 +71,7 @@
 
         <Button
             style="@style/NavigationButtons"
-            android:drawableTop="@drawable/location_pin"
+            android:drawableTop="@drawable/chosen_location_pin"
             android:text="@string/map"/>
 
 

@@ -1,12 +1,14 @@
 package com.javanostra.meetyourmatch;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,7 +16,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        getWindow().setNavigationBarColor(ContextCompat.getColor(this, R.color.bars));
-        setContentView(R.layout.activity_map);
+
+        SharedPreferences sharedPreferences = getSharedPreferences("StubPrefs", MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+
+        Intent intent;
+        if (isLoggedIn) {
+            intent = new Intent(this, MainScreenActivity.class);
+        } else {
+            intent = new Intent(this, LoginActivity.class);
+        }
+        startActivity(intent);
+        finish();
     }
 }

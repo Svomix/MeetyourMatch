@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    android:orientation="vertical">
+
+    <!-- Месяц и стрелки для навигации -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/prev_month_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_border_background"
+            android:text="Prev"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/month_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:text="October 2024"
+            android:textColor="#FDC31A"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/next_month_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_border_background"
+            android:text="Next"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+
+    <!-- Заголовки для дней недели -->
+
+    <!-- Сам календарь -->
+    <GridLayout
+        android:id="@+id/week_days_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:columnCount="7"
+        android:rowCount="1">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Пн"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_columnWeight="1"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Вт"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_columnWeight="1"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="2"
+            android:text="Ср"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_columnWeight="1"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Чт"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_columnWeight="1"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Пт"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_columnWeight="1"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Сб"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_columnWeight="1"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Вс"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_columnWeight="1"
+            android:textColor="#FFFFFF" />
+    </GridLayout>
+
+    <GridLayout
+        android:id="@+id/calendar_grid"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:columnCount="7"
+        android:paddingTop="8dp"
+        android:paddingBottom="64dp"
+        android:rowCount="6" />
+
+</LinearLayout>

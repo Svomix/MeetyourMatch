@@ -1,0 +1,29 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+
+    <TextView
+        android:id="@+id/day_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="1"
+        android:textAlignment="center"
+        android:textColor="#dbdbdb"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/event_count_text"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@drawable/border_element_background"
+        android:paddingTop="2dp"
+        android:text="0"
+        android:textAlignment="center"
+        android:textColor="@color/buttonColorDefault"
+        android:textSize="15sp" />
+
+</FrameLayout>

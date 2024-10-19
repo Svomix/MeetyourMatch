@@ -113,15 +113,20 @@
     </LinearLayout>
 
     <Button
-        style="@style/AccountButtons"
         android:id="@+id/settingsButton"
+        style="@style/AccountButtons"
+        android:layout_height="wrap_content"
+        android:text="Настройки"
         app:layout_constraintTop_toBottomOf="@+id/user_data"
-        android:text="Настройки"/>
+        app:strokeColor="#33333C"
+        app:strokeWidth="2dp" />
 
     <Button
         style="@style/AccountButtons"
+        android:text="Выйти из аккаунта"
         app:layout_constraintTop_toBottomOf="@+id/settingsButton"
-        android:text="Выйти из аккаунта"/>
+        app:strokeColor="#34343D"
+        app:strokeWidth="2dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
