@@ -1,0 +1,19 @@
+.window {
+  display: flex;
+  max-width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(var(--bgc-weak) 0vh, var(--bgc-strong) 100vh);
+}
+
+.wrapper {
+  flex-grow: 1;
+  max-width: 1600px;
+  min-height: 100%;
+  padding: 0px 28px;
+  margin: 0 auto;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
