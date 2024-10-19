@@ -1,3 +1,4 @@
+import Wrapper from '@/components/Wrapper';
 import './globals.css';
 
 export const metadata = {
@@ -8,7 +9,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="ru">
-      <body>{children}</body>
+      <body>
+        <Wrapper>{children}</Wrapper>
+      </body>
     </html>
   );
 }
