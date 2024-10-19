@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="marginButtons">5dp</dimen>
+    <dimen name="textButtonSize">11sp</dimen>
+    <dimen name="heightButton">70dp</dimen>
+    <dimen name="topBarHeight">60dp</dimen>
+</resources>

@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">MeetYourMatch</string>
+    <string name="congratulation">"Поздравляем!\nВы зарегистрированы!"</string>
+    <string name="start">Начать поиски</string>
+    <string name="chat">Чаты</string>
+    <string name="search">Поиск</string>
+    <string name="event">События</string>
+    <string name="map">Карта</string>
+    <string name="email">"loremipsum@fish.lang"</string>
+</resources>

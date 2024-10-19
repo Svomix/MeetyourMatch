@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="UserInformationTextStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="UserInformationView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">15dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:background">@drawable/round_border_data</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="AccountButtons">
+        <item name="layout_constraintLeft_toLeftOf">parent</item>
+        <item name="layout_constraintRight_toRightOf">parent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">30dp</item>
+        <item name="backgroundTint">@color/messageAndButtonBackground</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">25sp</item>
+    </style>
+
+    <style name="Header">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">30dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@color/bars</item>
+    </style>
+
+    <style name="HeaderButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:backgroundTint">@color/bars</item>
+        <item name="android:drawablePadding">10dp</item>
+    </style>
+
+    <style name="ChatTable">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:background">@color/messageAndButtonBackground</item>
+    </style>
+
+    <style name="ChatUsernameAndMessage">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_marginStart">10dp</item>
+    </style>
+
+    <style name="ChatUsername">
+        <item name="android:layout_width">250dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="ChatMessage">
+        <item name="android:layout_width">250dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/message</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="ChatLastMessageTime">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/message</item>
+    </style>
+
+    <style name="NavigationButtons">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">70dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="backgroundTint">@color/bars</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+</resources>

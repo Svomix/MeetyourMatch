@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="startColor">#34343D</color>
+    <color name="endColor">#232329</color>
+    <color name="buttonColor">#FBB63F</color>
+    <color name="messageAndButtonBackground">#1E1F22</color>
+    <color name="message">#AFB0BA</color>
+    <color name="bars">#141414</color>
+    <color name="icons">#898989</color>
+</resources>
