@@ -1,16 +1,17 @@
 :root {
   --white: #f9f9f9;
   --grey: #232325;
-  --black: #1a1a1a;
-  --gold: #ffb33a;
+  --black: #0a0a0a;
+  --gold: #feae2f;
+  --light-gold: #ffc72d;
   --bgc-strong: #232329;
   --bgc-weak: #34343d;
   --light-green: #377e16;
   --dark-green: #205942;
-  --border-pixel: 28px;
+  --border-width: 4px;
+  --border-radius: 28px;
 }
 
-/* Reset and base styles  */
 * {
   padding: 0px;
   margin: 0px;
@@ -22,11 +23,6 @@
 *::after {
   box-sizing: border-box;
 }
-
-body {
-  background: linear-gradient(var(--bgc-strong), var(--bgc-weak));
-}
-
 /* Links */
 
 a,

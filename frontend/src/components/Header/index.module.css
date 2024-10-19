@@ -2,4 +2,20 @@
   display: flex;
   justify-content: space-between;
   margin: 28px 0px;
+  position: sticky;
+  top: 28px;
+  --header-width: calc(min(100vw, 1600px) - 56px);
+}
+
+.header > ::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  border-radius: calc(var(--border-width) + var(--border-radius));
+  padding: var(--border-width);
+  margin: calc(-1 * var(--border-width));
 }

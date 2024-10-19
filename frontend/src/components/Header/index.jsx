@@ -1,5 +1,5 @@
-import Navbar from '../Navbar';
-import Signbar from '../Signbar';
+import Navbar from './Navbar';
+import Signbar from './Signbar';
 import styles from './index.module.css';
 
 export default () => {

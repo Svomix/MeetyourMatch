@@ -1,6 +1,6 @@
 export default {
-  HOME: './',
-  POSTER: './poster',
-  HOBBY: './hobby',
-  MAP: './map'
+  HOME: '/',
+  POSTER: '/poster',
+  HOBBY: '/hobby',
+  MAP: '/map'
 };
