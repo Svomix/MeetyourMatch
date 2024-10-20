@@ -1,5 +1,5 @@
 'use client';
-import Modal, {PageType} from '@/components/Modal';
+import Modal, { PageType } from '@/components/Modal';
 import styles from './index.module.css';
 import { useState } from 'react';
 

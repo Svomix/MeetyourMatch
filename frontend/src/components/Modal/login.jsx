@@ -21,7 +21,7 @@ export default function Login({ modal, setModal }) {
 
   function onClickLogin(e) {
     console.log(e.target);
-    
+
     //setModal(PageType.None);
     e.preventDefault();
   }

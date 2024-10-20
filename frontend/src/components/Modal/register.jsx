@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import InputField from './inputField';
 import styles from './index.module.css';
-import { PageType } from './index'
+import { PageType } from './index';
 
 export default function Register({ modal, setModal }) {
   const dialog = useRef();

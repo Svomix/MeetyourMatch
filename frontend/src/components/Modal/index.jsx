@@ -14,7 +14,6 @@ const ModalPage = {
 export const PageType = ModalPage;
 
 export default function Modal({ modal, setModal }) {
-
   /*useEffect(() => {
     if (modal == ModalPage.None) return;
     dialog.current?.showModal();
@@ -26,9 +25,9 @@ export default function Modal({ modal, setModal }) {
   function selectModal(modal, setModal) {
     switch (modal) {
       case ModalPage.Login:
-        return <Login modal={modal} setModal={setModal} />
+        return <Login modal={modal} setModal={setModal} />;
       case ModalPage.Register:
-        return <Register modal={modal} setModal={setModal} />
+        return <Register modal={modal} setModal={setModal} />;
     }
     return <></>;
   }
