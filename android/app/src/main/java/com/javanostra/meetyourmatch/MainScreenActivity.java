@@ -64,11 +64,8 @@ public class MainScreenActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() ==1) {
-            finish();
-        }else{
-            super.onBackPressed();
-        }
+        finish();
+
     }
 
     private void loadFragment(Fragment fragment) {

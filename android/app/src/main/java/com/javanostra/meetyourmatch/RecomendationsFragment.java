@@ -96,7 +96,6 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
     private void handleLike() {
         currentEventIndex++;
         showActionImage(R.drawable.ic_baseline_thumb_up_24);
-        Toast.makeText(getContext(), "handleLike", Toast.LENGTH_LONG).show();
 
         displayCurrentEvent();
     }
@@ -104,7 +103,6 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
     private void handleDislike() {
         currentEventIndex++;
         showActionImage(R.drawable.ic_baseline_thumb_down_24);
-        Toast.makeText(getContext(), "handleDislike", Toast.LENGTH_LONG).show();
 
         displayCurrentEvent();
     }

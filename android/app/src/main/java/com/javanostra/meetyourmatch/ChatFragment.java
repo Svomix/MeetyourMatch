@@ -33,10 +33,10 @@ public class ChatFragment extends Fragment {
             new User("Федор Меркурий", "Interests", "fish@lang.com", 19)
     };
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
 
         LinearLayout linearLayout = view.findViewById(R.id.chatContainer);
