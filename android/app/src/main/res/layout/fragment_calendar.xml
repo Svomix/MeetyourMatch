@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
@@ -17,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/round_border_background"
-            android:text="Prev"
+            android:text="Пред."
             android:textColor="#FFFFFF" />
 
         <TextView
@@ -28,6 +29,7 @@
             android:layout_marginRight="20dp"
             android:text="October 2024"
             android:textColor="#FDC31A"
+            android:textStyle="bold"
             android:textSize="20sp" />
 
         <Button
@@ -35,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/round_border_background"
-            android:text="Next"
+            android:text="След."
             android:textColor="#FFFFFF" />
     </LinearLayout>
 

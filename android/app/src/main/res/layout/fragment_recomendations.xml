@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    tools:context=".RecomendationsFragment"
+    android:padding="16dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/root_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="32dp">
+
+        <TextView
+            android:id="@+id/event_description"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_below="@id/event_title"
+            android:layout_marginBottom="150dp"
+            android:text="TextView"
+            android:textAlignment="center"
+            android:textColor="#CCCCCC"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/event_title" />
+
+        <ImageButton
+            android:id="@+id/dislike_button"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/button_background"
+            android:backgroundTint="#F02D2D"
+            android:src="@drawable/ic_baseline_thumb_down_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageButton
+            android:id="@+id/like_button"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/button_background"
+            android:backgroundTint="#66FF30"
+            android:backgroundTintMode="multiply"
+            android:scaleType="center"
+            android:src="@drawable/ic_baseline_thumb_up_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/eventImage"
+            android:layout_width="0dp"
+            android:layout_height="220dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="80dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="80dp"
+            android:background="@drawable/everyday_border"
+            android:outlineProvider="background"
+            android:src="@drawable/ic_mym_128_round"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/event_title"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/eventImage"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="30dp"
+            android:shadowColor="#000000"
+            android:shadowDx="10"
+            android:shadowDy="10"
+            android:shadowRadius="9"
+            android:text="TextView"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/eventImage" />
+
+        <Button
+            android:id="@+id/event_full_description"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="-8dp"
+            android:layout_marginTop="-8dp"
+            android:layout_marginEnd="-8dp"
+            android:layout_marginBottom="-8dp"
+            android:background="@drawable/border_element_background"
+            app:layout_constraintBottom_toBottomOf="@+id/eventImage"
+            app:layout_constraintEnd_toEndOf="@+id/eventImage"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/eventImage"
+            app:layout_constraintTop_toTopOf="@+id/eventImage"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageView
+            android:id="@+id/action_image_view"
+            android:layout_width="228dp"
+            android:layout_height="239dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="150dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginBottom="150dp"
+            android:alpha="0"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

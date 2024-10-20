@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
-    tools:ignore="HardcodedText">
+    tools:ignore="HardcodedText"
+    tools:context=".AccountActivity">
 
     <ImageButton
         android:layout_width="50dp"
@@ -14,7 +15,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="30dp"
         android:background="@android:color/transparent"
-        android:src="@drawable/close"/>
+        android:src="@drawable/close"
+        android:onClick="goBack"/>
 
     <ImageView
         android:layout_width="200dp"
@@ -116,14 +118,20 @@
         android:id="@+id/settingsButton"
         style="@style/AccountButtons"
         android:layout_height="wrap_content"
+        android:paddingHorizontal="30dp"
+        android:paddingVertical="10dp"
         android:text="Настройки"
+        android:textAllCaps="false"
         app:layout_constraintTop_toBottomOf="@+id/user_data"
         app:strokeColor="#33333C"
         app:strokeWidth="2dp" />
 
     <Button
         style="@style/AccountButtons"
+        android:paddingHorizontal="30dp"
+        android:paddingVertical="10dp"
         android:text="Выйти из аккаунта"
+        android:textAllCaps="false"
         app:layout_constraintTop_toBottomOf="@+id/settingsButton"
         app:strokeColor="#34343D"
         app:strokeWidth="2dp" />

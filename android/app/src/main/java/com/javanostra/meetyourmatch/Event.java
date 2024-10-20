@@ -1,21 +1,10 @@
 package com.javanostra.meetyourmatch;
 
-public class Event {
+import java.io.Serializable;
+
+public class Event implements Serializable {
     private String title;
     private String description;
-
-    public int getYear() {
-        return year;
-    }
-
-    public int getMonth() {
-        return month;
-    }
-
-    public int getDate() {
-        return date;
-    }
-
     private int date, month, year;
 
     public Event(String title, String description) {
@@ -36,5 +25,17 @@ public class Event {
 
     public String getDescription() {
         return description;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public int getMonthAsIndex() {
+        return month;
+    }
+
+    public int getDate() {
+        return date;
     }
 }

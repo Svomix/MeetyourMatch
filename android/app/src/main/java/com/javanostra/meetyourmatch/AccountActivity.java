@@ -1,8 +1,8 @@
 package com.javanostra.meetyourmatch;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,24 +10,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class MainActivity extends AppCompatActivity {
+public class AccountActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_account);
+    }
 
-        SharedPreferences sharedPreferences = getSharedPreferences("StubPrefs", MODE_PRIVATE);
-        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
-
-        Intent intent;
-        if (isLoggedIn) {
-            intent = new Intent(this, MainScreenActivity.class);
-        } else {
-            intent = new Intent(this, LoginActivity.class);
-        }
-
+    public void goBack(View view) {
+        Intent intent = new Intent(this, MainScreenActivity.class);
         startActivity(intent);
-        finish();
     }
 }

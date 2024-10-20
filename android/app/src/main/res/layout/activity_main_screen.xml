@@ -1,12 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".MainScreenActivity">
 
-    <FrameLayout
-        android:id="@+id/fragment_container"
+    <LinearLayout
+        style="@style/Header"
+        android:id="@+id/topBar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <ImageButton
+            style="@style/HeaderButton"
+            android:src="@drawable/bell"/>
+
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="50dp"
+            android:text="@string/app_name"
+            android:textColor="#FDC31A"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textAlignment="center"/>
+
+
+        <ImageButton
+            style="@style/HeaderButton"
+            android:src="@drawable/avatar"
+            android:onClick="openAccount"/>
+    </LinearLayout>
+
+
+    <FrameLayout android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/topBar"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"/>
 
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:paddingTop="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@color/bars">
+
+        <ImageButton
+            style="@style/NavigationButtons"
+            android:id="@+id/chatButton"
+            android:src="@drawable/chosen_chat"
+            android:onClick="chooseFragment"/>
+
+        <ImageButton
+            style="@style/NavigationButtons"
+            android:id="@+id/searchButton"
+            android:src="@drawable/search"
+            android:onClick="chooseFragment"/>
+
+        <ImageButton
+            style="@style/NavigationButtons"
+            android:id="@+id/rangeButton"
+            android:src="@drawable/range"
+            android:onClick="chooseFragment"/>
+
+        <ImageButton
+            style="@style/NavigationButtons"
+            android:id="@+id/locationPinButton"
+            android:src="@drawable/location_pin"
+            android:onClick="chooseFragment"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
