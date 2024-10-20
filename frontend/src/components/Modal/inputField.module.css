@@ -1,0 +1,27 @@
+
+
+.container {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  flex: 1 0 auto
+}
+
+.container > p {
+  color: var(--white);
+  margin: auto;
+}
+
+.wrap {
+  display: flex;
+  padding: 8px;
+  border: 1px solid var(--white);
+  border-radius: 8px;
+  flex: 1 0 auto
+}
+
+.input {
+  color: var(--white);
+  font-size: 1.5rem;
+  flex: 1 0 auto;
+}

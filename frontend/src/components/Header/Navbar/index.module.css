@@ -25,6 +25,8 @@
   font-size: 36px;
   font-weight: 900;
   letter-spacing: 1px;
+  pointer-events: none;
+  user-select: none;
 }
 
 .nav_list {

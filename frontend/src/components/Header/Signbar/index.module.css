@@ -11,3 +11,7 @@
 .btn::before {
   background: linear-gradient(to right, var(--black), var(--grey));
 }
+
+.btn:hover {
+  text-shadow: var(--white) 0 0 10px;
+}
