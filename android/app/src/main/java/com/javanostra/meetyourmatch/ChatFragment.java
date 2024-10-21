@@ -1,30 +1,26 @@
 package com.javanostra.meetyourmatch;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 public class ChatFragment extends Fragment {
 
     private final User[] users = {
-            new User("Ростислав Козлов", "Interests", "fish@lang.com", 19),
-            new User("Егор Ситников", "Interests", "fish@lang.com", 19),
-            new User("Тихон Щербаков", "Interests", "fish@lang.com", 19),
-            new User("Сергей Лукин", "Interests", "fish@lang.com", 19),
-            new User("Александр Пушкин", "Interests", "fish@lang.com", 19),
+            new User("Руслан Максудов", "Interests", "fish@lang.com", 19),
+            new User("Максим Корчак", "Interests", "fish@lang.com", 19),
+            new User("Дмитрий Чернышов", "Interests", "fish@lang.com", 19),
+            new User("Кирилл Новосельцев", "Interests", "fish@lang.com", 19),
+            new User("Александр Ананасенко", "Interests", "fish@lang.com", 19),
             new User("Антон Перепелкин", "Interests", "fish@lang.com", 19),
-            new User("Артемий Бурах", "Interests", "fish@lang.com", 19),
+            new User("Вован Сараев", "Interests", "fish@lang.com", 19),
             new User("Вова Вист", "Interests", "fish@lang.com", 19),
             new User("Уолтер Уайт", "Interests", "fish@lang.com", 19),
             new User("Гектор Саламандра", "Interests", "fish@lang.com", 19),

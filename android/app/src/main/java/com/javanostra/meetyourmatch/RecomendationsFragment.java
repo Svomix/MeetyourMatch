@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -141,10 +140,8 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
             if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
                 if (diffX > 0) {
                     animateSwipeToLeft(getView().findViewById(R.id.root_layout), this::handleLike);
-                    Toast.makeText(getContext(), "animateSwipeToLeft", Toast.LENGTH_LONG).show();
                 } else {
                     animateSwipeToRight(getView().findViewById(R.id.root_layout), this::handleDislike);
-                    Toast.makeText(getContext(), "animateSwipeToRight", Toast.LENGTH_LONG).show();
                 }
                 return true;
             }
