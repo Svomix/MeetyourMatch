@@ -8,8 +8,13 @@
   background: var(--grey);
   border: var(--border-width) solid var(--gold);
   border-radius: var(--border-radius);
-  padding: 0 36px;
   min-width: 500px;
+}
+
+.dialog_wrap {
+  display: flex;
+  flex-direction: column;
+  padding: 0 36px;
 }
 
 .dialog::backdrop {
@@ -41,6 +46,15 @@
   border: 2px solid var(--gold);
   border-radius: var(--border-radius);
   background: var(--gold);
+
+  transition: background-color 100ms;
+}
+
+.button_submit:disabled {
+  color: var(--black);
+  background-color: var(--dark-gold);
+  border-color: var(--dark-gold);
+  cursor:not-allowed;
 }
 
 .register_wrap {
@@ -57,4 +71,32 @@
   margin-left: 4px;
   color: var(--light-gold);
   pointer-events: all;
+}
+
+.license_wrap {
+  display: inline-flex;
+  flex-direction: row;
+  vertical-align: middle;
+  justify-content: center;
+}
+
+.license_text {
+  display: inline;
+  color: var(--white);
+}
+
+.license_link {
+  margin-left: 4px;
+  display: inline;
+  color: var(--gold);
+}
+
+.license_link:hover {
+  vertical-align: middle;
+  color: var(--light-gold);
+}
+
+.checkbox {
+  margin-left: 8px;
+  transform: scale(1.5);
 }

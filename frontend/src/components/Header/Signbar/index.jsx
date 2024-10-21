@@ -9,9 +9,6 @@ export default () => {
 
   return (
     <>
-      <div>
-        <Modal />
-      </div>
       <button onClick={() => dispatch(setModal(ModalPage.Login))} className={styles.btn}>
         Войти
       </button>

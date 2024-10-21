@@ -7,14 +7,24 @@ import { setModal, ModalPage } from '@store/slices/modalSlice';
 
 export default function Login() {
   const dialog = useRef();
-
   const dispatch = useDispatch();
 
   useEffect(() => {
     dialog.current?.showModal();
-    dialog.current?.addEventListener('close', (event) => {
-      setOpen(false);
-    });
+
+    function clickEvent(e) {
+      let clickInside = dialog.current?.contains(e.target) && e.target !== dialog.current;
+
+      if (!clickInside) {
+        dispatch(setModal(ModalPage.None));
+      }
+    }
+
+    document.addEventListener('click', clickEvent);
+
+    return () => {
+      document.removeEventListener('click', clickEvent);
+    };
   }, []);
 
   function onClickRegister(e) {
@@ -31,19 +41,21 @@ export default function Login() {
 
   return (
     <dialog ref={dialog} className={styles.dialog}>
-      <h1 className={styles.title}>Вход</h1>
-      <form onSubmit={onClickLogin} className={styles.form}>
-        <InputField placeholder="E-mail" name="email" />
-        <InputField placeholder="Пароль" name="password" />
-        <button type="submit" className={styles.button_submit}>
-          Войти
-        </button>
-      </form>
-      <div className={styles.register_wrap}>
-        <p className={styles.register_desc}>Нет аккаунта?</p>
-        <a className={styles.register_button} href="/" onClick={onClickRegister}>
-          Создайте аккаунт
-        </a>
+      <div className={styles.dialog_wrap}>
+        <h1 className={styles.title}>Вход</h1>
+        <form onSubmit={onClickLogin} className={styles.form}>
+          <InputField placeholder="E-mail" name="email" />
+          <InputField placeholder="Пароль" name="password" />
+          <button type="submit" className={styles.button_submit}>
+            Войти
+          </button>
+        </form>
+        <div className={styles.register_wrap}>
+          <p className={styles.register_desc}>Нет аккаунта?</p>
+          <a className={styles.register_button} href="/" onClick={onClickRegister}>
+            Создайте аккаунт
+          </a>
+        </div>
       </div>
     </dialog>
   );
