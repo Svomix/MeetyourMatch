@@ -1,28 +1,31 @@
 'use client';
 import InputField from './inputField';
 import styles from './index.module.css';
-import { PageType } from '.';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { setModal, ModalPage } from '@store/slices/modalSlice';
 
-export default function Login({ modal, setModal }) {
+export default function Login() {
   const dialog = useRef();
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     dialog.current?.showModal();
     dialog.current?.addEventListener('close', (event) => {
       setOpen(false);
     });
-  }, [modal]);
+  }, []);
 
   function onClickRegister(e) {
-    setModal(PageType.Register);
+    dispatch(setModal(ModalPage.Register));
     e.preventDefault();
   }
 
   function onClickLogin(e) {
     console.log(e.target);
 
-    //setModal(PageType.None);
+    dispatch(setModal(ModalPage.None));
     e.preventDefault();
   }
 

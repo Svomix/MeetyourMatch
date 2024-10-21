@@ -1,17 +1,18 @@
 'use client';
-import Modal, { PageType } from '@/components/Modal';
+import Modal from '@components/Modal';
 import styles from './index.module.css';
-import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setModal, ModalPage } from '@store/slices/modalSlice';
 
 export default () => {
-  const [modal, setModal] = useState(PageType.None);
+  const dispatch = useDispatch();
 
   return (
     <>
       <div>
-        <Modal modal={modal} setModal={setModal} />
+        <Modal />
       </div>
-      <button onClick={() => setModal(PageType.Login)} className={styles.btn}>
+      <button onClick={() => dispatch(setModal(ModalPage.Login))} className={styles.btn}>
         Войти
       </button>
     </>
