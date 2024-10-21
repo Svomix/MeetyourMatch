@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    style="@style/ChatTable"
+    android:id="@+id/chatBox">
 
-    <LinearLayout
-        style="@style/ChatTable"
-        android:id="@+id/chatBox">
+
         <ImageView
+            android:id="@+id/Avatar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/avatar"/>
@@ -37,8 +38,6 @@
             style="@style/ChatLastMessageTime"
             android:text="16:03"
             android:id="@+id/Time"/>
-
-    </LinearLayout>
 
 
 </LinearLayout>
