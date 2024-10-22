@@ -1,0 +1,8 @@
+.map {
+  margin: auto;
+  width: 90%;
+  height: 70vh;
+  justify-self: center;
+  border: var(--border-width) solid var(--light-gold);
+  border-radius: var(--border-radius);
+}
