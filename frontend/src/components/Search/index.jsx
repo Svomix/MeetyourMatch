@@ -1,15 +1,18 @@
 'use client';
+import classNames from '@/utils/classnames';
 import styles from './index.module.css';
 
-export default () => {
+export default ({placeholder, className}) => {
   return (
-    <section className={styles.search} onClick={(e) => e.stopPropagation()}>
-      <input className={styles.input} placeholder={'поиск по названию или #тегу'} id="searchBar" />
-      <div className={styles.border} />
-      <button className={styles.magnifier}>
-        <Magnifier />
-      </button>
-    </section>
+    <div className={styles.search_wrap}>
+      <section className={classNames(styles.search, className)} onClick={(e) => e.stopPropagation()}>
+        <input className={styles.input} placeholder={placeholder} id="searchBar" />
+        <div className={styles.border} />
+        <button className={styles.magnifier}>
+          <Magnifier />
+        </button>
+      </section>
+    </div>
   );
 };
 

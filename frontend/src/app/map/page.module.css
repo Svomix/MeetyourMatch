@@ -1,0 +1,11 @@
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  width: 95%;
+  height: 80vh;
+  gap: 4vh;
+  justify-self: center;
+  margin: auto;
+  padding-top: 40px;
+}

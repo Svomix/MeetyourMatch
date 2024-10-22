@@ -1,11 +1,15 @@
 import Layout from '@components/Layout';
-import styles from './page.module.css';
 import Map from '@components/Map';
+import Search from '@components/Search';
+import styles from './page.module.css';
 
 export default function MapPage() {
   return (
     <Layout>
-      <Map />
+      <div className={styles.wrap}>
+        <Search placeholder='поиск по названию или #тегу'/>
+        <Map />
+      </div>
     </Layout>
   );
 }

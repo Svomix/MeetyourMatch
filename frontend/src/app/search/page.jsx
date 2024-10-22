@@ -9,7 +9,7 @@ export default () => {
   return (
     <Layout>
       <div className={styles.wrapper}>
-        <Search />
+        <Search placeholder='поиск по названию или #тегу'/>
         <div className={styles.events}>
           {mock_cards.map((el, index) => (
             <Card key={Math.random() * index} event={el}></Card>
