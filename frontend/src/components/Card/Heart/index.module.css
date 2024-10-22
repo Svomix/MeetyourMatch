@@ -1,0 +1,16 @@
+.icon path {
+  fill: var(--black);
+}
+
+.active path {
+  animation: fillAnimation 0.5s forwards;
+}
+
+@keyframes fillAnimation {
+  0% {
+    fill: var(--black);
+  }
+  100% {
+    fill: var(--gold);
+  }
+}

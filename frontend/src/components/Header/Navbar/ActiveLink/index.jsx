@@ -1,5 +1,5 @@
 'use client';
-import { classNames } from '@/utils/classnames';
+import classNames from '@/utils/classnames';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './index.module.css';

@@ -1,7 +1,6 @@
 export default {
   HOME: '/',
-  POSTER: '/poster',
-  HOBBY: '/hobby',
+  SEARCH: '/search',
   MAP: '/map',
   LICENSE: '/license'
 };

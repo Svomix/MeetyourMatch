@@ -16,10 +16,7 @@ export default () => {
           <ActiveLink href={routes.HOME}>Главная</ActiveLink>
         </li>
         <li>
-          <ActiveLink href={routes.POSTER}>Афиша</ActiveLink>
-        </li>
-        <li>
-          <ActiveLink href={routes.HOBBY}>Хобби</ActiveLink>
+          <ActiveLink href={routes.SEARCH}>Поиск</ActiveLink>
         </li>
         <li>
           <ActiveLink href={routes.MAP}>Карта</ActiveLink>
