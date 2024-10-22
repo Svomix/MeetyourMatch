@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:textSize="16sp"
+            android:textSize="13sp"
             android:textStyle="bold"
             android:text="Nameholder"/>
         <TextView
@@ -35,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:textSize="11sp"
+            android:textSize="13sp"
             android:text="Lorem ipsum odor amet, consectetuer adipiscing elit. Sodales parturient hendrerit augue mauris vestibulum. Quisque adipiscing neque duis potenti litora? Dictum aliquet aptent iaculis cursus blandit morbi turpis. "
             />
     </LinearLayout>

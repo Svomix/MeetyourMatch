@@ -2,14 +2,17 @@ package com.javanostra.meetyourmatch;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class MessageAdapter extends RecyclerView.Adapter<MessageViewHolder> {
+public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
     Context context;
     List<Message> messages;
 
@@ -35,5 +38,19 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageViewHolder> {
     @Override
     public int getItemCount() {
         return messages.size();
+    }
+
+    public static class MessageViewHolder extends RecyclerView.ViewHolder {
+
+        ImageView imageView;
+        TextView nameView, textMessageView, messageTimeView;
+
+        public MessageViewHolder(@NonNull View itemView) {
+            super(itemView);
+            imageView = itemView.findViewById(R.id.Avatar);
+            textMessageView = itemView.findViewById(R.id.Message);
+            nameView = itemView.findViewById(R.id.Username);
+            messageTimeView = itemView.findViewById(R.id.Time);
+        }
     }
 }

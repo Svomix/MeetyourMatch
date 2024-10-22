@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder> {
 
@@ -29,7 +28,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     @NonNull
     @Override
     public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ChatViewHolder(LayoutInflater.from(context).inflate(R.layout.chat_box, parent, false), recyclerViewInterface);
+        return new ChatViewHolder(LayoutInflater.from(context).inflate(R.layout.fragment_chat_box, parent, false), recyclerViewInterface);
     }
 
     @Override
