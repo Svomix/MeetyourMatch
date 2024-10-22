@@ -17,17 +17,24 @@
   display: flex;
   align-items: center;
   cursor: pointer;
-  padding: 1em 0.5em;
+  padding: 10px 28px;
+  color: var(--gold);
+  background-color: var(--grey);
+  border-radius: 100%;
+}
+
+.arrow {
+  margin-top: -5px;
 }
 
 .btnArrow_type_prev {
   left: 0em;
-  margin-left: -1em;
+  margin-left: -2em;
 }
 
 .btnArrow_type_next {
   right: 0em;
-  margin-right: -1em;
+  margin-right: -2em;
 }
 
 .btnArrow_disabled {
@@ -37,7 +44,6 @@
 
 .slider__overflow {
   width: 100%;
-
   overflow: hidden;
   box-sizing: border-box;
   cursor: grab;
@@ -58,6 +64,7 @@
 }
 
 .dots {
+  margin-top: 0.5em;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -65,10 +72,10 @@
 }
 
 .dot {
-  opacity: 0.4;
+  opacity: 0.6;
   cursor: pointer;
-  width: 0.6em;
-  height: 0.6em;
+  width: 0.8em;
+  height: 0.8em;
   border-radius: 100%;
   background-color: var(--black);
 }
@@ -76,8 +83,8 @@
 .dot_active {
   opacity: 1;
   cursor: auto;
-  width: 0.9em;
-  height: 0.9em;
+  width: 1.2em;
+  height: 1.2em;
 }
 
 @media (min-width: 420px) and (max-width: 500px) {

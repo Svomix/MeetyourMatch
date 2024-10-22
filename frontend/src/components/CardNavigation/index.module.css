@@ -1,0 +1,24 @@
+.wrapper {
+  width: fit-content;
+  display: flex;
+  gap: 3vw;
+}
+
+.arrow_btn {
+  line-height: 0;
+  cursor: pointer;
+  padding: 8px;
+  background-color: var(--bgc-weak);
+  border-radius: 100%;
+}
+
+.arrow_btn svg {
+  width: 50px;
+  height: 50px;
+}
+
+.page {
+  display: flex;
+  color: var(--white);
+  align-items: center;
+}

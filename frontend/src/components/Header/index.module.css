@@ -5,6 +5,7 @@
   position: sticky;
   top: 28px;
   --header-width: calc(min(100vw, 1600px) - 56px);
+  z-index: 10;
 }
 
 .header > ::before {

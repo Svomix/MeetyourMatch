@@ -1,8 +1,7 @@
 import Layout from '@/components/Layout';
 import Slider from '@/components/Slider';
+import mock_img from '@public/mock_img.jpg';
 import styles from './page.module.css';
-
-const events = [1, 2, 3, 4, 5];
 
 export default () => {
   return (
@@ -19,3 +18,41 @@ export default () => {
     </Layout>
   );
 };
+
+const events = [
+  {
+    title: 'Lorem, ipsum dolor.',
+    description:
+      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure fugit dicta deserunt necessitatibus unde incidunt modi perferendis. Illo, quis voluptatum.',
+    tags: '#Lorem #ipsum #dolor',
+    img: mock_img
+  },
+  {
+    title: 'Lorem, ipsum dolor.',
+    description:
+      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure fugit dicta deserunt necessitatibus unde incidunt modi perferendis. Illo, quis voluptatum.',
+    tags: '#Lorem #ipsum #dolor',
+    img: mock_img
+  },
+  {
+    title: 'Lorem, ipsum dolor.',
+    description:
+      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure fugit dicta deserunt necessitatibus unde incidunt modi perferendis. Illo, quis voluptatum.',
+    tags: '#Lorem #ipsum #dolor',
+    img: mock_img
+  },
+  {
+    title: 'Lorem, ipsum dolor.',
+    description:
+      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure fugit dicta deserunt necessitatibus unde incidunt modi perferendis. Illo, quis voluptatum.',
+    tags: '#Lorem #ipsum #dolor',
+    img: mock_img
+  },
+  {
+    title: 'Lorem, ipsum dolor.',
+    description:
+      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure fugit dicta deserunt necessitatibus unde incidunt modi perferendis. Illo, quis voluptatum.',
+    tags: '#Lorem #ipsum #dolor',
+    img: mock_img
+  }
+];

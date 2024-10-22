@@ -88,11 +88,7 @@ export default ({ rec_events }) => {
     if (wrapperRef.current && cardRef.current) {
       params.gap =
         (wrapperRef.current.offsetWidth - 3 * cardRef.current.offsetWidth) / 2 -
-          cardRef.current.offsetWidth / 20 <
-        50
-          ? 100
-          : (wrapperRef.current.offsetWidth - 3 * cardRef.current.offsetWidth) / 2 -
-            cardRef.current.offsetWidth / 20;
+        cardRef.current.offsetWidth / 20;
 
       params.step = cardRef.current.offsetWidth + params.gap;
       params.initialOffset = (wrapperRef.current.offsetWidth - cardRef.current.offsetWidth) / 2;
@@ -183,7 +179,7 @@ export default ({ rec_events }) => {
             )}
             onClick={toPrevSlide}
           >
-            <span>❮</span>
+            <span className={styles.arrow}>❮</span>
           </div>
           <div
             className={classNames(
@@ -193,7 +189,7 @@ export default ({ rec_events }) => {
             )}
             onClick={toNextSlide}
           >
-            <span>❯</span>
+            <span className={styles.arrow}>❯</span>
           </div>
           <div className={styles.dots}>
             {rec_events.map((_, index) => (

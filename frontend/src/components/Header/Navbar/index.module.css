@@ -7,9 +7,11 @@
   padding: 12px 24px;
   gap: calc(var(--header-width) * 0.05);
 }
+
 .nav::before {
   background: linear-gradient(to left, var(--black), var(--grey));
 }
+
 .logo_wrapper {
   display: flex;
   justify-content: space-between;

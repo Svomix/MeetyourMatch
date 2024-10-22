@@ -1,6 +1,6 @@
+import Providers from '@/store/Provider';
 import localFont from 'next/font/local';
 import './globals.css';
-import Providers from '@/store/provider';
 
 const sansation = localFont({
   src: [
