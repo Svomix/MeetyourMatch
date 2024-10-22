@@ -2,6 +2,7 @@ package com.javanostra.meetyourmatch;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -10,7 +11,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,7 +28,8 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
 
     private TextView event_title;
     private TextView event_description;
-    private Button event_full_description;
+    private ImageView event_full_description;
+    private ImageView event_search;
     private ImageButton like_button;
     private ImageButton dislike_button;
     private GestureDetector gestureDetector;
@@ -43,6 +44,7 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
         event_title = view.findViewById(R.id.event_title);
         event_description = view.findViewById(R.id.event_description);
         event_full_description = view.findViewById(R.id.event_full_description);
+        event_search = view.findViewById(R.id.event_search);
         like_button = view.findViewById(R.id.like_button);
         dislike_button = view.findViewById(R.id.dislike_button);
         action_image_view = view.findViewById(R.id.action_image_view);
@@ -61,6 +63,7 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
         displayCurrentEvent();
 
         event_full_description.setOnClickListener(v -> handleDescription(events.get(currentEventIndex)));
+        event_search.setOnClickListener(v -> handleSearch());
         like_button.setOnClickListener(v -> handleLike());
         dislike_button.setOnClickListener(v -> handleDislike());
 
@@ -90,6 +93,26 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
         Intent intent = new Intent(getContext(), EventDetailsActivity.class);
         intent.putExtra("event", event);
         startActivity(intent);
+    }
+
+    private void handleSearch() {
+        if (listener != null) {
+            listener.onSwitchToSearch();
+        }
+    }
+
+    public interface OnRecommendationsInteractionListener {
+        void onSwitchToSearch();
+    }
+
+    private OnRecommendationsInteractionListener listener;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof OnRecommendationsInteractionListener) {
+            listener = (OnRecommendationsInteractionListener) context;
+        }
     }
 
     private void handleLike() {
@@ -145,6 +168,15 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
                 }
                 return true;
             }
+        } else {
+            if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+                if (diffY > 0) { // toDOWN
+                    animateSwipeToDown(getView().findViewById(R.id.root_layout));
+                } else { // toUP
+                    animateSwipeToUp(getView().findViewById(R.id.root_layout));
+                }
+                return true;
+            }
         }
         return false;
     }
@@ -160,6 +192,42 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
                     public void onAnimationEnd(Animator animation) {
                         action_image_view.setAlpha(0f);
                     }
+                })
+                .start();
+    }
+
+    private void animateSwipeToUp(View view) {
+        handleSearch();
+        view.animate()
+                .translationY(-view.getHeight() / 3)
+                .setDuration(400)
+                .withEndAction(() -> {
+                    view.setTranslationY(0);
+                    view.setAlpha(0f);
+
+                    view.animate()
+                            .alpha(1f)
+                            .setDuration(1000)
+                            .setInterpolator(new DecelerateInterpolator())
+                            .start();
+                })
+                .start();
+    }
+
+    private void animateSwipeToDown(View view) {
+        handleDescription(events.get(currentEventIndex));
+        view.animate()
+                .translationY(view.getHeight() / 3)
+                .setDuration(400)
+                .withEndAction(() -> {
+                    view.setTranslationY(0);
+                    view.setAlpha(0f);
+
+                    view.animate()
+                            .alpha(1f)
+                            .setDuration(1000)
+                            .setInterpolator(new DecelerateInterpolator())
+                            .start();
                 })
                 .start();
     }

@@ -10,12 +10,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-public class MainScreenActivity extends AppCompatActivity {
+public class MainScreenActivity extends AppCompatActivity implements RecomendationsFragment.OnRecommendationsInteractionListener {
 
     ChatFragment chatFragment;
     CalendarFragment calendarFragment;
     MapFragment mapFragment;
     RecomendationsFragment recomendationsFragment;
+    EventSearchFragment searchFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +26,7 @@ public class MainScreenActivity extends AppCompatActivity {
         calendarFragment = new CalendarFragment();
         mapFragment = new MapFragment();
         recomendationsFragment = new RecomendationsFragment();
+        searchFragment = new EventSearchFragment();
         loadFragment(chatFragment);
     }
 
@@ -67,10 +69,16 @@ public class MainScreenActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         finish();
     }
 
-    private void loadFragment(Fragment fragment) {
+    @Override
+    public void onSwitchToSearch() {
+        loadFragment(searchFragment);
+    }
+
+    public void loadFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, fragment);

@@ -95,4 +95,25 @@
         <item name="android:textSize">11sp</item>
     </style>
 
+    <style name="CustomAlertDialog">
+        <item name="android:background">@drawable/gradient_background</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:dialogCornerRadius">20dp</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+        <item name="android:buttonBarNeutralButtonStyle">@style/NeutralButtonStyle</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+    </style>
+
+    <style name="PositiveButtonStyle">
+        <item name="android:textColor">@color/buttonColorDefault</item>
+    </style>
+
+    <style name="NeutralButtonStyle">
+        <item name="android:textColor">@color/buttonColorDefault</item>
+    </style>
+
+    <style name="NegativeButtonStyle">
+        <item name="android:textColor">@color/buttonColorDefault</item>
+    </style>
+
 </resources>

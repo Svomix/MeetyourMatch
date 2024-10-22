@@ -96,7 +96,7 @@
         android:scaleType="fitCenter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
-        app:srcCompat="@drawable/outline_thumb_up_24" />
+        app:srcCompat="@drawable/ic_outline_thumb_up_24" />
 
     <TextView
         android:id="@+id/likeCount"
