@@ -16,7 +16,8 @@
 
         <ImageButton
             style="@style/HeaderButton"
-            android:src="@drawable/bell"/>
+            android:src="@drawable/bell"
+            android:onClick="openNotifications"/>
 
 
         <TextView

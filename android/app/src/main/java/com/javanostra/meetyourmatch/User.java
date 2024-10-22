@@ -5,12 +5,16 @@ public class User {
     private String interests;
     private String email;
     private int age;
+    private int id;
+    private static int nextId = 0;
+
 
     public User(String username, String interests, String email, int age) {
         this.username = username;
         this.interests = interests;
         this.email = email;
         this.age = age;
+        this.id = nextId++;
     }
 
     public String getUsername() {
@@ -45,4 +49,7 @@ public class User {
         this.age = age;
     }
 
+    public int getId() {
+        return id;
+    }
 }

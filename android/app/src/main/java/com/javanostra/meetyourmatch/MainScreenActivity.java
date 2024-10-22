@@ -61,10 +61,13 @@ public class MainScreenActivity extends AppCompatActivity {
         startActivity(new Intent(this, AccountActivity.class));
     }
 
+    public void openNotifications(View view) {
+        startActivity(new Intent(this, NotificationsActivity.class));
+    }
+
     @Override
     public void onBackPressed() {
         finish();
-
     }
 
     private void loadFragment(Fragment fragment) {
