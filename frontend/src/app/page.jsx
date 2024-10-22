@@ -25,34 +25,39 @@ const events = [
     description:
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure fugit dicta deserunt necessitatibus unde incidunt modi perferendis. Illo, quis voluptatum.',
     tags: '#Lorem #ipsum #dolor',
-    img: mock_img
+    img: mock_img,
+    id: 1
   },
   {
     title: 'Lorem, ipsum dolor.',
     description:
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure fugit dicta deserunt necessitatibus unde incidunt modi perferendis. Illo, quis voluptatum.',
     tags: '#Lorem #ipsum #dolor',
-    img: mock_img
+    img: mock_img,
+    id: 2
   },
   {
     title: 'Lorem, ipsum dolor.',
     description:
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure fugit dicta deserunt necessitatibus unde incidunt modi perferendis. Illo, quis voluptatum.',
     tags: '#Lorem #ipsum #dolor',
-    img: mock_img
+    img: mock_img,
+    id: 3
   },
   {
     title: 'Lorem, ipsum dolor.',
     description:
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure fugit dicta deserunt necessitatibus unde incidunt modi perferendis. Illo, quis voluptatum.',
     tags: '#Lorem #ipsum #dolor',
-    img: mock_img
+    img: mock_img,
+    id: 4
   },
   {
     title: 'Lorem, ipsum dolor.',
     description:
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure fugit dicta deserunt necessitatibus unde incidunt modi perferendis. Illo, quis voluptatum.',
     tags: '#Lorem #ipsum #dolor',
-    img: mock_img
+    img: mock_img,
+    id: 5
   }
 ];

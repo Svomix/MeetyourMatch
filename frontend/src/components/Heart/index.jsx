@@ -3,7 +3,7 @@ import classNames from '@/utils/classnames';
 import { useState } from 'react';
 import styles from './index.module.css';
 
-export default ({ className }) => {
+export default ({ width, height, className }) => {
   const [fill, setFill] = useState(false);
 
   const heart_click = () => {
@@ -14,8 +14,8 @@ export default ({ className }) => {
     <svg
       onClick={heart_click}
       className={classNames(styles.icon, className, fill && styles.active)}
-      width="30"
-      height="30"
+      width={width || 30}
+      height={height || 30}
       viewBox="0 0 36 32"
       xmlns="http://www.w3.org/2000/svg"
     >
