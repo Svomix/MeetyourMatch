@@ -36,12 +36,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         holder.itemView.setOnClickListener(v -> {
             onDayClickListener.onDayClick(day);
         });
-
-        if (day.hasEvents()) {
-            // Сделать стиль для дня с событиями
-        } else {
-            // Сделать стиль для обычных дней
-        }
     }
 
     @Override
