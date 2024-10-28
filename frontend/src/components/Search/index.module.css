@@ -47,10 +47,10 @@
   border: none;
   outline: none;
   font-size: 1.3rem;
-  color: var(--light-grey);
+  color: var(--white);
   min-width: 300px;
 }
 
 .input::placeholder {
-  color: #5e5e5e;
+  color: var(--light-grey);
 }
