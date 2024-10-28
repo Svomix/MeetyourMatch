@@ -45,6 +45,8 @@
 }
 
 .data_container {
+  z-index: 100;
+  
   display: flex;
   position: absolute;
   top: calc(3rem + var(--border-width));

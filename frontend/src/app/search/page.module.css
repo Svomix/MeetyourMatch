@@ -7,6 +7,17 @@
   gap: 4vh;
 }
 
+.controls {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+}
+
+.dbar {
+  --border-width: 4px;
+  --border-radius: 8px;
+}
+
 .events {
   display: grid;
   justify-items: center;
