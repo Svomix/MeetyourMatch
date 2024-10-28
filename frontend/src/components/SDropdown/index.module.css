@@ -44,10 +44,6 @@
   color: var(--light-grey);
 }
 
-.data_wrap {
-  
-}
-
 .data_container {
   display: flex;
   position: absolute;
