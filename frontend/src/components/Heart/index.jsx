@@ -6,8 +6,9 @@ import styles from './index.module.css';
 export default ({ width, height, className }) => {
   const [fill, setFill] = useState(false);
 
-  const heart_click = () => {
+  const heart_click = (e) => {
     setFill((fill) => !fill);
+    e.preventDefault();
   };
 
   return (
