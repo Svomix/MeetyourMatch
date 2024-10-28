@@ -45,15 +45,25 @@
 }
 
 .data_wrap {
+  
+}
+
+.data_container {
   display: flex;
   position: absolute;
   top: calc(3rem + var(--border-width));
+  left: var(--border-width);
+  
   background-color: var(--grey);
   width: calc(100% - var(--border-width)*2);
-  right: var(--border-width);
+
+  overflow-y:auto;
+  overflow-x: hidden;
+
   flex-direction: column;
   gap: 0.5rem;
-  
+  max-height: 50vh;
+  overflow: none;
   transition: opacity 0.05s ease-in, visibility 0.05s;
 }
 

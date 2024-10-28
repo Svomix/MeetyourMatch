@@ -10,7 +10,7 @@
 }
 
 .active_link {
-  background: linear-gradient(to left, #fff49d, var(--gold));
+  background: linear-gradient(to left, var(--white), var(--gold));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: bolder;
