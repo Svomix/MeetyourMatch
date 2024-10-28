@@ -47,7 +47,7 @@
   border: none;
   outline: none;
   font-size: 1.3rem;
-  color: var(--c-text);
+  color: var(--light-grey);
   min-width: 300px;
 }
 

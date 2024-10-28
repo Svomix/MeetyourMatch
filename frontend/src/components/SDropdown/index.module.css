@@ -41,7 +41,7 @@
 }
 
 .input::placeholder {
-  color: #8f8f8f;
+  color: var(--light-grey);
 }
 
 .data_wrap {

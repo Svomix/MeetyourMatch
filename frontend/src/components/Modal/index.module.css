@@ -52,8 +52,8 @@
 
 .button_submit:disabled {
   color: var(--black);
-  background-color: var(--dark-gold);
-  border-color: var(--dark-gold);
+  background-color: var(--light-grey);
+  border-color: var(--light-grey);
   cursor:not-allowed;
 }
 
@@ -69,7 +69,7 @@
 
 .register_button {
   margin-left: 4px;
-  color: var(--light-gold);
+  color: var(--gold);
   pointer-events: all;
 }
 
@@ -91,9 +91,14 @@
   color: var(--gold);
 }
 
+.license_link, .license_link:link, .license_link:visited {
+  text-decoration: underline;
+}
+
 .license_link:hover {
-  vertical-align: middle;
-  color: var(--light-gold);
+  /* vertical-align: middle; */
+  /* color: var(--light-grey); */
+  text-shadow: var(--white) 0 0 2px;
 }
 
 .checkbox {
