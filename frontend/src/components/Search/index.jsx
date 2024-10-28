@@ -2,10 +2,13 @@
 import classNames from '@/utils/classnames';
 import styles from './index.module.css';
 
-export default ({placeholder, className}) => {
+export default ({ placeholder, className }) => {
   return (
     <div className={styles.search_wrap}>
-      <section className={classNames(styles.search, className)} onClick={(e) => e.stopPropagation()}>
+      <section
+        className={classNames(styles.search, className)}
+        onClick={(e) => e.stopPropagation()}
+      >
         <input className={styles.input} placeholder={placeholder} id="searchBar" />
         <div className={styles.border} />
         <button className={styles.magnifier}>

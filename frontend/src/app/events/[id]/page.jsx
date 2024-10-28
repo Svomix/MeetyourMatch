@@ -43,12 +43,11 @@ export default function ExampleClientComponent() {
 }
 
 const card = {
-  title: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. ',
-  description:
-    'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut nam unde aspernatur numquam maxime ullam iste recusandae at repudiandae, labore repellendus soluta reiciendis? Exercitationem neque beatae asperiores voluptate corporis aperiam! Lorem ipsum dolor, sit amet consectetur adipisicing elit. A corporis voluptatem ad id quisquam perspiciatis?Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut nam unde aspernatur numquam maxime ullam iste recusandae at repudiandae, labore repellendus soluta reiciendis?',
-  date: '01.01.1970',
-  place: 'Lorem ipsum dolor sit.',
-  tags: '#Lorem #ipsum #dolor #sit',
+  title: 'Lorem ipsum dolor  ',
+  description: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit.?',
+  date: '01.01.1970,',
+  place: 'Lorem ipsum dolor',
+  tags: '#Lorem #ipsum #dolor',
   img: mock_img,
   heart_count: 52
 };
