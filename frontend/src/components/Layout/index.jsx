@@ -10,7 +10,7 @@ export default ({ children }) => {
       <div className={styles.window}>
         <div className={styles.wrapper}>
           <Header />
-          <container className={styles.container}>{children}</container>
+          <div className={styles.container}>{children}</div>
           <Footer />
         </div>
       </div>
