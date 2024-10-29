@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.javanostra.meetyourmatch.fragment.ChatRecyclerViewInterface;
 
 import java.util.List;
 
