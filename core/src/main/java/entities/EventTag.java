@@ -6,25 +6,23 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "event_tags")
-//связь composite columns
-public class EventTag
-{
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class EventTag {
     @EmbeddedId
-    private EventToTagId id;
+    private EventTagId id;
 
     @ManyToOne
     @MapsId("eventId")
-    @JoinColumn(name = "event_id")
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
     @ManyToOne
     @MapsId("tagId")
-    @JoinColumn(name = "tag_id")
+    @JoinColumn(name = "tag_id", nullable = false)
     private Tag tag;
 }

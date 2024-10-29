@@ -1,23 +1,31 @@
 package entities;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.antlr.v4.runtime.misc.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+import java.util.Set;
+
 @Entity
 @Table(name = "tags")
-
-public class Tag
-{
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Tag {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tag_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-    @Column(name = "tag_name",unique = true)
-    @NotNull
+    private Integer tagId;
+
+    @Column(name = "tag_name", nullable = false, unique = true, length = 50)
     private String tagName;
+
+    @ManyToMany(mappedBy = "tags")
+    private Set<Event> events;
+
+    @ManyToMany(mappedBy = "interests")
+    private Set<User> users;
 }

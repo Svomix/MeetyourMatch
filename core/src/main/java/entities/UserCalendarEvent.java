@@ -7,14 +7,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "user_interests")
+@Table(name = "user_calendar_events")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserInterest {
+public class UserCalendarEvent {
     @EmbeddedId
-    private UserInterestId id;
+    private UserCalendarEventId id;
 
     @ManyToOne
     @MapsId("userId")
@@ -22,7 +22,7 @@ public class UserInterest {
     private User user;
 
     @ManyToOne
-    @MapsId("tagId")
-    @JoinColumn(name = "tag_id", nullable = false)
-    private Tag tag;
+    @MapsId("eventId")
+    @JoinColumn(name = "event_id", nullable = false)
+    private Event event;
 }
