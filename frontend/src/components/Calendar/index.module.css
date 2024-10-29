@@ -1,7 +1,5 @@
 .icon path {
-  fill: transparent;
-  stroke: var(--black);
-  stroke-width: 2px;
+  fill: var(--black);
   transition: 200ms ease-in-out;
 }
 
@@ -10,7 +8,7 @@
 }
 
 .active path {
-  stroke: var(--gold);
+  fill: var(--gold);
 }
 
 .active {

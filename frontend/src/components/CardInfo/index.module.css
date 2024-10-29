@@ -1,0 +1,134 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.img_section {
+  display: flex;
+  height: 70vh;
+  width: 100%;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.left_side {
+  width: 40%;
+  padding: 40px;
+  background-color: var(--grey);
+  color: var(--white);
+  display: grid;
+  grid-template-rows: 12fr repeat(3, 2fr) 8fr;
+}
+
+.title,
+.meta {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  word-break: break-all;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.title {
+  align-self: center;
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
+  line-height: 1.1;
+  height: 3.3em;
+  font-size: 48px;
+  font-weight: 900;
+}
+
+.meta {
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
+  line-height: 1;
+  height: 1em;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.actions {
+  align-self: end;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icons {
+  display: flex;
+  gap: 1vw;
+}
+
+.link {
+  padding: 20px;
+  border-radius: var(--border-radius);
+  background-color: var(--black);
+  border: 2px solid var(--black);
+  color: var(--white);
+  font-size: 32px;
+  font-weight: 900;
+  transition: 200ms ease-in-out;
+}
+
+.link:hover {
+  border: 2px solid var(--gold);
+  transform: scale(1.05);
+}
+
+.link:active {
+  background-color: var(--grey);
+}
+
+.right_side {
+  width: 60%;
+  position: relative;
+}
+
+.img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  user-drag: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+.fade_out {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to left, transparent 60%, var(--grey));
+  pointer-events: none;
+}
+
+.extra_info {
+  display: flex;
+  flex-direction: column;
+  gap: 4vh;
+  padding: 40px;
+}
+
+.description {
+  color: var(--white);
+  letter-spacing: 0.5px;
+  line-height: 1.3;
+  font-size: 24px;
+}
+
+.description::first-line {
+  font-size: 36px;
+  font-weight: 900;
+  line-height: 1.5;
+}
+
+.tags {
+  color: var(--light-grey);
+  font-size: 20px;
+  font-weight: 100;
+}

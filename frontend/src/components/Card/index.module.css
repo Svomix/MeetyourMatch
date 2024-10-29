@@ -5,8 +5,14 @@
   flex-direction: column;
   background-color: var(--grey);
   border-radius: var(--border-radius);
-  border: 1px solid var(--gold);
+  border: 3px solid var(--black);
   overflow: hidden;
+  transition: 200ms ease-in-out;
+}
+
+.card:hover {
+  border: 3px solid var(--gold);
+  transform: scale(1.04);
 }
 
 .img_container {
@@ -16,6 +22,9 @@
 }
 
 .image {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
   user-drag: none;
   -webkit-user-drag: none;
   user-select: none;
@@ -25,8 +34,6 @@
 }
 
 .fade_out {
-  display: block;
-  content: '';
   position: absolute;
   top: 0;
   left: 0;

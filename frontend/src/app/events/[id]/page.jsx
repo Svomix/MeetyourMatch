@@ -1,53 +1,29 @@
 'use client';
 
-import Heart from '@components/Heart';
+import CardInfo from '@components/CardInfo';
 import Layout from '@components/Layout';
-import calendar from '@public/calendar.svg';
 import mock_img from '@public/mock_img.jpg';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import styles from './page.module.css';
 
 export default function ExampleClientComponent() {
   const pathname = usePathname().split('/').pop();
 
   return (
     <Layout>
-      <div className={styles.wrapper}>
-        <div className={styles.img_block}>
-          <div className={styles.img_wrapper}>
-            <Image className={styles.img} src={card.img} />
-          </div>
-          <div className={styles.ui_options}>
-            <div className={styles.heart_ui}>
-              <Heart width={48} height={48} />
-              <div className={styles.heart_count}>52</div>
-            </div>
-            <Image className={styles.icon} src={calendar} alt="people" />
-          </div>
-          <div className={styles.tags}>{card.tags}</div>
-        </div>
-        <div className={styles.text_block}>
-          <div className={styles.break}>
-            <div className={styles.title}>{'Page: ' + pathname + '. ' + card.title}</div>
-            <div className={styles.description}>{card.description}</div>
-          </div>
-          <div className={styles.break}>
-            <div className={styles.info}>{card.date}</div>
-            <div className={styles.info}>{card.place}</div>
-          </div>
-        </div>
-      </div>
+      <CardInfo path={pathname} card={card} />
     </Layout>
   );
 }
 
 const card = {
   title: 'Lorem ipsum dolor  ',
-  description: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit.?',
-  date: '01.01.1970,',
+  description:
+    'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi, ut. Minus possimus ea similique aliquam excepturi? Error magni sed ex, provident eos sit nisi cum distinctio officiis sequi. Reprehenderit laudantium magni doloribus rerum natus, doloremque perspiciatis fugit assumenda facilis officia dolores architecto ipsam quibusdam esse excepturi quis! Velit, a qui! Nam rerum, libero ipsum perspiciatis, laudantium molestiae labore quis quod, eum fuga architecto dolorum nobis esse! Doloremque blanditiis magni error, eligendi debitis nihil? Incidunt nemo dolores delectus magnam odio atque reiciendis quia. Sed enim, error, neque, labore necessitatibus cum rerum ducimus tempore quas dicta aspernatur hic deleniti dolores unde nesciunt!',
+  date: '01.01.1970',
   place: 'Lorem ipsum dolor',
+  price: 1001,
   tags: '#Lorem #ipsum #dolor',
+  from: 'https://chatgpt.com/',
   img: mock_img,
   heart_count: 52
 };
