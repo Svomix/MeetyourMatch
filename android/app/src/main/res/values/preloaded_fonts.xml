@@ -8,5 +8,6 @@
         <item>@font/pt_sans_caption_bold</item>
         <item>@font/roboto_flex</item>
         <item>@font/sansita</item>
+        <item>@font/fira_sans</item>
     </array>
 </resources>

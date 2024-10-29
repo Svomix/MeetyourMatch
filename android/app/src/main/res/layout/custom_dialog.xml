@@ -9,12 +9,13 @@
         android:id="@+id/dialog_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Мероприятия на день"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:fontFamily="@font/fira_sans"
         android:paddingBottom="20dp"
+        android:text="Мероприятия на день"
         android:textColor="@color/white"
-        android:layout_gravity="center_horizontal"/>
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <ScrollView
         android:layout_width="match_parent"

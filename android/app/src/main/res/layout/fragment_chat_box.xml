@@ -17,9 +17,10 @@
             android:id="@+id/ChatAndUser">
 
             <TextView
+                android:id="@+id/Username"
                 style="@style/ChatUsername"
-                android:text="Name"
-                android:id="@+id/Username"/>
+                android:fontFamily="@font/fira_sans"
+                android:text="Name" />
 
             <TextView
                 style="@style/ChatMessage"
