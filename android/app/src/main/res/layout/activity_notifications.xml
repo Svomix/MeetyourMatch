@@ -17,15 +17,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/bars">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#FDC31A"
-            android:text="Notifications"
             android:layout_gravity="center"
-            android:layout_marginVertical="15dp"/>
+            android:layout_marginVertical="15dp"
+            android:fontFamily="@font/fira_sans"
+            android:text="Notifications"
+            android:textColor="#FDC31A"
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
