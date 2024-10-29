@@ -1,0 +1,11 @@
+.desc {
+  /* margin: 9px 0; */
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  color: var(--light-grey);
+}
+
+.image {
+  height: 50vh;
+}

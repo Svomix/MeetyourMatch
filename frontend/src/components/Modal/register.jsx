@@ -31,7 +31,7 @@ export default function Register() {
 
   function onClickRegister(e) {
     console.log(e);
-    dispatch(setModal(ModalPage.None));
+    dispatch(setModal(ModalPage.Verify));
     e.preventDefault();
     return false;
   }
@@ -54,8 +54,8 @@ export default function Register() {
         <form onSubmit={onClickRegister} className={styles.form}>
           <InputField placeholder="Имя" name="name" />
           <InputField placeholder="E-mail" name="email" />
-          <InputField placeholder="Пароль" name="password" />
-          <InputField placeholder="Повторите пароль" name="password2" />
+          <InputField type="password" placeholder="Пароль" name="password" />
+          <InputField type="password" placeholder="Повторите пароль" name="password2" />
           <div className={styles.license_wrap}>
             <p className={styles.license_text}>Я согласен с</p>
             <Link

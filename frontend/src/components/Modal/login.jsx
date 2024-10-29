@@ -45,7 +45,7 @@ export default function Login() {
         <h1 className={styles.title}>Вход</h1>
         <form onSubmit={onClickLogin} className={styles.form}>
           <InputField placeholder="E-mail" name="email" />
-          <InputField placeholder="Пароль" name="password" />
+          <InputField type="password" placeholder="Пароль" name="password" />
           <button type="submit" className={styles.button_submit}>
             Войти
           </button>

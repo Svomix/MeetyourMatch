@@ -1,5 +1,4 @@
 'use client';
-import Modal from '@components/Modal';
 import styles from './index.module.css';
 import { useDispatch } from 'react-redux';
 import { setModal, ModalPage } from '@store/slices/modalSlice';

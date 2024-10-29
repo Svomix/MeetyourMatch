@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 export const ModalPage = {
   None: 'None',
   Login: 'Login',
-  Register: 'Register'
+  Register: 'Register',
+  Verify: 'Verify'
 };
 
 const initialState = { page: ModalPage.None };

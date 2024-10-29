@@ -30,7 +30,7 @@ export default function SDropdown({ data, placeholder, onSelect, className }) {
     data_wrap.current?.classList.add(styles.invisible);
     data_wrap.current?.classList.remove(styles.block);
     input.current.placeholder = placeholder;
-    if(!data.some((row) => row.text == input.current.value)) input.current.value = '';
+    if (!data.some((row) => row.text == input.current.value)) input.current.value = '';
     //if (filter !== '') input.current.value = '';
   }
 

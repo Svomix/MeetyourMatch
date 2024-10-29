@@ -1,13 +1,18 @@
 'use client';
-import styles from './index.module.css';
 import Register from './register';
 import Login from './login';
+import Verify from './Registration/verify';
 import { useSelector } from 'react-redux';
 import { ModalPage } from '@store/slices/modalSlice';
-
-export const PageType = ModalPage;
+import { useEffect, useState } from 'react';
 
 export default function Modal() {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const page = useSelector((state) => state.modal.page);
 
   function selectModal(page) {
@@ -16,9 +21,11 @@ export default function Modal() {
         return <Login />;
       case ModalPage.Register:
         return <Register />;
+      case ModalPage.Verify:
+        return <Verify />;
     }
     return <></>;
   }
 
-  return selectModal(page);
+  return isClient ? selectModal(page) : <></>;
 }

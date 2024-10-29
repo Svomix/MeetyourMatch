@@ -29,8 +29,14 @@
 }
 
 .input_wrap {
+  background-image: url("/filter-list-svgrepo-com.svg");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: 2.2rem;
+
   padding: 0.5rem 0;
-  padding-left: 2rem;
+  padding-left: 1rem;
+  margin-right: 0.5rem;
   width: 100%;
 }
 
