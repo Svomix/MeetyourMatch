@@ -4,7 +4,7 @@
   justify-content: space-between;
   background-color: var(--grey);
   border-radius: var(--border-radius);
-  padding: 12px 24px;
+  padding: 12px 20px;
   gap: calc(var(--header-width) * 0.05);
 }
 

@@ -7,10 +7,8 @@ export default () => {
   const dispatch = useDispatch();
 
   return (
-    <>
-      <button onClick={() => dispatch(setModal(ModalPage.Login))} className={styles.btn}>
-        Войти
-      </button>
-    </>
+    <button onClick={() => dispatch(setModal(ModalPage.Login))} className={styles.btn}>
+      Войти
+    </button>
   );
 };

@@ -1,0 +1,49 @@
+.signed_container {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  position: relative;
+  color: var(--white);
+  padding: 12px 20px;
+  font-size: 24px;
+  border-radius: var(--border-radius);
+  background-color: var(--grey);
+}
+
+.signed_container::before {
+  background: linear-gradient(to right, var(--black), var(--grey));
+}
+
+.username {
+  margin: auto 0;
+  vertical-align: middle;
+  text-align: center;
+  line-height: 1rem;
+  height: 1rem;
+  user-select: none;
+}
+
+.notifIcon {
+  margin: auto 0;
+  width: 2rem;
+  height: 2rem;
+  background: url("/Bell.svg") center center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.calenderIcon {
+  margin: auto 0;
+  width: 2rem;
+  height: 2rem;
+  background: url("/Calendar.svg") center center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.userLogo {
+  margin-left: 0.5rem;
+  border-radius: 24px;
+  border: var(--gold) solid 2px;
+}
+

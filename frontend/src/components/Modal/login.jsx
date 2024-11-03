@@ -4,10 +4,13 @@ import styles from './index.module.css';
 import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { setModal, ModalPage } from '@store/slices/modalSlice';
+import { saveAccessToken } from '@/services/authService';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
   const dialog = useRef();
   const dispatch = useDispatch();
+  const router = useRouter();
 
   useEffect(() => {
     dialog.current?.showModal();
@@ -35,7 +38,10 @@ export default function Login() {
   function onClickLogin(e) {
     console.log(e.target);
 
+    saveAccessToken("test2")
+
     dispatch(setModal(ModalPage.None));
+    router.refresh();
     e.preventDefault();
   }
 

@@ -33,8 +33,8 @@ export default function Verify() {
   return open ? (
     <dialog ref={dialog} className={base_styles.dialog}>
       <div className={base_styles.dialog_wrap}>
-        <h1 className={base_styles.title}>Подтверждение</h1>
-        <h2 className={styles.desc}>Подтвердите email по ссылке на почте</h2>
+        <h1 className={base_styles.title}>Оплата</h1>
+        <h2 className={styles.desc}>Приложите карту к экрану</h2>
         <Image className={styles.image} alt="verify" src={svg2}></Image>
       </div>
     </dialog>
