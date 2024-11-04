@@ -1,4 +1,4 @@
-package com.javanostra.meetyourmatch;
+package com.javanostra.meetyourmatch.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.javanostra.meetyourmatch.R;
+import com.javanostra.meetyourmatch.fragment.CalendarFragment;
+import com.javanostra.meetyourmatch.fragment.ChatFragment;
+import com.javanostra.meetyourmatch.fragment.EventSearchFragment;
+import com.javanostra.meetyourmatch.fragment.MapFragment;
+import com.javanostra.meetyourmatch.fragment.RecomendationsFragment;
 
 public class MainScreenActivity extends AppCompatActivity implements RecomendationsFragment.OnRecommendationsInteractionListener {
 

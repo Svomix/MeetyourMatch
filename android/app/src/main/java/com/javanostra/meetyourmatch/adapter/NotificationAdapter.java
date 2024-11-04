@@ -1,4 +1,4 @@
-package com.javanostra.meetyourmatch;
+package com.javanostra.meetyourmatch.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.javanostra.meetyourmatch.R;
+import com.javanostra.meetyourmatch.entity.Notification;
 
 import java.util.List;
 

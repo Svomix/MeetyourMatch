@@ -1,4 +1,4 @@
-package com.javanostra.meetyourmatch;
+package com.javanostra.meetyourmatch.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -7,6 +7,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.javanostra.meetyourmatch.R;
+import com.javanostra.meetyourmatch.entity.Event;
 
 public class EventDetailsActivity extends AppCompatActivity {
 

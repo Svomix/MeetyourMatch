@@ -1,4 +1,4 @@
-package com.javanostra.meetyourmatch;
+package com.javanostra.meetyourmatch.entity;
 
 public class Notification {
 

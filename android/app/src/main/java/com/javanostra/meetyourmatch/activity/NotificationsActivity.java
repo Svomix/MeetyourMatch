@@ -1,4 +1,4 @@
-package com.javanostra.meetyourmatch;
+package com.javanostra.meetyourmatch.activity;
 
 import android.os.Bundle;
 import android.view.Window;
@@ -11,6 +11,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.javanostra.meetyourmatch.R;
+import com.javanostra.meetyourmatch.adapter.NotificationAdapter;
+import com.javanostra.meetyourmatch.entity.Notification;
 
 import java.util.List;
 

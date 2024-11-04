@@ -1,4 +1,4 @@
-package com.javanostra.meetyourmatch;
+package com.javanostra.meetyourmatch.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -19,6 +19,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+
+import com.javanostra.meetyourmatch.R;
+import com.javanostra.meetyourmatch.activity.EventDetailsActivity;
+import com.javanostra.meetyourmatch.entity.Day;
+import com.javanostra.meetyourmatch.entity.Event;
 
 import java.util.Calendar;
 

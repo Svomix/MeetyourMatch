@@ -1,4 +1,4 @@
-package com.javanostra.meetyourmatch;
+package com.javanostra.meetyourmatch.activity;
 
 import android.os.Bundle;
 
@@ -9,6 +9,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.widget.TextView;
+
+import com.javanostra.meetyourmatch.R;
+import com.javanostra.meetyourmatch.adapter.MessageAdapter;
+import com.javanostra.meetyourmatch.entity.Message;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,7 +65,7 @@ public class ChatMessagesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_chat_messages);
-        getWindow().setStatusBarColor(ContextCompat.getColor(this,R.color.bars));
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.bars));
         String username = getIntent().getStringExtra("Username");
         int IdSender = getIntent().getIntExtra("IDSender", -1);
 

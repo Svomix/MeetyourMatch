@@ -1,4 +1,4 @@
-package com.javanostra.meetyourmatch;
+package com.javanostra.meetyourmatch.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,10 @@ import android.widget.EditText;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.javanostra.meetyourmatch.R;
+import com.javanostra.meetyourmatch.adapter.ElementAdapter;
+import com.javanostra.meetyourmatch.entity.Element;
 
 import java.util.ArrayList;
 import java.util.List;

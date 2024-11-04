@@ -1,4 +1,4 @@
-package com.javanostra.meetyourmatch;
+package com.javanostra.meetyourmatch.fragment;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -20,6 +20,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+
+import com.javanostra.meetyourmatch.R;
+import com.javanostra.meetyourmatch.activity.EventDetailsActivity;
+import com.javanostra.meetyourmatch.entity.Event;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.javanostra.meetyourmatch;
+package com.javanostra.meetyourmatch.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.javanostra.meetyourmatch.R;
+import com.javanostra.meetyourmatch.activity.ChatMessagesActivity;
+import com.javanostra.meetyourmatch.adapter.ChatAdapter;
+import com.javanostra.meetyourmatch.entity.User;
 import com.javanostra.meetyourmatch.fragment.ChatRecyclerViewInterface;
 
 import java.util.List;
