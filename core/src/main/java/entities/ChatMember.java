@@ -1,0 +1,29 @@
+package entities;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "Chats_members")
+@IdClass(ChatMemberId.class)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class ChatMember {
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "chat_id")
+    private Chat chat;
+
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+}
+

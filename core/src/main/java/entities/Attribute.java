@@ -6,16 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Tags")
+@Table(name = "Attributes")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Tag {
+public class Attribute {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(nullable = false)
     private String name;
 }
-

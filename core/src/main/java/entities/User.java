@@ -2,67 +2,43 @@ package entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
 @Entity
-@Table(name = "user_data")
+@Table(name = "Users")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Integer userId;
-
-    @Column(name = "username", nullable = false, length = 50)
-    private String username;
-
-    @Column(name = "email", nullable = false, unique = true, length = 50)
-    private String email;
-
-    @Column(name = "avatar_path", length = 255)
-    private String avatarPath;
+    private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "city", nullable = false)
-    private City city;
+    @JoinColumn(name = "group_id")
+    private UserGroup group;
 
-    @Column(name = "age")
-    private Integer age;
+    @Column(nullable = false, unique = true, length = 50)
+    private String username;
 
-    @Column(name = "sex", length = 1)
-    private String sex;
+    @Column(nullable = false, unique = true, length = 75)
+    private String email;
 
-    @Column(name = "password", nullable = false, length = 50)
+    @Column(nullable = false, length = 50)
     private String password;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_interests",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id")
-    )
-    private Set<Tag> interests;
+    @ManyToOne
+    @JoinColumn(name = "city_id", nullable = false)
+    private City city;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_liked_events",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id")
-    )
-    private Set<Event> likedEvents;
+    @Column(length = 1)
+    private String gender;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_calendar_events",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id")
-    )
-    private Set<Event> calendarEvents;
+    @Column(length = 100)
+    private String description;
+
+    @Column(name = "avatar_path")
+    private String avatarPath;
 }
+

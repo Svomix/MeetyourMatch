@@ -6,16 +6,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Tags")
+@Table(name = "Chats")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Tag {
+public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(length = 100)
     private String name;
+
+    @Column(name = "is_group", nullable = false)
+    private Boolean isGroup = false;
 }
 

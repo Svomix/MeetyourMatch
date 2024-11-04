@@ -1,16 +1,15 @@
 package entities;
 
-import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Embeddable
+import jakarta.persistence.Embeddable;
+
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Embeddable
 public class Location {
     private Double latitude;
     private Double longitude;

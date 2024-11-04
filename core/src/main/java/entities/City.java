@@ -2,27 +2,23 @@ package entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
 @Entity
-@Table(name = "cities")
+@Table(name = "Cities")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "city_id")
-    private Integer cityId;
+    private Integer id;
 
-    @Column(name = "city_name", unique = true, nullable = false, length = 50)
-    private String cityName;
+    @Column(nullable = false, length = 100)
+    private String name;
 
-    @OneToMany(mappedBy = "city")
-    private Set<User> citizens;
+    @Embedded
+    private Location location;
 }
+
