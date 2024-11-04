@@ -1,66 +1,115 @@
-CREATE TABLE IF NOT EXISTS tags
+CREATE TABLE Attributes
 (
-    tag_id   SERIAL PRIMARY KEY,
-    tag_name VARCHAR(50) NOT NULL UNIQUE
+    id   SERIAL PRIMARY KEY,
+    name TEXT NOT NULL
+);
+INSERT INTO Attributes(name)
+VALUES ('tag');
+INSERT INTO Attributes(name)
+VALUES ('vk_id');
+INSERT INTO Attributes(name)
+VALUES ('access_token');
+INSERT INTO Attributes(name)
+VALUES ('last_sync_timestamp');
+
+CREATE TYPE LOCATION AS
+(
+    latitude  DOUBLE PRECISION,
+    longitude DOUBLE PRECISION
 );
 
-CREATE TABLE IF NOT EXISTS events
+CREATE TYPE USER_ROLE AS ENUM ('admin', 'member');
+
+CREATE TABLE Cities
 (
-    event_id        SERIAL PRIMARY KEY,
-    title           VARCHAR(100) NOT NULL,
-    description     VARCHAR(1000),
-    date_and_time   TIMESTAMP    NOT NULL,
-    location        DECIMAL[2]   NOT NULL,
-    cover_image_url TEXT,
-    source_url      TEXT
+    id   SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    location LOCATION
 );
 
--- Таблица-связка для связи между событиями и тегами
-CREATE TABLE IF NOT EXISTS event_tags
+CREATE TABLE Tags
 (
-    event_id INT REFERENCES events(event_id) ON DELETE CASCADE,
-    tag_id   INT REFERENCES tags(tag_id) ON DELETE CASCADE,
-    PRIMARY KEY (event_id, tag_id)
+    id   SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS cities
+CREATE TABLE Users_group
 (
-    city_id   SERIAL PRIMARY KEY,
-    city_name VARCHAR(50) NOT NULL UNIQUE
+    id   SERIAL PRIMARY KEY,
+    name TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS user_data
+CREATE TABLE Users
 (
-    user_id         SERIAL PRIMARY KEY,
-    username        VARCHAR(50) NOT NULL,
-    email           VARCHAR(50) NOT NULL UNIQUE,
-    avatar_path     VARCHAR(255),
-    city            INT REFERENCES cities(city_id) ON DELETE CASCADE,
-    age             INT,
-    sex             VARCHAR(1),
-    password        VARCHAR(50) NOT NULL
+    id          SERIAL PRIMARY KEY,
+    group_id    INT         REFERENCES Users_group (id) ON DELETE SET NULL,
+    username    VARCHAR(50) NOT NULL UNIQUE,
+    email       VARCHAR(75) NOT NULL UNIQUE,
+    password    VARCHAR(50) NOT NULL,
+    city_id     INT         REFERENCES Cities (id) ON DELETE SET NULL NOT NULL,
+    gender      VARCHAR(1),
+    description VARCHAR(100),
+    avatar_path TEXT
 );
 
--- Таблица-связка для связи интересов пользователя с тегами
-CREATE TABLE IF NOT EXISTS user_interests
+CREATE TABLE Users_attribute_value
 (
-    user_id INT REFERENCES user_data(user_id) ON DELETE CASCADE,
-    tag_id  INT REFERENCES tags(tag_id) ON DELETE CASCADE,
-    PRIMARY KEY (user_id, tag_id)
+    id           SERIAL PRIMARY KEY,
+    user_id      INT REFERENCES Users (id) ON DELETE CASCADE,
+    attribute_id INT REFERENCES Attributes (id) ON DELETE CASCADE,
+    value        TEXT NOT NULL
 );
 
--- Таблица-связка для связи понравившихся событий пользователя
-CREATE TABLE IF NOT EXISTS user_liked_events
+CREATE TABLE Events
 (
-    user_id  INT REFERENCES user_data(user_id) ON DELETE CASCADE,
-    event_id INT REFERENCES events(event_id) ON DELETE CASCADE,
+    id            SERIAL PRIMARY KEY,
+    title         VARCHAR(100) NOT NULL,
+    description   VARCHAR(1000),
+    price         DECIMAL(10, 2),
+    date          TIMESTAMP,
+    location      LOCATION,
+    cover_img_url TEXT,
+    source_url    TEXT
+);
+
+CREATE TABLE Events_attribute_value
+(
+    id           SERIAL PRIMARY KEY,
+    event_id     INT REFERENCES Events (id) ON DELETE CASCADE,
+    attribute_id INT REFERENCES Attributes (id) ON DELETE CASCADE,
+    value        TEXT NOT NULL
+);
+
+CREATE TABLE Users_event
+(
+    user_id     INT REFERENCES Users (id) ON DELETE CASCADE,
+    event_id    INT REFERENCES Events (id) ON DELETE CASCADE,
+    is_liked    BOOLEAN DEFAULT FALSE,
+    is_disliked BOOLEAN DEFAULT FALSE,
+    in_calendar BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (user_id, event_id)
 );
 
--- Таблица-связка для связи событий, добавленных пользователем в календарь
-CREATE TABLE IF NOT EXISTS user_calendar_events
+CREATE TABLE Chats
 (
-    user_id  INT REFERENCES user_data(user_id) ON DELETE CASCADE,
-    event_id INT REFERENCES events(event_id) ON DELETE CASCADE,
-    PRIMARY KEY (user_id, event_id)
+    id       SERIAL PRIMARY KEY,
+    name     VARCHAR(100),
+    is_group BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE Chats_members
+(
+    chat_id INT REFERENCES Chats (id) ON DELETE CASCADE,
+    user_id INT REFERENCES Users (id) ON DELETE CASCADE,
+    role    USER_ROLE NOT NULL,
+    PRIMARY KEY (chat_id, user_id)
+);
+
+CREATE TABLE Messages
+(
+    id        SERIAL PRIMARY KEY,
+    chat_id   INT REFERENCES Chats (id) ON DELETE CASCADE,
+    user_id   INT  REFERENCES Users (id) ON DELETE SET NULL,
+    content   TEXT NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
