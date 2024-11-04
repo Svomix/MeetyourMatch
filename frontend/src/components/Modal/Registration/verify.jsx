@@ -1,5 +1,4 @@
 'use client';
-import InputField from '../inputField';
 import base_styles from '../index.module.css';
 import styles from './verify.module.css';
 import { useEffect, useRef, useState } from 'react';

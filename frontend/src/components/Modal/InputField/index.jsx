@@ -1,4 +1,4 @@
-import styles from './inputField.module.css';
+import styles from './index.module.css';
 
 export default function InputField({ name, title, ...rest }) {
   return (
