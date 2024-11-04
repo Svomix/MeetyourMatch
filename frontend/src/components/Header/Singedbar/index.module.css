@@ -41,9 +41,28 @@
   background-repeat: no-repeat;
 }
 
+.calenderIcon:hover, .notifIcon:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 4px 8px rgba(255, 255, 255, 0.05);
+}
+
 .userLogo {
   margin-left: 0.5rem;
   border-radius: 24px;
-  border: var(--gold) solid 2px;
+  border: var(--black) solid 2px;
+  color: var(--white);
 }
 
+.profile_link {
+  display: flex;
+}
+
+.profile_link:visited, .profile_link:link {
+  color: unset;
+}
+
+.profile_link:hover {
+  color: unset;
+  background-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 4px 6px rgba(255, 255, 255, 0.05);
+}

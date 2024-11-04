@@ -1,16 +1,13 @@
-'use client';
-
 import CardInfo from '@components/CardInfo';
 import Layout from '@components/Layout';
 import mock_img from '@public/mock_img.jpg';
-import { usePathname } from 'next/navigation';
 
-export default function ExampleClientComponent() {
-  const pathname = usePathname().split('/').pop();
+export default async function EventsPage({ params }){
+  const slug = (await params).id
 
   return (
     <Layout>
-      <CardInfo path={pathname} card={card} />
+      <CardInfo path={slug} card={card} />
     </Layout>
   );
 }

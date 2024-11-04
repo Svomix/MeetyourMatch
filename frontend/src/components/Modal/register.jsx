@@ -1,5 +1,5 @@
 'use client';
-import InputField from './InputField';
+import InputField from '../InputField';
 import styles from './index.module.css';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';

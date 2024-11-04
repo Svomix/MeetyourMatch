@@ -2,5 +2,6 @@ export default {
   HOME: '/',
   SEARCH: '/search',
   MAP: '/map',
-  LICENSE: '/license'
+  LICENSE: '/license',
+  PROFILE: '/profile'
 };
