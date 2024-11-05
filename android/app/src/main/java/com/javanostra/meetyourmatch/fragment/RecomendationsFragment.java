@@ -33,7 +33,7 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
     private TextView event_title;
     private TextView event_description;
     private ImageView event_full_description;
-    private ImageView event_search;
+    private ImageView event_refresh;
     private ImageButton like_button;
     private ImageButton dislike_button;
     private GestureDetector gestureDetector;
@@ -48,7 +48,7 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
         event_title = view.findViewById(R.id.event_title);
         event_description = view.findViewById(R.id.event_description);
         event_full_description = view.findViewById(R.id.event_full_description);
-        event_search = view.findViewById(R.id.event_search);
+        event_refresh = view.findViewById(R.id.event_refresh);
         like_button = view.findViewById(R.id.like_button);
         dislike_button = view.findViewById(R.id.dislike_button);
         action_image_view = view.findViewById(R.id.action_image_view);
@@ -67,7 +67,7 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
         displayCurrentEvent();
 
         event_full_description.setOnClickListener(v -> handleDescription(events.get(currentEventIndex)));
-        event_search.setOnClickListener(v -> handleSearch());
+        event_refresh.setOnClickListener(v -> handleRefresh());
         like_button.setOnClickListener(v -> handleLike());
         dislike_button.setOnClickListener(v -> handleDislike());
 
@@ -99,10 +99,11 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
         startActivity(intent);
     }
 
-    private void handleSearch() {
-        if (listener != null) {
-            listener.onSwitchToSearch();
-        }
+    private void handleRefresh() {
+        currentEventIndex++;
+        showActionImage(R.drawable.ic_baseline_refresh_24);
+
+        displayCurrentEvent();
     }
 
     public interface OnRecommendationsInteractionListener {
@@ -177,7 +178,7 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
                 if (diffY > 0) { // toDOWN
                     animateSwipeToDown(getView().findViewById(R.id.root_layout));
                 } else { // toUP
-                    animateSwipeToUp(getView().findViewById(R.id.root_layout));
+                    animateSwipeToUp(getView().findViewById(R.id.root_layout), this::handleRefresh);
                 }
                 return true;
             }
@@ -200,15 +201,14 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
                 .start();
     }
 
-    private void animateSwipeToUp(View view) {
-        handleSearch();
+    private void animateSwipeToUp(View view, Runnable onSwipeComplete) {
         view.animate()
                 .translationY(-view.getHeight() / 3)
                 .setDuration(400)
                 .withEndAction(() -> {
                     view.setTranslationY(0);
                     view.setAlpha(0f);
-
+                    onSwipeComplete.run();
                     view.animate()
                             .alpha(1f)
                             .setDuration(1000)

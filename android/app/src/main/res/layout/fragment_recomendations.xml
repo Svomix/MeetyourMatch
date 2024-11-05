@@ -33,19 +33,19 @@
 
         <ImageButton
             android:id="@+id/dislike_button"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="12dp"
             android:background="@drawable/border_element_background"
             android:backgroundTint="#00FFFFFF"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_baseline_close_24"
-            app:tint="#FF6060"
+            android:src="@drawable/ic_baseline_thumb_down_24"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:tint="#FF6060" />
 
         <ImageButton
             android:id="@+id/like_button"
@@ -54,15 +54,15 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/everyday_border"
             android:backgroundTint="#00FFFFFF"
             android:backgroundTintMode="multiply"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_baseline_thumb_up_24"
-            app:tint="#71E63E"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:tint="#71E63E" />
 
         <ImageView
             android:id="@+id/eventImage"
@@ -175,13 +175,13 @@
             app:layout_constraintStart_toEndOf="@+id/dislike_button">
 
             <ImageView
-                android:id="@+id/event_search"
+                android:id="@+id/event_refresh"
                 android:layout_width="100dp"
                 android:layout_height="80dp"
                 android:layout_marginBottom="8dp"
                 android:background="@drawable/border_element_background"
                 android:padding="10dp"
-                android:src="@drawable/baseline_public_24"
+                android:src="@drawable/ic_baseline_refresh_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -226,10 +226,10 @@
             android:layout_height="49dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_baseline_keyboard_arrow_left_24"
-            app:tint="#303038"
-            app:layout_constraintBottom_toTopOf="@+id/dislike_button"
+            app:layout_constraintBottom_toTopOf="@+id/search"
             app:layout_constraintEnd_toEndOf="@+id/dislike_button"
-            app:layout_constraintStart_toStartOf="@+id/dislike_button" />
+            app:layout_constraintStart_toStartOf="@+id/dislike_button"
+            app:tint="#303038" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
