@@ -1,4 +1,4 @@
-import CalendarCell from './Cell';
+import Cell from './Cell';
 import Navigation from './Navigation';
 import styles from './index.module.css';
 
@@ -15,11 +15,7 @@ export default () => {
         {[...Array(month_length)].map((_, i) => {
           i++;
           return (
-            <CalendarCell
-              key={i + 'd'}
-              index={i}
-              style={i == 1 ? { 'grid-column-start': '3' } : {}}
-            />
+            <Cell key={i + 'd'} index={i} style={i == 1 ? { 'grid-column-start': '3' } : {}} />
           );
         })}
       </div>
@@ -28,13 +24,13 @@ export default () => {
 };
 
 const week_days = [
-  'понедельник',
-  'вторник',
-  'среда',
-  'четверг',
-  'пятница',
-  'суббота',
-  'воскресенье'
+  'Понедельник',
+  'Вторник',
+  'Среда',
+  'Четверг',
+  'Пятница',
+  'Суббота',
+  'Воскресенье'
 ];
 
 const month_start = 2;

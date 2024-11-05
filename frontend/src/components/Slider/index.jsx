@@ -115,9 +115,7 @@ export default ({ rec_events }) => {
   useLayoutEffect(() => {
     if (wrapperRef.current && cardRef.current) {
       // Получаем изначальные измерения
-      setTimeout(() => {
-        resize();
-      }, 0);
+      resize();
 
       const slider = wrapperRef.current;
       // Слушатели нажатий
@@ -151,7 +149,7 @@ export default ({ rec_events }) => {
         window.removeEventListener('resize', resize);
       };
     }
-  }, [rec_events]);
+  }, []);
 
   return (
     <>

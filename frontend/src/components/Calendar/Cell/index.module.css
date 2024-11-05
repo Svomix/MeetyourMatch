@@ -3,4 +3,10 @@
   height: 100px;
   background-color: var(--light-grey);
   border: 2px solid var(--grey);
+  transition: 200ms ease-in-out;
+}
+
+.cell:hover {
+  transform: scale(1.05);
+  border: 2px solid var(--gold);
 }
