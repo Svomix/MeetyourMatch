@@ -47,8 +47,12 @@ public class MainScreenActivity extends AppCompatActivity implements Recomendati
             loadFragment(calendarFragment);
             imageButton.setImageResource(R.drawable.chosen_range);
         }
-        else if (view.getId() == R.id.searchButton) {
+        else if (view.getId() == R.id.recsButton) {
             loadFragment(recomendationsFragment);
+            imageButton.setImageResource(R.drawable.chosen_recs);
+        }
+        else if (view.getId() == R.id.searchButton) {
+            loadFragment(searchFragment);
             imageButton.setImageResource(R.drawable.chosen_search);
         }
         else {
@@ -60,6 +64,8 @@ public class MainScreenActivity extends AppCompatActivity implements Recomendati
             ((ImageButton) findViewById(R.id.chatButton)).setImageResource(R.drawable.chat);
         if (view.getId() != R.id.rangeButton)
             ((ImageButton) findViewById(R.id.rangeButton)).setImageResource(R.drawable.range);
+        if (view.getId() != R.id.recsButton)
+            ((ImageButton) findViewById(R.id.recsButton)).setImageResource(R.drawable.recs);
         if (view.getId() != R.id.searchButton)
             ((ImageButton) findViewById(R.id.searchButton)).setImageResource(R.drawable.search);
         if (view.getId() != R.id.locationPinButton)

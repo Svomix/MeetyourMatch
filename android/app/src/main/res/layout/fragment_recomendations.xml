@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
-    tools:context=".RecomendationsFragment">
+    tools:context=".fragment.RecomendationsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/root_layout"
@@ -21,6 +21,7 @@
             android:layout_height="0dp"
             android:layout_below="@id/event_title"
             android:layout_marginBottom="8dp"
+            android:fontFamily="@font/sansation_regular"
             android:text="TextView"
             android:textAlignment="center"
             android:textColor="#CCCCCC"
@@ -90,7 +91,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:fontFamily="@font/fira_sans"
+            android:fontFamily="@font/sansation_bold"
             android:shadowColor="#000000"
             android:shadowDx="10"
             android:shadowDy="10"
@@ -144,22 +145,22 @@
             app:cardBackgroundColor="@android:color/transparent"
             app:cardElevation="38dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.65"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintEnd_toStartOf="@+id/like_button"
+            app:layout_constraintHorizontal_bias="0.88"
+            app:layout_constraintStart_toEndOf="@+id/dislike_button">
 
             <ImageView
                 android:id="@+id/event_full_description"
-                android:layout_width="80dp"
+                android:layout_width="100dp"
                 android:layout_height="80dp"
                 android:layout_marginBottom="8dp"
-                android:background="@drawable/button_background"
+                android:background="@drawable/border_element_background"
                 android:padding="11dp"
-                android:src="@drawable/ic_baseline_description_24"
-                app:tint="#FFFFFF"
+                android:src="@drawable/sharp_table_rows_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:tint="#FFFFFF" />
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
@@ -169,18 +170,18 @@
             app:cardBackgroundColor="@android:color/transparent"
             app:cardElevation="38dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.35"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintEnd_toStartOf="@+id/like_button"
+            app:layout_constraintHorizontal_bias="0.12"
+            app:layout_constraintStart_toEndOf="@+id/dislike_button">
 
             <ImageView
                 android:id="@+id/event_search"
-                android:layout_width="80dp"
+                android:layout_width="100dp"
                 android:layout_height="80dp"
                 android:layout_marginBottom="8dp"
-                android:background="@drawable/button_background"
-                android:padding="8dp"
-                android:src="@drawable/chosen_search"
+                android:background="@drawable/border_element_background"
+                android:padding="10dp"
+                android:src="@drawable/baseline_public_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />

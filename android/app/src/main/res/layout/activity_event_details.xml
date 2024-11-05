@@ -13,7 +13,7 @@
         android:id="@+id/event_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/fira_sans"
+        android:fontFamily="@font/sansation_bold"
         android:paddingBottom="16dp"
         android:text="TextView"
         android:textAlignment="viewStart"

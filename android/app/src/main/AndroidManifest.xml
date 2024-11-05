@@ -13,35 +13,35 @@
         android:theme="@style/MeetYourMatch"
         tools:targetApi="31">
         <activity
-            android:name=".NotificationsActivity"
+            android:name=".activity.NotificationsActivity"
             android:exported="false" />
         <activity
-            android:name=".ChatMessagesActivity"
+            android:name=".activity.ChatMessagesActivity"
             android:exported="false" />
         <activity
-            android:name=".AccountActivity"
+            android:name=".activity.AccountActivity"
             android:exported="false" />
         <activity
-            android:name=".EventDetailsActivity"
+            android:name=".activity.EventDetailsActivity"
             android:exported="false" />
         <activity
-            android:name=".MainScreenActivity"
+            android:name=".activity.MainScreenActivity"
             android:exported="false" />
         <activity
-            android:name=".InterestSelectionActivity"
+            android:name=".activity.InterestSelectionActivity"
             android:exported="false" />
         <activity
-            android:name=".RegistrationActivity2"
+            android:name=".activity.RegistrationActivity2"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".RegistrationActivity"
+            android:name=".activity.RegistrationActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".activity.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

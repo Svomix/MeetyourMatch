@@ -69,6 +69,15 @@
             android:onClick="chooseFragment"/>
 
         <ImageButton
+            android:id="@+id/recsButton"
+            style="@style/NavigationButtons"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="chooseFragment"
+            android:src="@drawable/recs" />
+
+        <ImageButton
             style="@style/NavigationButtons"
             android:id="@+id/rangeButton"
             android:src="@drawable/range"
