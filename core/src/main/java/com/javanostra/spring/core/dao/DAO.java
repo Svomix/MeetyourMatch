@@ -1,4 +1,4 @@
-package dao;
+package com.javanostra.spring.core.dao;
 
 import java.util.List;
 

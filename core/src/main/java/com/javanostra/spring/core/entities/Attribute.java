@@ -1,4 +1,4 @@
-package entities;
+package com.javanostra.spring.core.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,19 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Cities")
+@Table(name = "Attributes")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class City {
+public class Attribute {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false)
     private String name;
-
-    @Embedded
-    private Location location;
 }
-

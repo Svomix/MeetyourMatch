@@ -1,4 +1,4 @@
-package entities;
+package com.javanostra.spring.core.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,7 @@ public class Event {
     @Column(length = 1000)
     private String description;
 
-    @Column(precision = 10, scale = 2)
+    @Column(precision = 10)
     private Double price;
 
     private Timestamp date;

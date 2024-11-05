@@ -1,23 +1,24 @@
-package dao.implementation;
+package com.javanostra.spring.core.dao.implementation;
 
-import dao.DAO;
+import com.javanostra.spring.core.dao.DAO;
+import com.javanostra.spring.core.entities.Event;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-
+import org.springframework.stereotype.Repository;
 import java.util.List;
 
-public class GeneralDAOImpl<T> implements DAO<T> {
-    private final SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-    private final Class<T> entityType;
+@Repository
+public class EventDAO implements DAO<Event> {
+    private final SessionFactory sessionFactory;
 
-    public GeneralDAOImpl(Class<T> entityType) {
-        this.entityType = entityType;
+    public EventDAO() {
+        sessionFactory = new Configuration().configure().addAnnotatedClass(Event.class).buildSessionFactory();
     }
 
     @Override
-    public void save(T entity) {
+    public void save(Event entity) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             session.persist(entity);
@@ -26,7 +27,7 @@ public class GeneralDAOImpl<T> implements DAO<T> {
     }
 
     @Override
-    public void update(T entity) {
+    public void update(Event entity) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             session.merge(entity);
@@ -38,7 +39,7 @@ public class GeneralDAOImpl<T> implements DAO<T> {
     public void delete(int id) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            T entity = session.get(entityType, id);
+            Event entity = session.get(Event.class, id);
             if (entity != null) {
                 session.remove(entity);
             }
@@ -47,16 +48,16 @@ public class GeneralDAOImpl<T> implements DAO<T> {
     }
 
     @Override
-    public T findById(int id) {
+    public Event findById(int id) {
         try (Session session = sessionFactory.openSession()) {
-            return session.get(entityType, id);
+            return session.get(Event.class, id);
         }
     }
 
     @Override
-    public List<T> findAll() {
+    public List<Event> findAll() {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("FROM "+ entityType.getSimpleName(), entityType).list();
+            return session.createQuery("FROM Event", Event.class).list();
         }
     }
 }

@@ -1,4 +1,4 @@
-package entities;
+package com.javanostra.spring.core.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
