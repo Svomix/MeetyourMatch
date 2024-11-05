@@ -1,0 +1,14 @@
+.arrow_btn {
+  line-height: 0;
+  cursor: pointer;
+  padding: 4px;
+  background-color: var(--grey);
+  border-radius: 100%;
+  border: 3px solid var(--grey);
+  transition: 200ms ease-in-out;
+}
+
+.arrow_btn:hover {
+  transform: scale(1.05);
+  border: 2px solid var(--gold);
+}

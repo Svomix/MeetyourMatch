@@ -1,5 +1,5 @@
-import Calendar from '@components/Calendar';
-import Heart from '@components/Heart';
+import Calendar from '@components/Buttons/CalendarButton';
+import Heart from '@components/Buttons/HeartButton';
 import mock_img from '@public/mock_img.jpg';
 import Image from 'next/image';
 import Link from 'next/link';

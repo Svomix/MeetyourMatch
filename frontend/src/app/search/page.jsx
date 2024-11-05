@@ -1,6 +1,6 @@
 import Layout from '@/components/Layout';
 import Card from '@components/Card';
-import CardNavigation from '@components/Propagation';
+import CardNavigation from '@components/Pagination';
 import Search from '@components/Search';
 import mock_img from '@public/mock_img.jpg';
 import styles from './page.module.css';

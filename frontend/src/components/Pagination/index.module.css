@@ -1,0 +1,11 @@
+.wrapper {
+  width: fit-content;
+  display: flex;
+  gap: 3vw;
+}
+
+.page {
+  display: flex;
+  color: var(--white);
+  align-items: center;
+}

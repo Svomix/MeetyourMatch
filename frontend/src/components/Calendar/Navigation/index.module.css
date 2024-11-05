@@ -1,0 +1,12 @@
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2%;
+}
+
+.info {
+  text-align: center;
+  color: var(--white);
+  font-size: 32px;
+}

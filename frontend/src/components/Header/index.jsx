@@ -1,19 +1,19 @@
+import { tokenType } from '@/services/authService';
 import { cookies } from 'next/headers';
-import Navbar from './Navbar';
 import styles from './index.module.css';
+import Navbar from './Navbar';
 import Singedbar from './Singedbar';
 import Unsignedbar from './Unsignedbar';
-import { tokenType } from '@/services/authService';
 
 export default async () => {
   const cookieStore = await cookies();
 
-  const token = cookieStore.get(tokenType.ACCESS_TOKEN)
+  const token = cookieStore.get(tokenType.ACCESS_TOKEN);
 
   return (
     <header className={styles.header}>
-      <Navbar/>
-      {token ? <Singedbar/> : <Unsignedbar/>}
+      <Navbar />
+      {token ? <Singedbar /> : <Unsignedbar />}
     </header>
   );
 };

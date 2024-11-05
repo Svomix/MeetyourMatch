@@ -3,5 +3,6 @@ export default {
   SEARCH: '/search',
   MAP: '/map',
   LICENSE: '/license',
-  PROFILE: '/profile'
+  PROFILE: '/profile',
+  CALENDAR: '/profile/calendar'
 };

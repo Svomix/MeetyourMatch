@@ -1,0 +1,25 @@
+.icon path {
+  fill: var(--black);
+  transition: 200ms ease-in-out;
+}
+
+.icon:hover {
+  transform: scale(1.1);
+}
+
+.active path {
+  fill: var(--gold);
+}
+
+.active {
+  animation: 200ms fillAnimation;
+}
+
+@keyframes fillAnimation {
+  0% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1.2);
+  }
+}

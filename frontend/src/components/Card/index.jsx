@@ -1,4 +1,4 @@
-import Heart from '@components/Heart';
+import Heart from '@components/Buttons/HeartButton';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './index.module.css';
