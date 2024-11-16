@@ -1,11 +1,12 @@
 package com.javanostra.spring.core.services;
 
-import com.javanostra.spring.core.dao.implementation.ChatDAO;
+import com.javanostra.spring.core.dao.ChatDAO;
 import com.javanostra.spring.core.entities.Chat;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @AllArgsConstructor
@@ -17,7 +18,7 @@ public class ChatService {
     }
 
     public Chat findChatById(int id) {
-        return chatDAO.findById(id);
+        return chatDAO.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
     public void saveChat(Chat chat) {
@@ -25,10 +26,10 @@ public class ChatService {
     }
 
     public void updateChat(Chat chat) {
-        chatDAO.update(chat);
+        chatDAO.save(chat);
     }
 
     public void deleteChat(int id) {
-        chatDAO.delete(id);
+        chatDAO.deleteById(id);
     }
 }

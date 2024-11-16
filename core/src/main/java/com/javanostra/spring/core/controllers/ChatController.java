@@ -1,6 +1,7 @@
 package com.javanostra.spring.core.controllers;
 
 import com.javanostra.spring.core.entities.Chat;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import com.javanostra.spring.core.services.ChatService;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/chats")
+@AllArgsConstructor
 public class ChatController {
     private ChatService chatService;
 
