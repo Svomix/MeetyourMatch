@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .cors((cors) -> cors.disable()) //TODO: add cors
                 .securityContext((context) -> context.securityContextRepository(conextRepository))
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                //.addFilterBefore(middlewareFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(middlewareFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((requests) ->
                         requests
                                 .requestMatchers("/api/v1/chats").authenticated()

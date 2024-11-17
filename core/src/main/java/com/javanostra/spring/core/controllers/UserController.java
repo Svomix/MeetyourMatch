@@ -2,12 +2,18 @@ package com.javanostra.spring.core.controllers;
 
 import com.javanostra.spring.core.entities.Attribute;
 import com.javanostra.spring.core.entities.User;
+import com.javanostra.spring.core.entities.UserAuthority;
 import com.javanostra.spring.core.entities.UserEvent;
+import com.javanostra.spring.core.services.GroupService;
 import com.javanostra.spring.core.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -15,6 +21,13 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+
+    @GetMapping("/authorities")
+    public List<UserAuthority> getMyAuthorities(){
+        SecurityContext ctx = SecurityContextHolder.getContext();
+        System.out.println(ctx.getAuthentication());
+        return ctx.getAuthentication().getAuthorities().stream().map(a -> (UserAuthority)a).toList();
+    }
 
     @GetMapping
     public Page<User> findAllUsers(
