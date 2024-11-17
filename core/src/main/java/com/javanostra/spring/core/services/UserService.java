@@ -1,7 +1,7 @@
 package com.javanostra.spring.core.services;
 
 import com.javanostra.spring.core.dao.UserDAO;
-import com.javanostra.spring.core.dao.UserGroupDAO;
+import com.javanostra.spring.core.dao.UserAuthorityDAO;
 import com.javanostra.spring.core.entities.User;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
@@ -18,7 +17,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
+import com.javanostra.spring.core.dao.AttributeDAO;
+import com.javanostra.spring.core.dao.UsersAttributeValueDAO;
+import com.javanostra.spring.core.dao.UsersEventDAO;
+import com.javanostra.spring.core.entities.Attribute;
+import com.javanostra.spring.core.entities.UserAttributeValue;
+import com.javanostra.spring.core.entities.UserEvent;
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -28,15 +39,25 @@ public class UserService implements UserDetailsManager {
     @NonNull
     UserDAO userDAO;
     @NonNull
-    UserGroupDAO userGroupDAO;
+    private UserAuthorityDAO userGroupDAO;
+    @NonNull
+    private final UsersEventDAO usersEventDAO;
+    @NonNull
+    private final UsersAttributeValueDAO usersAttributeValueDAO;
+    @NonNull
+    private final AttributeDAO attributeDAO;
+
     AuthenticationManager authenticationManager;
+
     private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
 
+    @Transactional
     @Override
     public void createUser(UserDetails user) {
         userDAO.save((User) user);
     }
 
+    @Transactional
     @Override
     public void updateUser(UserDetails user) {
         //User user_ent = userDAO.findByUsername(user.getUsername());
@@ -45,14 +66,16 @@ public class UserService implements UserDetailsManager {
         userDAO.save((User) user);
     }
 
+    @Transactional
     @Override
     public void deleteUser(String username) {
         User user_ent = userDAO.findByUsername(username);
         userDAO.delete(user_ent);
     }
 
+    @Transactional
     @Override
-    public void changePassword(String oldPassword, String newPassword) throws AuthenticationException {
+    public void changePassword(String oldPassword, String newPassword) throws AuthenticationException { //pls fix
         Authentication currentUser = securityContextHolderStrategy.getContext().getAuthentication();
         if (currentUser == null) {
             throw new AccessDeniedException("Can't change password as no Authentication object found in context for current user.");
@@ -91,10 +114,82 @@ public class UserService implements UserDetailsManager {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user_ent = userDAO.findByUsername(username);
-        if(Objects.nonNull(user_ent)){
+        if (Objects.nonNull(user_ent)) {
             return user_ent;
-        }else{
+        } else {
             throw new UsernameNotFoundException("username not found");
         }
+    }
+
+    public Page<User> findAllUsers(Pageable pageable) {
+        return userDAO.findAll(pageable);
+    }
+
+    public User findUserById(Long userId) {
+        return userDAO.findUserById(userId);
+    }
+
+    public Page<UserEvent> findAllUserEvents(Long userId, Pageable pageable) {
+        return usersEventDAO.findAllUserEventsByUserId(userId, pageable);
+    }
+
+    public UserEvent findUserEventById(Long userId, Long eventId) {
+        return usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
+    }
+
+    public Page<Attribute> findUserAttributesByUserId(Long userId, Pageable pageable) {
+        List<Attribute> attributeList = usersAttributeValueDAO
+                .findByUser(userDAO.findUserById(userId))
+                .stream()
+                .map(UserAttributeValue::getAttribute)
+                .toList();
+
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((int) pageable.getOffset() + pageable.getPageSize(), attributeList.size());
+        return new PageImpl<>(attributeList.subList(start, end), pageable, attributeList.size());
+    }
+
+//    @Transactional
+//    public void saveUser(User user) {
+//        userDAO.save(user);
+//    }
+
+    @Transactional
+    public void saveUserEvent(UserEvent event) {
+        usersEventDAO.save(event);
+    }
+
+//    @Transactional
+//    public void updateUser(User user) {
+//        userDAO.save(user);
+//    }
+
+    @Transactional
+    public void updateUserEvent(UserEvent event) {
+        usersEventDAO.save(event);
+    }
+
+    @Transactional
+    public void deleteUserById(Long userId) {
+        userDAO.deleteUserById(userId);
+    }
+
+    @Transactional
+    public void deleteUserEventById(Long eventId) {
+        usersEventDAO.deleteUserEventByEventId(eventId);
+    }
+
+    @Transactional
+    public void createUserAttributeValue(Long userId, Long attrId, String value) {
+        UserAttributeValue userAttributeValue = new UserAttributeValue();
+        userAttributeValue.setUser(userDAO.findUserById(userId));
+        userAttributeValue.setAttribute(attributeDAO.findAttributeById(attrId));
+        userAttributeValue.setValue(value);
+        usersAttributeValueDAO.save(userAttributeValue);
+    }
+
+    @Transactional
+    public void deleteUserAttributeByAttrId(Long userId, Long attrId) {
+        usersAttributeValueDAO.deleteByUserAndAttributeId(userDAO.findUserById(userId), attrId);
     }
 }
