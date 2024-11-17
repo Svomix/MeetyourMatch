@@ -1,16 +1,15 @@
 package com.javanostra.spring.core.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Set;
 
 @Entity
 @Table(name = "Users")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
@@ -18,11 +17,11 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "authorities",
-            joinColumns = { @JoinColumn(name = "id") },
-            inverseJoinColumns = { @JoinColumn(name = "authority_id") }
+            joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") },
+            inverseJoinColumns = { @JoinColumn(name = "authority_id", referencedColumnName = "id") }
     )
     private Set<UserAuthority> authorities;
 

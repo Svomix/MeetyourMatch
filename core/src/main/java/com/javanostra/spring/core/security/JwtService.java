@@ -45,7 +45,6 @@ public class JwtService {
         JWTVerifier verifier = JWT.require(algorithm)
                 .build();
 
-        System.out.println(verifier.verify(token).getSubject());
         return verifier.verify(token).getSubject();
     }
 }

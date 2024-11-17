@@ -3,8 +3,7 @@ package com.javanostra.spring.core.dto;
 import lombok.*;
 
 @AllArgsConstructor
-@Setter
-@Getter
+@Data
 public class NewUserDTO {
     @NonNull
     private String username;

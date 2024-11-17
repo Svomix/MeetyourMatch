@@ -1,0 +1,50 @@
+package com.javanostra.spring.core.controllers;
+
+import com.javanostra.spring.core.dto.NewUserDTO;
+import com.javanostra.spring.core.entities.User;
+import com.javanostra.spring.core.services.GroupService;
+import com.javanostra.spring.core.services.UserService;
+import lombok.AllArgsConstructor;
+import org.hibernate.Hibernate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
+
+@RestController
+@RequestMapping("/register")
+@AllArgsConstructor
+public class AuthController {
+
+    private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
+    private final GroupService groupService;
+
+    @PostMapping
+    public ResponseEntity<String> register(@RequestBody NewUserDTO newUser) {
+
+        if(!userService.userExists(newUser.getUsername())) {
+            User newUserEnt = new User();
+
+            newUserEnt.setUsername(newUser.getUsername());
+            newUserEnt.setPassword(passwordEncoder.encode(newUser.getPassword()));
+            newUserEnt.setEmail(newUser.getEmail());
+
+            newUserEnt.setAuthorities(Set.of(groupService.getDefaultGroup()));
+
+            System.out.println(newUserEnt);
+
+            userService.createUser(newUserEnt);
+
+            return ResponseEntity.ok("create user " + newUser.getUsername());
+        }else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user " + newUser.getUsername() + " already exists");
+        }
+
+
+    }
+
+}

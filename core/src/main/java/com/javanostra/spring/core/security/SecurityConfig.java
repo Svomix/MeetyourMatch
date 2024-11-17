@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .addFilterBefore(middlewareFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((requests) ->
                         requests
-                                .requestMatchers("/api/v1/chats").authenticated()
+                                .requestMatchers("/api/v1/users**").authenticated()
                                 .anyRequest().permitAll()
                 )
                 .formLogin((form) -> form
