@@ -6,7 +6,7 @@ import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GroupService {
+public class AuthorizationService {
     UserAuthorityDAO groupDAO;
 
     static final String DEFAULT_AUTHORITY_NAME = "ROLE_USER";
@@ -14,7 +14,7 @@ public class GroupService {
     @Getter
     UserAuthority defaultGroup;
 
-    GroupService(UserAuthorityDAO dao){
+    AuthorizationService(UserAuthorityDAO dao){
         groupDAO = dao;
 
         if(!groupDAO.existsByAuthority(DEFAULT_AUTHORITY_NAME)){

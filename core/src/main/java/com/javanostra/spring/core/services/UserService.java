@@ -39,8 +39,6 @@ public class UserService implements UserDetailsManager {
     @NonNull
     UserDAO userDAO;
     @NonNull
-    private UserAuthorityDAO userGroupDAO;
-    @NonNull
     private final UsersEventDAO usersEventDAO;
     @NonNull
     private final UsersAttributeValueDAO usersAttributeValueDAO;

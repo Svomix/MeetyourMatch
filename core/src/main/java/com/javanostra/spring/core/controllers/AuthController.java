@@ -2,14 +2,12 @@ package com.javanostra.spring.core.controllers;
 
 import com.javanostra.spring.core.dto.NewUserDTO;
 import com.javanostra.spring.core.entities.User;
-import com.javanostra.spring.core.services.GroupService;
+import com.javanostra.spring.core.services.AuthorizationService;
 import com.javanostra.spring.core.services.UserService;
 import lombok.AllArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -21,7 +19,7 @@ public class AuthController {
 
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
-    private final GroupService groupService;
+    private final AuthorizationService authorizationService;
 
     @PostMapping
     public ResponseEntity<String> register(@RequestBody NewUserDTO newUser) {
@@ -33,7 +31,7 @@ public class AuthController {
             newUserEnt.setPassword(passwordEncoder.encode(newUser.getPassword()));
             newUserEnt.setEmail(newUser.getEmail());
 
-            newUserEnt.setAuthorities(Set.of(groupService.getDefaultGroup()));
+            newUserEnt.setAuthorities(Set.of(authorizationService.getDefaultGroup()));
 
             System.out.println(newUserEnt);
 
