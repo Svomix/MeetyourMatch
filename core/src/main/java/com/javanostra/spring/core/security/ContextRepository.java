@@ -63,13 +63,19 @@ public class ContextRepository implements SecurityContextRepository {
         return null;
     }
 
+    private Cookie getCookie(String name, String value){
+        Cookie cookie = new Cookie(name, value);
+        cookie.setPath("/");
+        return cookie;
+    }
+
     @Override
     public void saveContext(SecurityContext context, HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = context.getAuthentication();
         if (Objects.nonNull(auth) && auth.isAuthenticated()) {
-            response.addCookie(new Cookie(ACCESS_TOKEN, jwtService.generateToken((User) auth.getPrincipal())));
+            response.addCookie(getCookie(ACCESS_TOKEN, jwtService.generateToken((User) auth.getPrincipal())));
         } else {
-            response.addCookie(new Cookie(ACCESS_TOKEN, ""));
+            response.addCookie(getCookie(ACCESS_TOKEN, ""));
         }
     }
 
