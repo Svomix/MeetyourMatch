@@ -1,7 +1,7 @@
 import logo from '@public/Logo.svg';
 import routes from '@routes';
 import Image from 'next/image';
-import ActiveLink from './ActiveLink';
+import ActiveLink from '../ActiveLink';
 import styles from './index.module.css';
 
 export default () => {

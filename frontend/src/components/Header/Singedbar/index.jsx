@@ -1,13 +1,18 @@
 'use client';
 import { removeAccessToken } from '@/services/authService';
-import Routes from '@routes';
+import bell_svg from '@public/Bell.jsx';
+import active_bell_svg from '@public/BellActive.jsx';
+import calendar_svg from '@public/Calendar';
+import active_calendar_svg from '@public/CalendarActive';
+import { default as Routes, default as routes } from '@routes';
 import Image from 'next/image';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import ActiveLink from '../ActiveLink';
 import styles from './index.module.css';
 
 export default () => {
   const router = useRouter();
+  const path = usePathname();
 
   function onClick() {
     removeAccessToken();
@@ -16,9 +21,13 @@ export default () => {
 
   return (
     <div className={styles.signed_container}>
-      <button onClick={onClick} className={styles.notifIcon}></button>
-      <Link className={styles.calenderIcon} href={Routes.CALENDAR} />
-      <Link className={styles.profile_link} href={Routes.PROFILE}>
+      <ActiveLink href={Routes.NOTIFY} onClick={onClick}>
+        {path == routes.BELL ? active_bell_svg : bell_svg}
+      </ActiveLink>
+      <ActiveLink href={Routes.CALENDAR}>
+        {path == routes.CALENDAR ? active_calendar_svg : calendar_svg}
+      </ActiveLink>
+      <ActiveLink className={styles.profile_link} href={Routes.PROFILE}>
         <p className={styles.username}>Username</p>
         <Image
           className={styles.userLogo}
@@ -27,7 +36,7 @@ export default () => {
           height={48}
           alt="User logo"
         ></Image>
-      </Link>
+      </ActiveLink>
     </div>
   );
 };

@@ -1,9 +1,21 @@
 .cell {
   width: 100%;
-  height: 100px;
+  height: 110px;
+  padding: 4px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   background-color: var(--light-grey);
+  border-radius: calc(var(--border-radius) / 2);
   border: 2px solid var(--grey);
   transition: 200ms ease-in-out;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.cell > * {
+  flex-shrink: 0;
 }
 
 .cell:hover {

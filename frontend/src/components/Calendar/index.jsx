@@ -12,16 +12,37 @@ export default () => {
             {day}
           </p>
         ))}
-        {[...Array(month_length)].map((_, i) => {
-          i++;
-          return (
-            <Cell key={i + 'd'} index={i} style={i == 1 ? { 'grid-column-start': '3' } : {}} />
-          );
-        })}
+
+        {[...Array(month_length)].map((_, i) => (
+          <Cell
+            key={i + 'd'}
+            index={i}
+            event_list={mock}
+            style={i++ == 1 ? { gridColumnStart: month_start } : {}}
+          />
+        ))}
       </div>
     </section>
   );
 };
+
+const mock = [
+  'событие',
+  'праздник',
+  'день рождения',
+  'корпоратив',
+  'отдых',
+  'выходной',
+  'сессия',
+  'Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate, consectetur! Eum omnis, neque facilis veniam sit nam ex tenetur eligendi.',
+  'событие',
+  'праздник',
+  'день рождения',
+  'корпоратив',
+  'отдых',
+  'выходной',
+  'сессия'
+];
 
 const week_days = [
   'Понедельник',

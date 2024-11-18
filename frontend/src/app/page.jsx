@@ -1,5 +1,4 @@
 import Layout from '@/components/Layout';
-import Slider from '@/components/Slider';
 import mock_img from '@public/mock_img.jpg';
 import styles from './page.module.css';
 
@@ -11,9 +10,7 @@ export default () => {
         <p className={styles.paragraph}>
           Выбор на любой вкус - от фестивалей настольных игр до рок-концертов
         </p>
-        <div className={styles.slider}>
-          <Slider rec_events={events} />
-        </div>
+        <div className={styles.slider}></div>
       </div>
     </Layout>
   );

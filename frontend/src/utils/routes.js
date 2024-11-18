@@ -4,5 +4,6 @@ export default {
   MAP: '/map',
   LICENSE: '/license',
   PROFILE: '/profile',
-  CALENDAR: '/profile/calendar'
+  CALENDAR: '/profile/calendar',
+  NOTIFY: '/profile/notify'
 };

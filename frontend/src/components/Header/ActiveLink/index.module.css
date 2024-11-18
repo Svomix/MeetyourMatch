@@ -6,7 +6,7 @@
 }
 
 .link:hover {
-  text-shadow: var(--white) 0 0 10px;
+  filter: drop-shadow(0 0 10px var(--white));
 }
 
 .active_link {
