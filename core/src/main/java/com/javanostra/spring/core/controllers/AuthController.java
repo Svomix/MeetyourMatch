@@ -4,10 +4,12 @@ import com.javanostra.spring.core.dto.NewUserDTO;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.services.AuthorizationService;
 import com.javanostra.spring.core.services.UserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -22,9 +24,8 @@ public class AuthController {
     private final AuthorizationService authorizationService;
 
     @PostMapping
-    public ResponseEntity<String> register(@RequestBody NewUserDTO newUser) {
-
-        if(!userService.userExists(newUser.getUsername())) {
+    public ResponseEntity<String> register(@Valid @ModelAttribute NewUserDTO newUser) {
+        if (!userService.userExists(newUser.getUsername())) {
             User newUserEnt = new User();
 
             newUserEnt.setUsername(newUser.getUsername());
@@ -38,11 +39,9 @@ public class AuthController {
             userService.createUser(newUserEnt);
 
             return ResponseEntity.ok("create user " + newUser.getUsername());
-        }else{
+        } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user " + newUser.getUsername() + " already exists");
         }
-
-
     }
 
 }

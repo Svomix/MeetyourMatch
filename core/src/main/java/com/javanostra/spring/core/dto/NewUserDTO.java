@@ -1,14 +1,15 @@
 package com.javanostra.spring.core.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @AllArgsConstructor
 @Data
 public class NewUserDTO {
-    @NonNull
+    @NotBlank(message = "null username")
     private String username;
-    @NonNull
+    @NotBlank(message = "null email")
     private String email;
-    @NonNull
+    @NotBlank(message = "null password")
     private String password;
 }
