@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/register")
+@RequestMapping("/api/register")
 @AllArgsConstructor
 public class AuthController {
 
