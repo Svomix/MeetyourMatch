@@ -2,9 +2,12 @@ package com.javanostra.spring.core.services;
 
 import com.javanostra.spring.core.dao.UserDAO;
 import com.javanostra.spring.core.dao.UserAuthorityDAO;
+import com.javanostra.spring.core.dto.UserProfileDTO;
 import com.javanostra.spring.core.entities.User;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +31,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 import java.util.Objects;
@@ -189,5 +193,18 @@ public class UserService implements UserDetailsManager {
     @Transactional
     public void deleteUserAttributeByAttrId(Long userId, Long attrId) {
         usersAttributeValueDAO.deleteByUserAndAttributeId(userDAO.findUserById(userId), attrId);
+    }
+
+    public User getCurrentUser() {
+        SecurityContext ctx = securityContextHolderStrategy.getContext();
+        if(Objects.nonNull(ctx)) {
+            Authentication authentication = ctx.getAuthentication();
+            Object principal = authentication.getPrincipal();
+
+            if (principal instanceof User user) {
+                return user;
+            }
+        }
+        return null;
     }
 }

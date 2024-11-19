@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class AuthorizationService {
     UserAuthorityDAO groupDAO;
 
-    static final String DEFAULT_AUTHORITY_NAME = "ROLE_USER";
+    public static final String DEFAULT_AUTHORITY_NAME = "ROLE_USER";
 
     @Getter
     UserAuthority defaultGroup;
