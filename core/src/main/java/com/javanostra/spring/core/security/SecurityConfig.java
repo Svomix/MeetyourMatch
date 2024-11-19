@@ -63,14 +63,10 @@ public class SecurityConfig {
                     logout
                             .logoutUrl("/api/logout")
                             .permitAll()
-                            .addLogoutHandler(((request, response, authentication) -> {
+                            .logoutSuccessHandler((request, response, authentication) -> {
                                 response.setStatus(HttpServletResponse.SC_OK);
-                                try {
-                                    response.getWriter().println("logout");
-                                } catch (IOException ignored) {
-
-                                }
-                            }));
+                                response.getWriter().println("logged out");
+                            });
                 })
                 .exceptionHandling((handling -> {
                     handling.authenticationEntryPoint(((request, response, authException) -> {
