@@ -4,6 +4,8 @@ import com.javanostra.spring.core.dto.NewUserDTO;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.services.AuthorizationService;
 import com.javanostra.spring.core.services.UserService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
