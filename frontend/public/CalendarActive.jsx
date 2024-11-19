@@ -39,8 +39,8 @@ export default (
         y2="18"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FFB33A" />
-        <stop offset="1" stop-color="#FFEBCB" />
+        <stop stopColor="#FFB33A" />
+        <stop offset="1" stopColor="#FFEBCB" />
       </linearGradient>
       <linearGradient
         id="paint1_linear_638_173"
@@ -50,8 +50,8 @@ export default (
         y2="18"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FFB33A" />
-        <stop offset="1" stop-color="#FFEBCB" />
+        <stop stopColor="#FFB33A" />
+        <stop offset="1" stopColor="#FFEBCB" />
       </linearGradient>
       <linearGradient
         id="paint2_linear_638_173"
@@ -61,8 +61,8 @@ export default (
         y2="18"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FFB33A" />
-        <stop offset="1" stop-color="#FFEBCB" />
+        <stop stopColor="#FFB33A" />
+        <stop offset="1" stopColor="#FFEBCB" />
       </linearGradient>
       <linearGradient
         id="paint3_linear_638_173"
@@ -72,8 +72,8 @@ export default (
         y2="18"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FFB33A" />
-        <stop offset="1" stop-color="#FFEBCB" />
+        <stop stopColor="#FFB33A" />
+        <stop offset="1" stopColor="#FFEBCB" />
       </linearGradient>
       <linearGradient
         id="paint4_linear_638_173"
@@ -83,8 +83,8 @@ export default (
         y2="18"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FFB33A" />
-        <stop offset="1" stop-color="#FFEBCB" />
+        <stop stopColor="#FFB33A" />
+        <stop offset="1" stopColor="#FFEBCB" />
       </linearGradient>
     </defs>
   </svg>

@@ -1,12 +1,12 @@
-import Layout from '@components/Layout';
-import styles from './page.module.css';
+import LogoutButton from '@components/Buttons/LogoutButton';
 import InputField from '@components/InputField';
 import InterestsContainer from '@components/InterestsContainer';
 import Image from 'next/image';
+import styles from './page.module.css';
 
 export default function ProfilePage() {
   return (
-    <Layout>
+    <>
       <div className={styles.container}>
         <form className={styles.settings_container}>
           <div>
@@ -45,12 +45,14 @@ export default function ProfilePage() {
               type="password"
             />
           </div>
+
           <div>
             <h1 className={styles.header}>Интересы</h1>
             <InterestsContainer />
           </div>
         </form>
+        <LogoutButton />
       </div>
-    </Layout>
+    </>
   );
 }

@@ -1,10 +1,9 @@
-import Layout from '@/components/Layout';
 import mock_img from '@public/mock_img.jpg';
 import styles from './page.module.css';
 
 export default () => {
   return (
-    <Layout>
+    <>
       <h1 className={styles.title}>Найдите события, хобби, или компанию единомышленников</h1>
       <div className={styles.wrapper}>
         <p className={styles.paragraph}>
@@ -12,7 +11,7 @@ export default () => {
         </p>
         <div className={styles.slider}></div>
       </div>
-    </Layout>
+    </>
   );
 };
 

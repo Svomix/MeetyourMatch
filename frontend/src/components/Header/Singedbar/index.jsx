@@ -1,34 +1,37 @@
 'use client';
-import { removeAccessToken } from '@/services/authService';
+import { auth_fetch } from '@/utils/fetch';
 import bell_svg from '@public/Bell.jsx';
 import active_bell_svg from '@public/BellActive.jsx';
 import calendar_svg from '@public/Calendar';
 import active_calendar_svg from '@public/CalendarActive';
 import { default as Routes, default as routes } from '@routes';
 import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import ActiveLink from '../ActiveLink';
 import styles from './index.module.css';
 
 export default () => {
-  const router = useRouter();
   const path = usePathname();
+  let [name, setName] = useState('username');
+  console.log(1);
 
-  function onClick() {
-    removeAccessToken();
-    router.refresh();
-  }
+  useEffect(() => {
+    auth_fetch('/api/account/getInfo')
+      .then((el) => el.json())
+      .then((el) => setName(el.username));
+  });
 
   return (
     <div className={styles.signed_container}>
-      <ActiveLink href={Routes.NOTIFY} onClick={onClick}>
+      <ActiveLink href={Routes.NOTIFY}>
         {path == routes.BELL ? active_bell_svg : bell_svg}
       </ActiveLink>
       <ActiveLink href={Routes.CALENDAR}>
         {path == routes.CALENDAR ? active_calendar_svg : calendar_svg}
       </ActiveLink>
       <ActiveLink className={styles.profile_link} href={Routes.PROFILE}>
-        <p className={styles.username}>Username</p>
+        <p className={styles.username}>{name}</p>
         <Image
           className={styles.userLogo}
           src={'/user_logo.jpg'}

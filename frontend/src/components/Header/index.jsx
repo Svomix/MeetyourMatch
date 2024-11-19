@@ -7,13 +7,12 @@ import Unsignedbar from './Unsignedbar';
 
 export default async () => {
   const cookieStore = await cookies();
-
   const token = cookieStore.get(tokenType.ACCESS_TOKEN);
 
   return (
     <header className={styles.header}>
       <Navbar />
-      {token ? <Singedbar /> : <Unsignedbar />}
+      {token?.value ? <Singedbar /> : <Unsignedbar />}
     </header>
   );
 };

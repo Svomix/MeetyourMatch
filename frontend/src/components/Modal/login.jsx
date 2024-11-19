@@ -1,11 +1,11 @@
 'use client';
-import InputField from '../InputField';
-import styles from './index.module.css';
+import { unauth_fetch } from '@/utils/fetch';
+import { ModalPage, setModal } from '@store/slices/modalSlice';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { setModal, ModalPage } from '@store/slices/modalSlice';
-import { saveAccessToken } from '@/services/authService';
-import { useRouter } from 'next/navigation';
+import InputField from '../InputField';
+import styles from './index.module.css';
 
 export default function Login() {
   const dialog = useRef();
@@ -17,10 +17,7 @@ export default function Login() {
 
     function clickEvent(e) {
       let clickInside = dialog.current?.contains(e.target) && e.target !== dialog.current;
-
-      if (!clickInside) {
-        dispatch(setModal(ModalPage.None));
-      }
+      if (!clickInside) dispatch(setModal(ModalPage.None));
     }
 
     document.addEventListener('click', clickEvent);
@@ -35,22 +32,19 @@ export default function Login() {
     e.preventDefault();
   }
 
-  function onClickLogin(e) {
-    console.log(e.target);
-
-    saveAccessToken("test2")
-
+  async function onSubmit(e) {
+    e.preventDefault();
+    await unauth_fetch('/api/login', 'post', new FormData(e.target));
     dispatch(setModal(ModalPage.None));
     router.refresh();
-    e.preventDefault();
   }
 
   return (
     <dialog ref={dialog} className={styles.dialog}>
       <div className={styles.dialog_wrap}>
         <h1 className={styles.title}>Вход</h1>
-        <form onSubmit={onClickLogin} className={styles.form}>
-          <InputField placeholder="E-mail" name="email" />
+        <form onSubmit={onSubmit} className={styles.form}>
+          <InputField placeholder="Имя" name="username" />
           <InputField type="password" placeholder="Пароль" name="password" />
           <button type="submit" className={styles.button_submit}>
             Войти

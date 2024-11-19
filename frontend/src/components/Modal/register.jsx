@@ -1,14 +1,17 @@
 'use client';
-import InputField from '../InputField';
-import styles from './index.module.css';
+import { unauth_fetch } from '@/utils/fetch';
+import routes from '@routes';
+import { ModalPage, setModal } from '@store/slices/modalSlice';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { setModal, ModalPage } from '@store/slices/modalSlice';
-import Link from 'next/link';
-import routes from '@routes';
+import InputField from '../InputField';
+import styles from './index.module.css';
 
 export default function Register() {
   const dialog = useRef();
+  const router = useRouter();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -16,10 +19,7 @@ export default function Register() {
 
     function clickEvent(e) {
       let clickInside = dialog.current?.contains(e.target) && e.target !== dialog.current;
-
-      if (!clickInside) {
-        dispatch(setModal(ModalPage.None));
-      }
+      if (!clickInside) dispatch(setModal(ModalPage.None));
     }
 
     document.addEventListener('click', clickEvent);
@@ -29,16 +29,23 @@ export default function Register() {
     };
   }, []);
 
-  function onClickRegister(e) {
-    console.log(e);
-    dispatch(setModal(ModalPage.Verify));
+  async function onClickRegister(e) {
     e.preventDefault();
-    return false;
+
+    if (e.target[2].value != e.target[3].value) {
+      alert('Пароли не совпадают');
+      return;
+    }
+
+    await unauth_fetch('/api/register', 'post', new FormData(e.target));
+
+    dispatch(setModal(ModalPage.None));
+    router.refresh();
   }
 
   function onClickLogin(e) {
-    dispatch(setModal(ModalPage.Login));
     e.preventDefault();
+    dispatch(setModal(ModalPage.Login));
   }
 
   const [disabled, setDisabled] = useState(true);
@@ -52,10 +59,10 @@ export default function Register() {
       <div className={styles.dialog_wrap}>
         <h1 className={styles.title}>Регистрация</h1>
         <form onSubmit={onClickRegister} className={styles.form}>
-          <InputField placeholder="Имя" name="name" />
+          <InputField placeholder="Имя" name="username" />
           <InputField placeholder="E-mail" name="email" />
           <InputField type="password" placeholder="Пароль" name="password" />
-          <InputField type="password" placeholder="Повторите пароль" name="password2" />
+          <InputField type="password" placeholder="Повторите пароль" />
           <div className={styles.license_wrap}>
             <p className={styles.license_text}>Я согласен с</p>
             <Link
