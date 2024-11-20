@@ -1,25 +1,24 @@
+'use client';
+import { tokenType } from '@/services/authService';
+import { auth_fetch, unauth_fetch } from '@/utils/fetch';
 import CardInfo from '@components/CardInfo';
-import mock_img from '@public/mock_img.jpg';
+import Cookies from 'js-cookie';
+import { useEffect, useState } from 'react';
 
-export default async function EventsPage({ params }) {
-  const slug = (await params).id;
+export default function EventsPage({ params }) {
+  const slug = params.id;
 
-  return (
-    <>
-      <CardInfo path={slug} card={card} />
-    </>
-  );
+  let [event, setEvent] = useState(undefined);
+  useEffect(() => {
+    if (Cookies.get(tokenType.ACCESS_TOKEN))
+      event = auth_fetch(`/api/v1/events/${slug}`)
+        .then((resp) => resp.json())
+        .then((data) => setEvent(data));
+    else
+      event = unauth_fetch(`/api/v1/events/${slug}`)
+        .then((resp) => resp.json())
+        .then((data) => setEvent(data));
+  }, []);
+
+  return <CardInfo path={slug} event={event} />;
 }
-
-const card = {
-  title: 'Lorem ipsum dolor  ',
-  description:
-    'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi, ut. Minus possimus ea similique aliquam excepturi? Error magni sed ex, provident eos sit nisi cum distinctio officiis sequi. Reprehenderit laudantium magni doloribus rerum natus, doloremque perspiciatis fugit assumenda facilis officia dolores architecto ipsam quibusdam esse excepturi quis! Velit, a qui! Nam rerum, libero ipsum perspiciatis, laudantium molestiae labore quis quod, eum fuga architecto dolorum nobis esse! Doloremque blanditiis magni error, eligendi debitis nihil? Incidunt nemo dolores delectus magnam odio atque reiciendis quia. Sed enim, error, neque, labore necessitatibus cum rerum ducimus tempore quas dicta aspernatur hic deleniti dolores unde nesciunt!',
-  date: '01.01.1970',
-  place: 'Lorem ipsum dolor',
-  price: 1001,
-  tags: '#Lorem #ipsum #dolor',
-  from: 'https://chatgpt.com/',
-  img: mock_img,
-  heart_count: 52
-};

@@ -1,42 +1,45 @@
 import Calendar from '@components/Buttons/CalendarButton';
 import Heart from '@components/Buttons/HeartButton';
-import mock_img from '@public/mock_img.jpg';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './index.module.css';
 
-export default ({ path, card }) => {
+export default ({ path, event }) => {
   return (
-    <article className={styles.wrapper}>
-      <div className={styles.img_section}>
-        <div className={styles.left_side}>
-          <h1 className={styles.title}>{card.title}</h1>
-          <h2 className={styles.meta}>Дата: {card.date}</h2>
-          <h3 className={styles.meta}>Место: {card.place}</h3>
-          <h4 className={styles.meta}>Цена: {card.price}₽</h4>
-          <div className={styles.actions}>
-            <div className={styles.icons}>
-              <Heart width={50} height={50} />
-              <Calendar width={50} height={50} />
+    <>
+      {event && (
+        <article className={styles.wrapper}>
+          <div className={styles.img_section}>
+            <div className={styles.left_side}>
+              <h1 className={styles.title}>{event.title}</h1>
+              <h2 className={styles.meta}>Дата: {new Date(event.date).toLocaleString('ru-RU')}</h2>
+              <h3 className={styles.meta}>Место: {event.place}</h3>
+              <h4 className={styles.meta}>Цена: {event.price}₽</h4>
+              <div className={styles.actions}>
+                <div className={styles.icons}>
+                  <Heart width={50} height={50} />
+                  <Calendar width={50} height={50} />
+                </div>
+                <Link className={styles.link} href={event.sourceUrl} target="_blank">
+                  К источнику
+                </Link>
+              </div>
             </div>
-            <Link className={styles.link} href={card.from} target="_blank">
-              К источнику
-            </Link>
+            <div className={styles.right_side}>
+              <Image className={styles.img} src={event.coverImgUrl} width={2000} height={2000} />
+              <div className={styles.fade_out}></div>
+            </div>
           </div>
-        </div>
-        <div className={styles.right_side}>
-          <Image className={styles.img} src={mock_img} />
-          <div className={styles.fade_out}></div>
-        </div>
-      </div>
-      <div className={styles.extra_info}>
-        <p className={styles.description}>
-          Описание:
-          <br />
-          {card.description}
-        </p>
-        <p className={styles.tags}>{card.tags}</p>
-      </div>
-    </article>
+          <div className={styles.extra_info}>
+            <p className={styles.description}>
+              Описание:
+              <br />
+              {event.description}
+            </p>
+            <p className={styles.tags}>#отдых #искусство</p>
+          </div>
+        </article>
+      )}
+    </>
   );
 };

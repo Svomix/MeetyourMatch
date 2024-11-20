@@ -14,7 +14,6 @@ import styles from './index.module.css';
 export default () => {
   const path = usePathname();
   let [name, setName] = useState('username');
-  console.log(1);
 
   useEffect(() => {
     auth_fetch('/api/account/getInfo')
