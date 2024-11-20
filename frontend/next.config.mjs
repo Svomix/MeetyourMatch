@@ -9,6 +9,16 @@ const nextConfig = {
       }
     ];
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'image.shutterstock.com',
+        port: '',
+        pathname: '**'
+      }
+    ]
+  },
 
   skipTrailingSlashRedirect: true
 };

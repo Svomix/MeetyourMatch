@@ -60,7 +60,7 @@ export default function Register() {
         <h1 className={styles.title}>Регистрация</h1>
         <form onSubmit={onClickRegister} className={styles.form}>
           <InputField placeholder="Имя" name="username" />
-          <InputField placeholder="E-mail" name="email" />
+          <InputField type="email" placeholder="E-mail" name="email" />
           <InputField type="password" placeholder="Пароль" name="password" />
           <InputField type="password" placeholder="Повторите пароль" />
           <div className={styles.license_wrap}>

@@ -11,14 +11,20 @@ export default ({ event, width, height }) => {
       style={{ width: `${width}`, height: `${height}` }}
     >
       <div className={styles.img_container}>
-        <Image className={styles.image} src={event.img} alt="img" />
+        <Image
+          className={styles.image}
+          src={event.coverImgUrl}
+          width={1024}
+          height={1024}
+          alt="img"
+        />
         <div className={styles.fade_out} />
       </div>
 
       <div className={styles.description}>
         <h3 className={styles.event_title}>{event.title}</h3>
-        <p className={styles.event_date}>{event.date}</p>
-        <p className={styles.event_tags}>{event.tags}</p>
+        <p className={styles.event_date}>{new Date(event.date).toLocaleString('ru-RU')}</p>
+        <p className={styles.event_tags}>#отдых #искусство</p>
         <Heart width={40} height={40} className={styles.heart} />
       </div>
     </Link>

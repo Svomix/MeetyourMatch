@@ -1,11 +1,28 @@
+'use client';
+import { tokenType } from '@/services/authService';
+import { auth_fetch, unauth_fetch } from '@/utils/fetch';
 import Card from '@components/Card';
 import CardNavigation from '@components/Pagination';
 import SDropdown from '@components/SDropdown';
 import Search from '@components/Search';
 import mock_img from '@public/mock_img.jpg';
+import Cookies from 'js-cookie';
+import { useEffect, useState } from 'react';
 import styles from './page.module.css';
 
 export default () => {
+  let [events, setEvents] = useState([]);
+  useEffect(() => {
+    if (Cookies.get(tokenType.ACCESS_TOKEN))
+      events = auth_fetch('/api/v1/events?limit=16')
+        .then((resp) => resp.json())
+        .then((data) => setEvents(data.content));
+    else
+      events = unauth_fetch('/api/v1/events?limit=16')
+        .then((resp) => resp.json())
+        .then((data) => setEvents(data.content));
+  }, []);
+
   return (
     <>
       <div className={styles.wrapper}>
@@ -30,8 +47,8 @@ export default () => {
           />
         </section>
         <div className={styles.events}>
-          {mock_cards.map((el, index) => (
-            <Card key={Math.random() * index} event={el}></Card>
+          {events?.map((el, index) => (
+            <Card key={index} event={el} />
           ))}
         </div>
         <div className={styles.pages}>

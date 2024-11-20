@@ -2,6 +2,7 @@
 import { auth_fetch } from '@/utils/fetch';
 import routes from '@routes';
 import { useRouter } from 'next/navigation';
+import styles from './index.module.css';
 
 export default () => {
   const router = useRouter();
@@ -9,9 +10,13 @@ export default () => {
   async function onClick(e) {
     e.preventDefault();
     await auth_fetch('/api/logout');
-    //removeAccessToken();
     router.replace(routes.HOME);
+    router.refresh();
   }
 
-  return <button onClick={onClick}>Выйти</button>;
+  return (
+    <button className={styles.btn} onClick={onClick}>
+      Выйти
+    </button>
+  );
 };
