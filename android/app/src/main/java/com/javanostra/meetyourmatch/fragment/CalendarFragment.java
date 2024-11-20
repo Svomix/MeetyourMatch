@@ -23,9 +23,11 @@ import androidx.fragment.app.Fragment;
 
 import com.javanostra.meetyourmatch.R;
 import com.javanostra.meetyourmatch.activity.EventDetailsActivity;
-import com.javanostra.meetyourmatch.entity.Day;
-import com.javanostra.meetyourmatch.entity.Event;
+import com.javanostra.meetyourmatch.persistance.entity.Day;
+import com.javanostra.meetyourmatch.persistance.entity.Event;
+import com.javanostra.meetyourmatch.persistance.entity.Location;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 
 public class CalendarFragment extends Fragment implements GestureDetector.OnGestureListener {
@@ -84,34 +86,30 @@ public class CalendarFragment extends Fragment implements GestureDetector.OnGest
     }
 
     Event[] events = new Event[] {
-            new Event("Name", "Desc", 8, 7, 2024),
-            new Event("Name", "Desc", 12, 8, 2024),
-            new Event("Name", "Desc", 22, 9, 2024),
-            new Event("Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1", "Desc", 25, 10, 2024),
-            new Event("Name2", "Desc", 25, 10, 2024),
-            new Event("Name3", "Desc", 25, 10, 2024),
-            new Event("Name4", "Desc", 25, 10, 2024),
-            new Event("Name5", "Desc", 25, 10, 2024),
-            new Event("Name6", "Desc", 25, 10, 2024),
-            new Event("Name7", "Desc", 25, 10, 2024),
-            new Event("Name8", "Desc", 25, 10, 2024),
-            new Event("Name9", "Desc", 25, 10, 2024),
-            new Event("Name10", "Desc", 25, 10, 2024),
-            new Event("Name11", "Desc", 25, 10, 2024),
-            new Event("Name12", "Desc", 25, 10, 2024),
-            new Event("Name13", "Desc", 25, 10, 2024),
-            new Event("Name14", "Desc", 25, 10, 2024),
-            new Event("Name15", "Desc", 25, 10, 2024),
-            new Event("Name16", "Desc", 25, 10, 2024),
-            new Event("Name17", "Desc", 25, 10, 2024),
-            new Event("Name18", "Desc", 25, 10, 2024),
-            new Event("Name19", "Desc", 25, 10, 2024),
-            new Event("Name20", "Desc", 25, 10, 2024),
-            new Event("Name21", "Desc", 25, 10, 2024),
-            new Event("Name22", "Desc", 25, 10, 2024),
-            new Event("Name23", "Desc", 25, 10, 2024),
-            new Event("Name24", "Desc", 25, 10, 2024),
-            new Event("Name", "Desc", 30, 11, 2024)
+            new Event("Event 1", "Tags 1", 200.00,
+                    new Timestamp(2024, 7, 8, 0, 0, 0, 0),
+                    new Location(10.0, 10.0)),
+            new Event("Event 2", "Tags 2", 300.00,
+                    new Timestamp(2024, 8, 12, 0, 0, 0, 0),
+                    new Location(10.0, 10.0)),
+            new Event("Event 3", "Tags 3", 400.00,
+                    new Timestamp(2024, 9, 22, 0, 0, 0, 0),
+                    new Location(10.0, 10.0)),
+            new Event("Event 4Event 4Event 4Event 4", "Tags 4Tags 4", 500.00,
+                    new Timestamp(2024, 10, 25, 0, 0, 0, 0),
+                    new Location(10.0, 10.0)),
+            new Event("Event 5Event 5Event 5Event 5", "Tags 5Tags 5", 600.00,
+                    new Timestamp(2024, 10, 25, 0, 0, 0, 0),
+                    new Location(10.0, 10.0)),
+            new Event("Event 6Event 6Event 6Event 6", "Tags 6Tags 6", 700.00,
+                    new Timestamp(2024, 10, 25, 0, 0, 0, 0),
+                    new Location(10.0, 10.0)),
+            new Event("Event 7Event 7Event 7Event 7", "Tags 7Tags 7", 800.00,
+                    new Timestamp(2024, 10, 25, 0, 0, 0, 0),
+                    new Location(10.0, 10.0)),
+            new Event("EventEventEventEvent", "Tags 8Tags 8", 1000.00,
+                    new Timestamp(2024, 11, 30, 0, 0, 0, 0),
+                    new Location(10.0, 10.0))
     };
 
     private void updateCalendar() {
@@ -154,7 +152,8 @@ public class CalendarFragment extends Fragment implements GestureDetector.OnGest
 
                 Day currentDay = new Day(day);
                 for (Event event : events) {
-                    if (currentYear == event.getYear() && currentMonth == event.getMonthAsIndex() && day == event.getDate()) {
+                    Timestamp eventDate = event.getDate();
+                    if (currentYear == eventDate.getYear() && currentMonth == eventDate.getMonth() - 1 && day == eventDate.getDate()) {
                         currentDay.addEvent(event);
                     }
                 }

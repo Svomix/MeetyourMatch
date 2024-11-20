@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.javanostra.meetyourmatch.R;
 import com.javanostra.meetyourmatch.activity.ChatMessagesActivity;
-import com.javanostra.meetyourmatch.entity.Message;
-import com.javanostra.meetyourmatch.entity.User;
 import com.javanostra.meetyourmatch.fragment.ChatRecyclerViewInterface;
+import com.javanostra.meetyourmatch.persistance.entity.Message;
+import com.javanostra.meetyourmatch.persistance.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +43,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
         List<Message> messages = ChatMessagesActivity.historyChat.getOrDefault(position, new ArrayList<>());
         Message lastMessage = (messages.size() == 0? new Message("NULL", position, -1, "NULL") : messages.get(messages.size() - 1));
-        String time = lastMessage.getDateOfSending();
-        String text = lastMessage.getMessage();
+        String time = lastMessage.getTimestamp();
+        String text = lastMessage.getContent();
         holder.lastMessageView.setText(text);
         holder.timeView.setText(time);
     }

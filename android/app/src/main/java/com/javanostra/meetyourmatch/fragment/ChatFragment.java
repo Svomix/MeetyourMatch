@@ -15,8 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.javanostra.meetyourmatch.R;
 import com.javanostra.meetyourmatch.activity.ChatMessagesActivity;
 import com.javanostra.meetyourmatch.adapter.ChatAdapter;
-import com.javanostra.meetyourmatch.entity.User;
-import com.javanostra.meetyourmatch.fragment.ChatRecyclerViewInterface;
+import com.javanostra.meetyourmatch.persistance.entity.User;
 
 import java.util.List;
 
@@ -24,19 +23,19 @@ public class ChatFragment extends Fragment implements ChatRecyclerViewInterface 
 
 
     public static final List<User> users = List.of(
-            new User("Руслан Максудов", "Interests", "fish@lang.com", 19),
-            new User("Максим Корчак", "Interests", "fish@lang.com", 19),
-            new User("Дмитрий Чернышов", "Interests", "fish@lang.com", 19),
-            new User("Кирилл Новосельцев", "Interests", "fish@lang.com", 19),
-            new User("Максим Новосельцев", "Interests", "fish@lang.com", 19),
-            new User("Антон Перепелкин", "Interests", "fish@lang.com", 19),
-            new User("Вован Сараев", "Interests", "fish@lang.com", 19),
-            new User("Александр Коваленко", "Interests", "fish@lang.com", 19),
-            new User("Валерия Ткаченко", "Interests", "fish@lang.com", 19),
-            new User("Рефат Решитов", "Interests", "fish@lang.com", 19),
-            new User("Рамазан Шихларов", "Interests", "fish@lang.com", 19),
-            new User("Рычка Игорь", "Interests", "fish@lang.com", 19),
-            new User("Рабош Никита", "Interests", "fish@lang.com", 19)
+            new User("Руслан Максудов", "fish@lang.com", "Password"),
+            new User("Максим Корчак", "fish@lang.com", "Password"),
+            new User("Дмитрий Чернышов", "fish@lang.com", "Password"),
+            new User("Кирилл Новосельцев", "fish@lang.com", "Password"),
+            new User("Максим Новосельцев", "fish@lang.com", "Password"),
+            new User("Антон Перепелкин", "fish@lang.com", "Password"),
+            new User("Вован Сараев", "fish@lang.com", "Password"),
+            new User("Александр Коваленко", "fish@lang.com", "Password"),
+            new User("Валерия Ткаченко", "fish@lang.com", "Password"),
+            new User("Рефат Решитов", "fish@lang.com", "Password"),
+            new User("Рамазан Шихларов", "fish@lang.com", "Password"),
+            new User("Рычка Игорь", "fish@lang.com", "Password"),
+            new User("Рабош Никита", "fish@lang.com", "Password")
     );
 
     @Nullable

@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.javanostra.meetyourmatch.R;
-import com.javanostra.meetyourmatch.entity.Event;
+import com.javanostra.meetyourmatch.persistance.entity.Event;
 
 public class EventDetailsActivity extends AppCompatActivity {
 
@@ -83,15 +83,15 @@ public class EventDetailsActivity extends AppCompatActivity {
     private String dateCorrectImplementation(Event event) {
         StringBuilder builder = new StringBuilder("Дата: ");
 
-        int buffer = event.getDate();
+        int buffer = event.getDate().getDate();
         if (buffer < 10) builder.append("0");
         builder.append(buffer).append('.');
 
-        buffer = event.getMonthAsIndex()+1;
+        buffer = event.getDate().getMonth();
         if (buffer < 10) builder.append("0");
         builder.append(buffer).append('.');
 
-        builder.append(event.getYear());
+        builder.append(event.getDate().getYear());
 
         return builder.toString();
     }

@@ -1,20 +1,16 @@
 package com.javanostra.meetyourmatch.activity;
 
 import android.os.Bundle;
-import android.view.Window;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.javanostra.meetyourmatch.R;
 import com.javanostra.meetyourmatch.adapter.NotificationAdapter;
-import com.javanostra.meetyourmatch.entity.Notification;
+import com.javanostra.meetyourmatch.persistance.entity.Notification;
 
 import java.util.List;
 

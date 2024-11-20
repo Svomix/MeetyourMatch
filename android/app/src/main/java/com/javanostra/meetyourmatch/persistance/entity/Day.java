@@ -1,4 +1,4 @@
-package com.javanostra.meetyourmatch.entity;
+package com.javanostra.meetyourmatch.persistance.entity;
 
 import java.util.ArrayList;
 import java.util.List;

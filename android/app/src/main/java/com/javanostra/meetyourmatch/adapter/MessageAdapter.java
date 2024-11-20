@@ -11,9 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.javanostra.meetyourmatch.R;
-import com.javanostra.meetyourmatch.entity.Message;
-import com.javanostra.meetyourmatch.entity.User;
 import com.javanostra.meetyourmatch.fragment.ChatFragment;
+import com.javanostra.meetyourmatch.persistance.entity.Message;
+import com.javanostra.meetyourmatch.persistance.entity.User;
 
 import java.util.List;
 
@@ -34,10 +34,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-        User sender = ChatFragment.users.get(messages.get(position).getIdSender());
+        User sender = ChatFragment.users.get(messages.get(position).getUser_id());
         holder.nameView.setText(sender.getUsername());
-        holder.textMessageView.setText(messages.get(position).getMessage());
-        holder.messageTimeView.setText(messages.get(position).getDateOfSending());
+        holder.textMessageView.setText(messages.get(position).getContent());
+        holder.messageTimeView.setText(messages.get(position).getTimestamp());
     }
 
     @Override

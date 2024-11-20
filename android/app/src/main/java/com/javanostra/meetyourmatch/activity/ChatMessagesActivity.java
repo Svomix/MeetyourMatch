@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.javanostra.meetyourmatch.R;
 import com.javanostra.meetyourmatch.adapter.MessageAdapter;
-import com.javanostra.meetyourmatch.entity.Message;
+import com.javanostra.meetyourmatch.persistance.entity.Message;
 
 import java.util.ArrayList;
 import java.util.HashMap;

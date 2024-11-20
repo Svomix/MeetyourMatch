@@ -16,6 +16,16 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.javanostra.meetyourmatch.R;
+import com.javanostra.meetyourmatch.persistance.RetrofitClient;
+import com.javanostra.meetyourmatch.persistance.api_service.AccountApiService;
+import com.javanostra.meetyourmatch.persistance.api_service.LoginApiService;
+import com.javanostra.meetyourmatch.persistance.api_service.RegistrationApiService;
+import com.javanostra.meetyourmatch.persistance.entity.UserRegistrationData;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegistrationActivity2 extends AppCompatActivity {
 
@@ -35,6 +45,8 @@ public class RegistrationActivity2 extends AppCompatActivity {
             return insets;
         });
 
+        UserRegistrationData userData = (UserRegistrationData) getIntent().getSerializableExtra("user_registration_data");
+
         buttonSendCode = findViewById(R.id.buttonSendCode);
         startResendTimer();
 
@@ -44,8 +56,12 @@ public class RegistrationActivity2 extends AppCompatActivity {
         });
 
         findViewById(R.id.buttonCompleteReg).setOnClickListener(v -> {
-            Intent intent = new Intent(RegistrationActivity2.this, InterestSelectionActivity.class);
-            startActivity(intent);
+            performRegister(userData);
+            performLogin(userData.getUsername(), userData.getPassword());
+            performCityUpdate(userData.getCityId());
+
+            //Intent intent = new Intent(RegistrationActivity2.this, InterestSelectionActivity.class);
+            //startActivity(intent);
         });
 
         findViewById(R.id.buttonClose2).setOnClickListener(v -> {
@@ -68,7 +84,8 @@ public class RegistrationActivity2 extends AppCompatActivity {
     private void setupOtpInputs() {
         etDigit1.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -78,12 +95,14 @@ public class RegistrationActivity2 extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
 
         etDigit2.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -95,12 +114,14 @@ public class RegistrationActivity2 extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
 
         etDigit3.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -112,12 +133,14 @@ public class RegistrationActivity2 extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
 
         etDigit4.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -127,7 +150,8 @@ public class RegistrationActivity2 extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
     }
 
@@ -149,7 +173,8 @@ public class RegistrationActivity2 extends AppCompatActivity {
 
     private final TextWatcher inputWatcher = new TextWatcher() {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -157,7 +182,8 @@ public class RegistrationActivity2 extends AppCompatActivity {
         }
 
         @Override
-        public void afterTextChanged(Editable s) {}
+        public void afterTextChanged(Editable s) {
+        }
     };
 
     private void checkAllDigitsEntered() {
@@ -171,5 +197,70 @@ public class RegistrationActivity2 extends AppCompatActivity {
         } else {
             finishRegistration.setEnabled(false);
         }
+    }
+
+    private void performRegister(UserRegistrationData userData) {
+        RegistrationApiService apiService = RetrofitClient.getRetrofit(this).create(RegistrationApiService.class);
+
+        Call<String> call = apiService.register(userData.getUsername(), userData.getPassword(), userData.getEmail());
+
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(RegistrationActivity2.this, "Пользователь зарегистрирован", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(RegistrationActivity2.this, "Ошибка регистрации: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(RegistrationActivity2.this, "Ошибка сети REG: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void performLogin(String username, String password) {
+        LoginApiService apiService = RetrofitClient.getRetrofit(this).create(LoginApiService.class);
+
+        Call<ResponseBody> call = apiService.login(username, password);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.code() == 200) {
+                } else {
+                    Toast.makeText(RegistrationActivity2.this, "Ошибка входа: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(RegistrationActivity2.this, "Ошибка сети LOG: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void performCityUpdate(int cityID) {
+        AccountApiService userApiService = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
+
+        Call<String> call = userApiService.setCity((long) cityID);
+
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(RegistrationActivity2.this, "response.body()", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(RegistrationActivity2.this, "Ошибка обновления: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(RegistrationActivity2.this, "Ошибка сети CIT: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.javanostra.meetyourmatch.R;
-import com.javanostra.meetyourmatch.entity.Day;
+import com.javanostra.meetyourmatch.persistance.entity.Day;
 
 import java.util.List;
 

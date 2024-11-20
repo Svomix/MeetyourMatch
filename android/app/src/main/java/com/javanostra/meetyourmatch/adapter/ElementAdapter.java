@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.javanostra.meetyourmatch.R;
-import com.javanostra.meetyourmatch.entity.Element;
+import com.javanostra.meetyourmatch.persistance.entity.Element;
 
 import java.util.ArrayList;
 import java.util.Collections;

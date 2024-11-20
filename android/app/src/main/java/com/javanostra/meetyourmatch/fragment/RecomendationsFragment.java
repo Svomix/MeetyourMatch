@@ -21,8 +21,10 @@ import androidx.fragment.app.Fragment;
 
 import com.javanostra.meetyourmatch.R;
 import com.javanostra.meetyourmatch.activity.EventDetailsActivity;
-import com.javanostra.meetyourmatch.entity.Event;
+import com.javanostra.meetyourmatch.persistance.entity.Event;
+import com.javanostra.meetyourmatch.persistance.entity.Location;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,15 +56,38 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
         action_image_view = view.findViewById(R.id.action_image_view);
 
         events = new ArrayList<>();
-        events.add(new Event("Name-2", "Desc", 8, 7, 2024));
-        events.add(new Event("Name-1", "Desc", 12, 8, 2024));
-        events.add(new Event("Name0", "DescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDesc", 22, 9, 2024));
-        events.add(new Event("Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1", "Desc", 25, 10, 2024));
-        events.add(new Event("Name2", "Desc", 25, 10, 2024));
-        events.add(new Event("Name3", "Desc", 12, 7, 2024));
-        events.add(new Event("Name4", "Desc", 20, 8, 2024));
-        events.add(new Event("Name5", "Desc", 5, 11, 2024));
-        events.add(new Event("Name6", "Desc", 9, 12, 2024));
+        events.add(new Event("Event 1", "Tags 1", 200.00,
+                new Timestamp(2024, 7, 8, 0, 0, 0, 0),
+                new Location(10.0, 10.0)));
+        events.add(new Event("Event 2", "Tags 2", 300.00,
+                        new Timestamp(2024, 8, 12, 0, 0, 0, 0),
+                        new Location(10.0, 10.0)));
+        events.add(new Event("Event 3", "Tags 3", 400.00,
+                        new Timestamp(2024, 9, 22, 0, 0, 0, 0),
+                        new Location(10.0, 10.0)));
+        events.add(new Event("Event 4Event 4Event 4Event 4", "Tags 4Tags 4", 500.00,
+                        new Timestamp(2024, 10, 25, 0, 0, 0, 0),
+                        new Location(10.0, 10.0)));
+        events.add(new Event("Event 5Event 5Event 5Event 5", "Tags 5Tags 5", 600.00,
+                        new Timestamp(2024, 10, 25, 0, 0, 0, 0),
+                        new Location(10.0, 10.0)));
+        events.add(new Event("Event 6Event 6Event 6Event 6", "Tags 6Tags 6", 700.00,
+                        new Timestamp(2024, 10, 25, 0, 0, 0, 0),
+                        new Location(10.0, 10.0)));
+        events.add(new Event("Event 7Event 7Event 7Event 7", "Tags 7Tags 7", 800.00,
+                        new Timestamp(2024, 10, 25, 0, 0, 0, 0),
+                        new Location(10.0, 10.0)));
+        events.add(new Event("EventEventEventEvent", "Tags 8Tags 8", 1000.00,
+                        new Timestamp(2024, 11, 30, 0, 0, 0, 0),
+                        new Location(10.0, 10.0)));
+//        events.add(new Event("Name-1", "Desc", 12, 8, 2024));
+//        events.add(new Event("Name0", "DescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDesc", 22, 9, 2024));
+//        events.add(new Event("Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1", "Desc", 25, 10, 2024));
+//        events.add(new Event("Name2", "Desc", 25, 10, 2024));
+//        events.add(new Event("Name3", "Desc", 12, 7, 2024));
+//        events.add(new Event("Name4", "Desc", 20, 8, 2024));
+//        events.add(new Event("Name5", "Desc", 5, 11, 2024));
+//        events.add(new Event("Name6", "Desc", 9, 12, 2024));
 
         displayCurrentEvent();
 

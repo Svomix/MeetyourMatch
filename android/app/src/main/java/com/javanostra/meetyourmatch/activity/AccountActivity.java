@@ -8,6 +8,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.javanostra.meetyourmatch.R;
+import com.javanostra.meetyourmatch.persistance.cookie.CookieManager;
 
 public class AccountActivity extends AppCompatActivity {
 
@@ -19,13 +20,18 @@ public class AccountActivity extends AppCompatActivity {
     }
 
     public void goBack(View view) {
-        Intent intent = new Intent(this, MainScreenActivity.class);
-        startActivity(intent);
+        finish();
+        //Intent intent = new Intent(this, MainScreenActivity.class);
+        //startActivity(intent);
     }
 
     public void exitAccount(View view) {
+        CookieManager cookieManager = new CookieManager(this);
+        cookieManager.saveCookie("");
+
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+        finish();
     }
 }

@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.javanostra.meetyourmatch.R;
-import com.javanostra.meetyourmatch.entity.Notification;
+import com.javanostra.meetyourmatch.persistance.entity.Notification;
 
 import java.util.List;
 

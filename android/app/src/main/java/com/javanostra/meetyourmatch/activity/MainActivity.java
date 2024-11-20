@@ -7,24 +7,25 @@ import android.os.Bundle;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.javanostra.meetyourmatch.persistance.cookie.CookieManager;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("StubPrefs", MODE_PRIVATE);
-        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+        CookieManager cookieManager = new CookieManager(this);
+        String token = cookieManager.getCookie();
 
-        Intent intent;
-        if (isLoggedIn) {
-            intent = new Intent(this, MainScreenActivity.class);
+        if (token != null && !token.isEmpty()) {
+            Intent intent = new Intent(MainActivity.this, MainScreenActivity.class);
+            startActivity(intent);
         } else {
-            intent = new Intent(this, LoginActivity.class);
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
         }
 
-        startActivity(intent);
         finish();
     }
 }

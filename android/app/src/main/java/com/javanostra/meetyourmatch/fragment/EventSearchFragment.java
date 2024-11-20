@@ -23,8 +23,10 @@ import androidx.fragment.app.Fragment;
 
 import com.javanostra.meetyourmatch.R;
 import com.javanostra.meetyourmatch.activity.EventDetailsActivity;
-import com.javanostra.meetyourmatch.entity.Event;
+import com.javanostra.meetyourmatch.persistance.entity.Event;
+import com.javanostra.meetyourmatch.persistance.entity.Location;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,13 +64,27 @@ public class EventSearchFragment extends Fragment {
         });
 
         events = new ArrayList<>();
-        events.add(new Event("Event 1", "Tags 1", 8, 7, 2024));
-        events.add(new Event("Event 2", "Tags 2", 12, 8, 2024));
-        events.add(new Event("Event 3", "Tags 3", 1, 9, 2024));
-        events.add(new Event("Event 4", "Tags 4", 19, 9, 2024));
-        events.add(new Event("Event 5", "Tags 5", 26, 8, 2024));
-        events.add(new Event("Event 6", "Tags 6", 21, 7, 2024));
-        events.add(new Event("Event 7", "Tags 7", 15, 6, 2024));
+        events.add(new Event("Event 1", "Tags 1", 200.00,
+                new Timestamp(2024, 7, 12, 0, 0, 0, 0),
+                new Location(10.0, 10.0)));
+        events.add(new Event("Event 2", "Tags 2", 980.00,
+                new Timestamp(2024, 8, 12, 0, 0, 0, 0),
+                new Location(10.0, 10.0)));
+        events.add(new Event("Event 3", "Tags 3", 100.00,
+                new Timestamp(2024, 9, 1, 0, 0, 0, 0),
+                new Location(10.0, 10.0)));
+        events.add(new Event("Event 4", "Tags 4", 190.00,
+                new Timestamp(2024, 9, 19, 0, 0, 0, 0),
+                new Location(10.0, 10.0)));
+        events.add(new Event("Event 5", "Tags 5", 2600.00,
+                new Timestamp(2024, 8, 26, 0, 0, 0, 0),
+                new Location(10.0, 10.0)));
+        events.add(new Event("Event 6", "Tags 6", 210.00,
+                new Timestamp(2024, 7, 21, 0, 0, 0, 0),
+                new Location(10.0, 10.0)));
+        events.add(new Event("Event 7", "Tags 7", 1500.00,
+                new Timestamp(2024, 6, 12, 0, 0, 0, 0),
+                new Location(10.0, 10.0)));
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
