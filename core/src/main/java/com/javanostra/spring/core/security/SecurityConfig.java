@@ -44,6 +44,8 @@ public class SecurityConfig {
                 .addFilterBefore(middlewareFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((requests) ->
                         requests
+                                .requestMatchers("/api/v1/events").permitAll()
+                                .requestMatchers("/api/v1/events/").permitAll()
                                 .requestMatchers("/api/v1/**").authenticated()
                                 .anyRequest().permitAll()
                 )
