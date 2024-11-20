@@ -1,6 +1,7 @@
 package com.javanostra.spring.core.controllers;
 
 import com.javanostra.spring.core.dto.NewUserDTO;
+import com.javanostra.spring.core.dto.ResponseDTO;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.services.AuthorizationService;
 import com.javanostra.spring.core.services.UserService;
@@ -26,7 +27,7 @@ public class AuthController {
     private final AuthorizationService authorizationService;
 
     @PostMapping
-    public ResponseEntity<String> register(@Valid @ModelAttribute NewUserDTO newUser) {
+    public ResponseEntity<ResponseDTO> register(@Valid @ModelAttribute NewUserDTO newUser) {
         if (!userService.userExists(newUser.getUsername())) {
             User newUserEnt = new User();
 
@@ -40,9 +41,9 @@ public class AuthController {
 
             userService.createUser(newUserEnt);
 
-            return ResponseEntity.ok("create user " + newUser.getUsername());
+            return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "created account " + newUser.getUsername()));
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user " + newUser.getUsername() + " already exists");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(HttpStatus.BAD_REQUEST,  "user " + newUser.getUsername() + " already exists"));
         }
     }
 

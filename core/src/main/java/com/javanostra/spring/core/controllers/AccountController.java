@@ -1,6 +1,7 @@
 package com.javanostra.spring.core.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.javanostra.spring.core.dto.ResponseDTO;
 import com.javanostra.spring.core.dto.UserProfileDTO;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.services.CityService;
@@ -36,19 +37,19 @@ public class AccountController {
     }
 
     @PostMapping("/setCity")
-    public ResponseEntity<String> setCity(@RequestParam("city") Long city_id){
+    public ResponseEntity<ResponseDTO> setCity(@RequestParam("city") Long city_id){
         try {
             User currentUser = userService.getCurrentUser();
 
             if (Objects.nonNull(currentUser)) {
                 currentUser.setCity(cityService.findCityById(city_id));
                 userService.updateUser(currentUser);
-                return ResponseEntity.ok("city set");
+                return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "city set"));
             }
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }catch (NoSuchElementException exception){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("no such city exists");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(HttpStatus.BAD_REQUEST, "no such city exists"));
         }
     }
 }
