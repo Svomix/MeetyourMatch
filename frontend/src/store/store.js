@@ -1,15 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
+import modalSlice from '@store/modalSlice';
+import authSlice from './authSlice';
 
-import modalSlice from '@store/slices/modalSlice';
-
-const reHydrateStore = () => {
-  if (typeof window === 'undefined') {
-    return undefined;
-  }
-  if (localStorage.getItem('appState') !== null) {
-    return JSON.parse(localStorage.getItem('appState')); // re-hydrate the store
-  }
-};
+// const reHydrateStore = () => {
+//   if (typeof window === 'undefined') return undefined;
+//   if (localStorage.getItem('appState') !== null)
+//     return JSON.parse(localStorage.getItem('appState'));
+// };
 
 const appMiddleware = ({ getState }) => {
   return (next) => (action) => {
@@ -21,8 +18,9 @@ const appMiddleware = ({ getState }) => {
 
 export const store = configureStore({
   reducer: {
-    modal: modalSlice
+    modal: modalSlice,
+    auth: authSlice
   },
-  preloadedState: reHydrateStore(),
+  // preloadedState: reHydrateStore(),
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(appMiddleware)
 });

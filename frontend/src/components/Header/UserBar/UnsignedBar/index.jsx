@@ -1,7 +1,7 @@
 'use client';
-import styles from './index.module.css';
+import { ModalPage, setModal } from '@store/modalSlice/index';
 import { useDispatch } from 'react-redux';
-import { setModal, ModalPage } from '@store/slices/modalSlice';
+import styles from './index.module.css';
 
 export default () => {
   const dispatch = useDispatch();

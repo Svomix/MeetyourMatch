@@ -3,6 +3,18 @@ import Layout from '@components/Layout';
 import localFont from 'next/font/local';
 import './globals.css';
 
+export default function RootLayout({ children }) {
+  return (
+    <html lang="ru">
+      <body className={sansation.className}>
+        <Providers>
+          <Layout>{children}</Layout>
+        </Providers>
+      </body>
+    </html>
+  );
+}
+
 const sansation = localFont({
   src: [
     {
@@ -33,15 +45,3 @@ export const metadata = {
   title: 'Meet your match',
   description: 'We will help you to find your interests'
 };
-
-export default function RootLayout({ children }) {
-  return (
-    <html lang="ru">
-      <body className={sansation.className}>
-        <Providers>
-          <Layout>{children}</Layout>
-        </Providers>
-      </body>
-    </html>
-  );
-}

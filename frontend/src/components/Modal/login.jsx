@@ -1,6 +1,7 @@
 'use client';
 import { unauth_fetch } from '@/utils/fetch';
-import { ModalPage, setModal } from '@store/slices/modalSlice';
+import { authStates, setAuth } from '@store/authSlice';
+import { ModalPage, setModal } from '@store/modalSlice/index';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -21,7 +22,6 @@ export default function Login() {
     }
 
     document.addEventListener('click', clickEvent);
-
     return () => {
       document.removeEventListener('click', clickEvent);
     };
@@ -36,6 +36,7 @@ export default function Login() {
     e.preventDefault();
     await unauth_fetch('/api/login', 'post', new FormData(e.target));
     dispatch(setModal(ModalPage.None));
+    dispatch(setAuth(authStates.auth));
     router.refresh();
   }
 

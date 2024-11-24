@@ -1,11 +1,11 @@
 'use client';
+import svg2 from '@public/check-circle-svgrepo-com.svg';
+import { ModalPage, setModal } from '@store/modalSlice/index';
+import Image from 'next/image';
+import { useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import base_styles from '../index.module.css';
 import styles from './verify.module.css';
-import { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { setModal, ModalPage } from '@store/slices/modalSlice';
-import Image from 'next/image';
-import svg2 from '@public/check-circle-svgrepo-com.svg';
 
 export default function Verify() {
   const dialog = useRef();

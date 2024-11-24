@@ -8,7 +8,7 @@ import { default as Routes, default as routes } from '@routes';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import ActiveLink from '../ActiveLink';
+import ActiveLink from '../../ActiveLink';
 import styles from './index.module.css';
 
 export default () => {

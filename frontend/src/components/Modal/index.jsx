@@ -1,10 +1,10 @@
 'use client';
-import Register from './register';
-import Login from './login';
-import Verify from './Registration/verify';
-import { useSelector } from 'react-redux';
-import { ModalPage } from '@store/slices/modalSlice';
+import { ModalPage } from '@store/modalSlice/index';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import Login from './login';
+import Register from './register';
+import Verify from './Registration/verify';
 
 export default function Modal() {
   const [isClient, setIsClient] = useState(false);

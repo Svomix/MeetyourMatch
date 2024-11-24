@@ -1,7 +1,8 @@
 'use client';
 import { unauth_fetch } from '@/utils/fetch';
 import routes from '@routes';
-import { ModalPage, setModal } from '@store/slices/modalSlice';
+import { authStates, setAuth } from '@store/authSlice';
+import { ModalPage, setModal } from '@store/modalSlice/index';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -40,6 +41,7 @@ export default function Register() {
     await unauth_fetch('/api/register', 'post', new FormData(e.target));
 
     dispatch(setModal(ModalPage.None));
+    dispatch(setAuth(authStates.auth));
     router.refresh();
   }
 
