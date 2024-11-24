@@ -52,8 +52,6 @@
 }
 
 .data_container {
-  z-index: 100;
-
   display: flex;
   position: absolute;
   left: var(--border-width);
@@ -71,6 +69,7 @@
   max-height: 50vh;
   padding-bottom: var(--border-radius);
   overflow: none;
+  scrollbar-color: var(--light-grey) var(--grey);
 
   transition: 200ms ease-in;
 }

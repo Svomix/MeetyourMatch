@@ -1,17 +1,23 @@
+'use client';
+import classNames from '@/utils/classnames';
+import DraggableCard from '@components/DraggableCard';
 import mock_img from '@public/mock_img.jpg';
+import { useState } from 'react';
 import styles from './page.module.css';
 
 export default () => {
+  const [active, setActive] = useState();
+
   return (
-    <>
-      <h1 className={styles.title}>Найдите события, хобби, или компанию единомышленников</h1>
-      <div className={styles.wrapper}>
-        <p className={styles.paragraph}>
-          Выбор на любой вкус - от фестивалей настольных игр до рок-концертов
-        </p>
-        <div className={styles.slider}></div>
+    <div className={styles.wrapper}>
+      <div className={classNames(styles.reject, active == 1 && styles.active)}>Пропустить</div>
+      <div className={classNames(styles.accept, active == 2 && styles.active)}>Нравится</div>
+      <div className={styles.text}>
+      <h1 className={styles.title}>Рекомендуемое</h1>
+      <p className={styles.desc}>Попробуйте перетащить карту</p>
       </div>
-    </>
+      <DraggableCard setActive={setActive} event={events[0]} />
+    </div>
   );
 };
 
