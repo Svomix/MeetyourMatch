@@ -21,6 +21,7 @@
 
 .dropdown {
   position: relative;
+
   display: flex;
   background-color: var(--grey);
   border-radius: var(--border-radius);
@@ -29,7 +30,7 @@
 }
 
 .input_wrap {
-  background-image: url("/filter-list-svgrepo-com.svg");
+  background-image: url('/filter-list-svgrepo-com.svg');
   background-repeat: no-repeat;
   background-position: right center;
   background-size: 2.2rem;
@@ -52,39 +53,46 @@
 
 .data_container {
   z-index: 100;
-  
+
   display: flex;
   position: absolute;
-  top: calc(3rem + var(--border-width));
   left: var(--border-width);
-  
-  background-color: var(--grey);
-  width: calc(100% - var(--border-width)*2);
+  top: 0;
 
-  overflow-y:auto;
+  background-color: var(--grey);
+  width: calc(100% - var(--border-width) * 2);
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+
+  overflow-y: auto;
   overflow-x: hidden;
 
   flex-direction: column;
-  gap: 0.5rem;
   max-height: 50vh;
+  padding-bottom: var(--border-radius);
   overflow: none;
-  transition: opacity 0.05s ease-in, visibility 0.05s;
+
+  transition: 200ms ease-in;
 }
 
 .data {
   display: block;
   color: var(--white);
   text-align: left;
-  margin: 0.2rem;
-
-  transition: color 0.05s ease-in;
+  padding: 0.5rem 1rem;
+  transition: 200ms ease-in;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
 }
 
 .data:hover {
   color: var(--gold);
+  border-top: 1px solid var(--gold);
+  border-bottom: 1px solid var(--gold);
 }
 
 .block {
+  top: calc(3rem - var(--border-radius));
   visibility: visible;
   opacity: 1;
 }

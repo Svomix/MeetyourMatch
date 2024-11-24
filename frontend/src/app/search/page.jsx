@@ -44,6 +44,7 @@ export default () => {
               { key: 'tag2', text: 'Тег2' },
               { key: 'tag3', text: 'Тег3' }
             ]}
+            className={styles.dbar}
           />
         </section>
         <div className={styles.events}>

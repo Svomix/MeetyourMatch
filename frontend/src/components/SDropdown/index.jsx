@@ -1,7 +1,7 @@
 'use client';
+import classNames from '@/utils/classnames';
 import { useRef, useState } from 'react';
 import styles from './index.module.css';
-import classNames from '@/utils/classnames';
 
 export default function SDropdown({ data, placeholder, onSelect, className }) {
   let [filter, setFilter] = useState('');
@@ -31,12 +31,10 @@ export default function SDropdown({ data, placeholder, onSelect, className }) {
     data_wrap.current?.classList.remove(styles.block);
     input.current.placeholder = placeholder;
     if (!data.some((row) => row.text == input.current.value)) input.current.value = '';
-    //if (filter !== '') input.current.value = '';
   }
 
   function onClick(e) {
     input.current.value = e.text;
-    //setTimeout(() => setFilter(''), 100);
   }
 
   return (
