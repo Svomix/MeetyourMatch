@@ -11,8 +11,8 @@ export default function InterestsContainer() {
       <div className={styles.main_container}>
           {mock_test.map((el, index) => (
             <div key={index} className={styles.interest_item_wrap}>
-            <div key={index} className={styles.interest_item}>{el}</div>
-          </div>
+              <div key={index} className={styles.interest_item}>{el}</div>
+            </div>
           ))}
       </div>
     </div>

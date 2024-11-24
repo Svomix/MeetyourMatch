@@ -1,5 +1,4 @@
 'use client';
-import { auth_fetch } from '@/utils/fetch';
 import bell_svg from '@public/Bell.jsx';
 import active_bell_svg from '@public/BellActive.jsx';
 import calendar_svg from '@public/Calendar';
@@ -10,16 +9,19 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ActiveLink from '../../ActiveLink';
 import styles from './index.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProfileInfo } from '@store/profileSlice';
 
 export default () => {
   const path = usePathname();
+  const dispatch = useDispatch();
   let [name, setName] = useState('username');
 
+  const info = useSelector(state => state.profileInfo)
+
   useEffect(() => {
-    auth_fetch('/api/account/getInfo')
-      .then((el) => el.json())
-      .then((el) => setName(el.username));
-  });
+    dispatch(fetchProfileInfo())
+  }, []);
 
   return (
     <div className={styles.signed_container}>
@@ -30,7 +32,7 @@ export default () => {
         {path == routes.CALENDAR ? active_calendar_svg : calendar_svg}
       </ActiveLink>
       <ActiveLink className={styles.profile_link} href={Routes.PROFILE}>
-        <p className={styles.username}>{name}</p>
+        <p className={styles.username}>{info?.username}</p>
         <Image
           className={styles.userLogo}
           src={'/user_logo.jpg'}

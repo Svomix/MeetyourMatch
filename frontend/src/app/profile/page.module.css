@@ -61,3 +61,27 @@
 .avatar_hover:hover {
   opacity: 1;
 }
+
+.save_button {
+  margin: 4px 0px 12px 0px;
+  padding: 12px 24px;
+  font-size: 1.75rem;
+  font-weight: bold;
+  background-color: var(--gold);
+  border: var(--border-width) solid var(--grey);
+  border-radius: var(--border-radius);
+  color: var(--grey);
+}
+
+.save_button:disabled {
+  background-color: var(--light-grey);
+  pointer-events: none;
+}
+
+.error {
+  font-size: 1rem;
+  min-height: 1.1rem;
+  text-align: center;
+  font-weight: bold;
+  color: var(--red);
+}

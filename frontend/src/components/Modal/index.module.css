@@ -40,7 +40,7 @@
   display: flex;
   padding: 8px 20px;
   margin: 0 auto;
-  margin-top: 12px;
+  margin-top: 8px;
   color: var(--grey);
   font-size: 32px;
   border: 2px solid var(--gold);
@@ -85,6 +85,14 @@
   color: var(--white);
 }
 
+.error {
+  font-size: 1rem;
+  min-height: 1.1rem;
+  text-align: center;
+  font-weight: bold;
+  color: var(--red);
+}
+
 .license_link {
   margin-left: 4px;
   display: inline;
@@ -105,3 +113,4 @@
   margin-left: 8px;
   transform: scale(1.5);
 }
+

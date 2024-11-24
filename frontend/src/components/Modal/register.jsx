@@ -1,5 +1,4 @@
 'use client';
-import { unauth_fetch } from '@/utils/fetch';
 import routes from '@routes';
 import { authStates, setAuth } from '@store/authSlice';
 import { ModalPage, setModal } from '@store/modalSlice/index';
@@ -9,11 +8,15 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import InputField from '../InputField';
 import styles from './index.module.css';
+import { unauthed } from '@/services/axiosInstance';
 
 export default function Register() {
   const dialog = useRef();
   const router = useRouter();
   const dispatch = useDispatch();
+
+  const [fetching, setFetching] = useState(false)
+  const [error, setError] = useState("")
 
   useEffect(() => {
     dialog.current?.showModal();
@@ -23,10 +26,10 @@ export default function Register() {
       if (!clickInside) dispatch(setModal(ModalPage.None));
     }
 
-    document.addEventListener('click', clickEvent);
+    document.addEventListener('mousedown', clickEvent);
 
     return () => {
-      document.removeEventListener('click', clickEvent);
+      document.removeEventListener('mousedown', clickEvent);
     };
   }, []);
 
@@ -34,15 +37,27 @@ export default function Register() {
     e.preventDefault();
 
     if (e.target[2].value != e.target[3].value) {
-      alert('Пароли не совпадают');
+      setError('Пароли не совпадают');
       return;
     }
 
-    await unauth_fetch('/api/register', 'post', new FormData(e.target));
-
-    dispatch(setModal(ModalPage.None));
-    dispatch(setAuth(authStates.auth));
-    router.refresh();
+    setFetching(true)
+    try{
+      await unauthed.post("/register", new FormData(e.target))
+      dispatch(setModal(ModalPage.None));
+      dispatch(setAuth(authStates.auth));
+      router.refresh();
+    }catch(e){
+      if(e.response.data.exception === "UserAlreadyExistsException"){
+        setError(e.response.data.error)
+        await new Promise(r => setTimeout(r, 2000))
+      }else if(e.response.status == 400){
+        setError("Заполните все поля")
+      }else{
+        alert(e)
+      }
+      setFetching(false)
+    }
   }
 
   function onClickLogin(e) {
@@ -56,15 +71,22 @@ export default function Register() {
     setDisabled(!e.target.checked);
   }
 
+  function resetError(){
+    if(!fetching && error){
+      setError("")
+    }
+  }
+
   return open ? (
     <dialog ref={dialog} className={styles.dialog}>
       <div className={styles.dialog_wrap}>
         <h1 className={styles.title}>Регистрация</h1>
         <form onSubmit={onClickRegister} className={styles.form}>
-          <InputField placeholder="Имя" name="username" />
-          <InputField type="email" placeholder="E-mail" name="email" />
-          <InputField type="password" placeholder="Пароль" name="password" />
-          <InputField type="password" placeholder="Повторите пароль" />
+          <InputField placeholder="Имя" name="username" onFocus={resetError} />
+          <InputField type="email" placeholder="E-mail" name="email" onFocus={resetError} />
+          <InputField type="password" placeholder="Пароль" name="password" onFocus={resetError} />
+          <InputField type="password" placeholder="Повторите пароль" onFocus={resetError} />
+          {error && <p className={styles.error}>{error}</p>}
           <div className={styles.license_wrap}>
             <p className={styles.license_text}>Я согласен с</p>
             <Link
@@ -77,7 +99,7 @@ export default function Register() {
             </Link>
             <input onChange={onChangeCheckbox} className={styles.checkbox} type="checkbox"></input>
           </div>
-          <button disabled={disabled} type="submit" className={styles.button_submit}>
+          <button disabled={disabled || fetching} type="submit" className={styles.button_submit}>
             Зарегистрироваться
           </button>
         </form>

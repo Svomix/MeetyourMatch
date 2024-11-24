@@ -1,6 +1,5 @@
 'use client';
 import { tokenType } from '@/services/authService';
-import { auth_fetch, unauth_fetch } from '@/utils/fetch';
 import Card from '@components/Card';
 import CardNavigation from '@components/Pagination';
 import SDropdown from '@components/SDropdown';
@@ -9,18 +8,15 @@ import mock_img from '@public/mock_img.jpg';
 import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import styles from './page.module.css';
+import { authed, unauthed } from '@/services/axiosInstance';
 
 export default () => {
   let [events, setEvents] = useState([]);
   useEffect(() => {
-    if (Cookies.get(tokenType.ACCESS_TOKEN))
-      events = auth_fetch('/api/v1/events?limit=16')
-        .then((resp) => resp.json())
-        .then((data) => setEvents(data.content));
-    else
-      events = unauth_fetch('/api/v1/events?limit=16')
-        .then((resp) => resp.json())
-        .then((data) => setEvents(data.content));
+    const instance = Cookies.get(tokenType.ACCESS_TOKEN) ? authed : unauthed;
+    instance.get("/v1/events?limit=16").then(response => {
+      setEvents(response.data.content)
+    })
   }, []);
 
   return (
