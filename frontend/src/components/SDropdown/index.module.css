@@ -15,7 +15,7 @@
   z-index: -1;
   border-radius: calc(var(--border-width) + var(--border-radius));
   padding: var(--border-width);
-  margin: calc(-1 * var(--border-width));
+  margin: calc(var(--border-width));
   background: linear-gradient(to left, var(--black), var(--grey));
 }
 
@@ -71,7 +71,7 @@
   overflow: none;
   scrollbar-color: var(--light-grey) var(--grey);
 
-  transition: 200ms ease-in;
+  transition: 50ms ease-in;
 }
 
 .data {
@@ -79,7 +79,7 @@
   color: var(--white);
   text-align: left;
   padding: 0.5rem 1rem;
-  transition: 200ms ease-in;
+  transition: 50ms ease-in;
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
 }
