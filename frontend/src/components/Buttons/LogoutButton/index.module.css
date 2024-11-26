@@ -5,4 +5,9 @@
   border: var(--border-width) solid var(--black);
   border-radius: var(--border-radius);
   color: var(--white);
+  transition: 200ms ease-in-out;
+}
+.btn:hover {
+  transform: scale(1.05);
+  border-color: var(--gold);
 }

@@ -11,8 +11,6 @@
   padding: 1rem 1rem;
   max-width: 1300px;
   width: 100%;
-  /* background: var(--bgc-strong);
-  border-radius: var(--border-radius); */
 }
 
 .input {
@@ -24,7 +22,7 @@
 .settings_container {
   display: grid;
   grid-template-columns: 2fr 3fr;
-  gap: 10%;
+  gap: 4vw;
 }
 
 .param_name {

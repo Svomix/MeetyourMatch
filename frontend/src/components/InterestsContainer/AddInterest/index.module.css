@@ -1,0 +1,25 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+}
+.btn {
+  width: fit-content;
+  padding: 0.25rem 1rem;
+  font-size: 1.75rem;
+  background: var(--bgc-strong);
+  color: var(--white);
+  border: var(--border-width) solid var(--black);
+  border-radius: var(--border-radius);
+  transition: 200ms ease-in-out;
+  margin-left: 0.25vw;
+}
+
+.btn_active {
+  transform: scale(1.05);
+}
+
+.btn:hover {
+  transform: scale(1.05);
+  border-color: var(--gold);
+}
