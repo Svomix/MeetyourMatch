@@ -9,13 +9,13 @@ import profileSlice from "./profileSlice";
 //     return JSON.parse(localStorage.getItem('appState'));
 // };
 
-const appMiddleware = ({ getState }) => {
-  return (next) => (action) => {
-    const result = next(action);
-    localStorage.setItem('appState', JSON.stringify(getState()));
-    return result;
-  };
-};
+// const appMiddleware = ({ getState }) => {
+//   return (next) => (action) => {
+//     const result = next(action);
+//     localStorage.setItem('appState', JSON.stringify(getState()));
+//     return result;
+//   };
+// };
 
 export const store = configureStore({
   reducer: {
@@ -24,5 +24,5 @@ export const store = configureStore({
     profileInfo: profileSlice
   },
   // preloadedState: reHydrateStore(),
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(appMiddleware)
+  //middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(appMiddleware)
 });
