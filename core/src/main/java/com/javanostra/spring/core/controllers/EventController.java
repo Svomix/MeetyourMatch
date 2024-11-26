@@ -17,7 +17,7 @@ public class EventController {
     @GetMapping
     public Page<Event> findAllEvents(
             @RequestParam(value = "offset", defaultValue = "0") Integer offset,
-            @RequestParam(value = "limit", defaultValue = "5") Integer limit
+            @RequestParam(value = "limit", defaultValue = "30") Integer limit
     ) {
         return eventService.findAllEvents(PageRequest.of(offset, limit));
     }
@@ -31,7 +31,7 @@ public class EventController {
     public Page<Attribute> findEventAttributesByEventId(
             @PathVariable("event_id") Long eventId,
             @RequestParam(value = "offset", defaultValue = "0") Integer offset,
-            @RequestParam(value = "limit", defaultValue = "5") Integer limit
+            @RequestParam(value = "limit", defaultValue = "30") Integer limit
     ) {
         return eventService.findEventAttributesByEventId(eventId, PageRequest.of(offset, limit));
     }

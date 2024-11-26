@@ -1,13 +1,12 @@
 package com.javanostra.spring.core.services;
 
 import com.javanostra.spring.core.dao.UserDAO;
-import com.javanostra.spring.core.dao.UserAuthorityDAO;
-import com.javanostra.spring.core.dto.UserProfileDTO;
 import com.javanostra.spring.core.entities.User;
+import com.javanostra.spring.core.security.ContextRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,11 +26,9 @@ import com.javanostra.spring.core.entities.Attribute;
 import com.javanostra.spring.core.entities.UserAttributeValue;
 import com.javanostra.spring.core.entities.UserEvent;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 import java.util.Objects;
@@ -77,27 +74,8 @@ public class UserService implements UserDetailsManager {
 
     @Transactional
     @Override
-    public void changePassword(String oldPassword, String newPassword) throws AuthenticationException { //pls fix
-        Authentication currentUser = securityContextHolderStrategy.getContext().getAuthentication();
-        if (currentUser == null) {
-            throw new AccessDeniedException("Can't change password as no Authentication object found in context for current user.");
-        } else {
-            String username = currentUser.getName();
-            if (this.authenticationManager != null) {
-                //this.logger.debug(LogMessage.format("Reauthenticating user '%s' for password change request.", username));
-                this.authenticationManager.authenticate(UsernamePasswordAuthenticationToken.unauthenticated(username, oldPassword));
-            } else {
-                //this.logger.debug("No authentication manager set. Password won't be re-checked.");
-            }
-
-            //this.logger.debug("Changing password for user '" + username + "'");
-            //this.getJdbcTemplate().update(this.changePasswordSql, new Object[]{newPassword, username});
-            Authentication authentication = this.createNewAuthentication(currentUser, newPassword);
-            SecurityContext context = this.securityContextHolderStrategy.createEmptyContext();
-            context.setAuthentication(authentication);
-            this.securityContextHolderStrategy.setContext(context);
-            //this.userCache.removeUserFromCache(username);
-        }
+    public void changePassword(String oldPassword, String newPassword) {
+        throw new UnsupportedOperationException();
     }
 
     protected Authentication createNewAuthentication(Authentication currentAuth, String newPassword) {
@@ -112,6 +90,9 @@ public class UserService implements UserDetailsManager {
         return userDAO.existsByUsername(username);
     }
 
+    public boolean userExistsByEmail(String email) {
+        return userDAO.existsByEmail(email);
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

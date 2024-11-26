@@ -1,10 +1,14 @@
 package com.javanostra.spring.core.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.javanostra.spring.core.dto.ExceptionDTO;
+import com.javanostra.spring.core.dto.ResponseDTO;
 import com.javanostra.spring.core.services.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -12,8 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
@@ -34,29 +36,33 @@ public class SecurityConfig {
     @Autowired
     UserService userDetailsManager;
 
+    ObjectMapper mapper = new ObjectMapper();
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, ContextRepository conextRepository, AuthMiddlewareFilter middlewareFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, ContextRepository contextRepository, AuthMiddlewareFilter middlewareFilter) throws Exception {
         http
                 .csrf((csrf) -> csrf.disable()) //TODO: add csrf
                 .cors((cors) -> cors.disable()) //TODO: add cors
-                .securityContext((context) -> context.securityContextRepository(conextRepository))
+                .securityContext((context) -> context.securityContextRepository(contextRepository))
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(middlewareFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((requests) ->
                         requests
-                                .requestMatchers("/api/v1/events**").permitAll()
-                                .requestMatchers("/api/v1/**").authenticated()
+                                .requestMatchers("/api/account**").authenticated()
                                 .anyRequest().permitAll()
                 )
                 .formLogin((form) -> form
                         .successHandler(
                                 (request, response, authentication) -> {
                                     response.setStatus(HttpServletResponse.SC_OK);
-                                    response.getWriter().println("logged in as " + authentication.getName());
+                                    response.setContentType("application/json;charset=UTF-8");
+                                    response.getWriter().write( mapper.writeValueAsString(new ResponseDTO(HttpStatus.OK, "logged in as "+authentication.getName())) );
                                 }
                         )
                         .failureHandler(((request, response, exception) -> {
-                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.getWriter().write( mapper.writeValueAsString(new ExceptionDTO(exception.getMessage(), exception.getClass().getSimpleName(), HttpStatus.UNAUTHORIZED.value())) );
                         }))
                         .loginPage("/api/login")
                         .permitAll())
@@ -66,7 +72,8 @@ public class SecurityConfig {
                             .permitAll()
                             .logoutSuccessHandler((request, response, authentication) -> {
                                 response.setStatus(HttpServletResponse.SC_OK);
-                                response.getWriter().println("logged out");
+                                response.setContentType("application/json;charset=UTF-8");
+                                response.getWriter().write( mapper.writeValueAsString(new ResponseDTO(HttpStatus.OK, "logged out")) );
                             });
                 })
                 .exceptionHandling((handling -> {
