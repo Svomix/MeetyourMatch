@@ -26,7 +26,7 @@ export default ({ path, event }) => {
               </div>
             </div>
             <div className={styles.right_side}>
-              <Image className={styles.img} src={event.coverImgUrl} width={2000} height={2000} />
+              <Image alt={"event image"} className={styles.img} src={event.coverImgUrl} width={2000} height={2000} />
               <div className={styles.fade_out}></div>
             </div>
           </div>

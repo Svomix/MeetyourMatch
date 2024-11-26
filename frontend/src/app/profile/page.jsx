@@ -9,11 +9,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { authed } from '@/services/axiosInstance';
 import { useRouter } from 'next/navigation';
 import { fetchProfileInfo } from '@store/profileSlice';
+import SDropdown from '@components/SDropdown';
 
 export default function ProfilePage() {
 
   const dispatch = useDispatch()
   const [username, setUsername] = useState(null)
+  const [password, setPassword] = useState(null)
+  const [password2, setPassword2] = useState(null)
+  
   const [error, setError] = useState(null)
   const router = useRouter();
 
@@ -22,10 +26,32 @@ export default function ProfilePage() {
   if(username === null && info) setUsername(info.username)
 
   const username_changed = username !== null && username !== info.username
-  const can_save = username_changed
+  const password_changed = password && password2
+
+  const can_save = username_changed || password_changed
 
   async function onSave(e){
     e.preventDefault()
+    if(password_changed){
+      if(password !== password2){
+        setError("Пароли не совпадают")
+        setPassword2("")
+        return
+      }
+      try {
+        await authed.post("/account/setPassword", null, {
+          params: {
+            password: password
+          }
+        })
+      }catch(e){
+        alert(e)
+      }finally{
+        setPassword("")
+        setPassword2("")
+      }
+    }
+
     if(username_changed){
       try {
         await authed.post("/account/setName", null, {
@@ -41,7 +67,8 @@ export default function ProfilePage() {
         }
       }
     }
-    dispatch(fetchProfileInfo())
+    
+    await dispatch(fetchProfileInfo()).unwrap()
     router.refresh();
   }
 
@@ -64,6 +91,8 @@ export default function ProfilePage() {
               name="name"
               onFocus={resetError}
             />
+            {/* <p className={styles.param_name}>Город</p>
+            <SDropdown placeholder={'Город'} data={stub_cities} className={styles.dbar} /> */}
             <p className={styles.param_name}>Аватар</p>
             <div className={styles.avatar_container}>
               <div className={styles.avatar_hover}>Изменить аватар</div>
@@ -78,7 +107,8 @@ export default function ProfilePage() {
             <p className={styles.param_name}>Пароль</p>
             <InputField
               className={styles.input}
-              defaultValue=""
+              value={password || ""}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Новый пароль"
               name="password"
               type="password"
@@ -86,7 +116,8 @@ export default function ProfilePage() {
             />
             <InputField
               className={styles.input}
-              defaultValue=""
+              value={password2 || ""}
+              onChange={(e) => setPassword2(e.target.value)}
               placeholder="Повторите пароль"
               name="password2"
               type="password"

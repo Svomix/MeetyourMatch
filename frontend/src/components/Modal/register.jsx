@@ -50,12 +50,12 @@ export default function Register() {
     }catch(e){
       if(e.response.data.exception === "UserAlreadyExistsException"){
         setError(e.response.data.error)
-        await new Promise(r => setTimeout(r, 2000))
       }else if(e.response.status == 400){
         setError("Заполните все поля")
       }else{
         alert(e)
       }
+      await new Promise(r => setTimeout(r, 2000))
       setFetching(false)
     }
   }
