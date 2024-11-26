@@ -3,9 +3,8 @@ package com.javanostra.spring.core.services;
 import com.javanostra.spring.core.dao.AttributeDAO;
 import com.javanostra.spring.core.dao.EventAttributeValueDAO;
 import com.javanostra.spring.core.dao.EventDAO;
-import com.javanostra.spring.core.entities.Attribute;
-import com.javanostra.spring.core.entities.Event;
-import com.javanostra.spring.core.entities.EventAttributeValue;
+import com.javanostra.spring.core.dao.TagDAO;
+import com.javanostra.spring.core.entities.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,6 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -23,6 +23,7 @@ public class EventService {
     private final EventDAO eventDAO;
     private final EventAttributeValueDAO eventAttributeValueDAO;
     private final AttributeDAO attributeDAO;
+    private final TagDAO tagDAO;
 
     public Page<Event> findAllEvents(Pageable pageable) {
         return eventDAO.findAll(pageable);
@@ -30,6 +31,15 @@ public class EventService {
 
     public Event findEventById(Long eventId) {
         return eventDAO.findById(eventId).orElseThrow(NoSuchElementException::new);
+    }
+
+    public List<Tag> findEventTagsByEventId(Long userId) {
+        List<EventAttributeValue> EAVs = eventAttributeValueDAO.findByEventAndAttribute(eventDAO.findEventById(userId), attributeDAO.findAttributeById(1L));
+        List<Tag> tags = new ArrayList<>();
+        for (EventAttributeValue EAV : EAVs) {
+            tagDAO.findById(Long.parseLong(EAV.getValue())).ifPresent(tags::add);
+        }
+        return tags;
     }
 
     @Transactional

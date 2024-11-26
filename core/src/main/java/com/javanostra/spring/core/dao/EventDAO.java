@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EventDAO extends JpaRepository<Event, Long>, PagingAndSortingRepository<Event, Long> {
+    Event findEventById(long id);
 }

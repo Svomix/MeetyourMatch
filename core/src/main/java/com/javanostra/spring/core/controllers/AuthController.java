@@ -60,6 +60,6 @@ public class AuthController {
         context.setAuthentication(token);
         contextRepository.saveContext(context, request, response);
 
-        return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "created account " + newUser.getUsername()));
+        return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "created account " + newUser.getUsername()));
     }
 }

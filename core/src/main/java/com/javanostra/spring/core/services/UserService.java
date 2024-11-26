@@ -2,16 +2,18 @@ package com.javanostra.spring.core.services;
 
 import com.javanostra.spring.core.dao.UserDAO;
 import com.javanostra.spring.core.entities.User;
-import com.javanostra.spring.core.security.ContextRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import com.javanostra.spring.core.dao.*;
+import com.javanostra.spring.core.dto.UserEventDTO;
+import com.javanostra.spring.core.entities.*;
+import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
@@ -25,11 +27,8 @@ import com.javanostra.spring.core.dao.UsersEventDAO;
 import com.javanostra.spring.core.entities.Attribute;
 import com.javanostra.spring.core.entities.UserAttributeValue;
 import com.javanostra.spring.core.entities.UserEvent;
-import jakarta.transaction.Transactional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,13 +37,17 @@ import java.util.Objects;
 public class UserService implements UserDetailsManager {
 
     @NonNull
-    UserDAO userDAO;
+    private final UserDAO userDAO;
     @NonNull
     private final UsersEventDAO usersEventDAO;
+    @NonNull
+    private final EventDAO eventDAO;
     @NonNull
     private final UsersAttributeValueDAO usersAttributeValueDAO;
     @NonNull
     private final AttributeDAO attributeDAO;
+    @NonNull
+    private final TagDAO tagDAO;
 
     AuthenticationManager authenticationManager;
 
@@ -87,11 +90,11 @@ public class UserService implements UserDetailsManager {
 
     @Override
     public boolean userExists(String username) {
-        return userDAO.existsByUsername(username);
+        return userDAO.existsByUsernameIgnoreCase(username);
     }
 
     public boolean userExistsByEmail(String email) {
-        return userDAO.existsByEmail(email);
+        return userDAO.existsByEmailIgnoreCase(email);
     }
 
     @Override
@@ -116,6 +119,86 @@ public class UserService implements UserDetailsManager {
         return usersEventDAO.findAllUserEventsByUserId(userId, pageable);
     }
 
+    public List<UserEventDTO> findUserEventsInCalendar(Long userId) {
+        List<UserEvent> userEvents = usersEventDAO.findUserEventByUserIdAndInCalendarIsTrue(userId);
+        return userEvents.stream()
+                .map(event -> new UserEventDTO(
+                        event.getUser().getId(),
+                        event.getEvent().getId(),
+                        event.getIsLiked(),
+                        event.getIsDisliked(),
+                        event.getInCalendar()
+                ))
+                .toList();
+    }
+
+    public Integer getLikes(Long eventId) {
+        List<UserEvent> userEvents = usersEventDAO.findUserEventByEvent(eventDAO.findEventById(eventId));
+        int counter = 0;
+        for (UserEvent userEvent : userEvents) {
+            if (userEvent.getIsLiked()) counter++;
+        }
+        return counter;
+    }
+
+    @Transactional
+    public void switchLiked(Long userId, Long eventId) {
+        UserEvent userEvent = usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
+        if (userEvent == null) {
+            userEvent = new UserEvent();
+            userEvent.setUser(userDAO.findUserById(userId));
+            userEvent.setEvent(eventDAO.findEventById(eventId));
+            userEvent.setIsDisliked(false);
+            userEvent.setInCalendar(false);
+        }
+        userEvent.setIsLiked(!userEvent.getIsLiked());
+        usersEventDAO.save(userEvent);
+    }
+
+    @Transactional
+    public void switchDisliked(Long userId, Long eventId) {
+        UserEvent userEvent = usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
+        if (userEvent == null) {
+            userEvent = new UserEvent();
+            userEvent.setUser(userDAO.findUserById(userId));
+            userEvent.setEvent(eventDAO.findEventById(eventId));
+            userEvent.setIsLiked(false);
+            userEvent.setInCalendar(false);
+        }
+        userEvent.setIsDisliked(!userEvent.getIsDisliked());
+        usersEventDAO.save(userEvent);
+    }
+
+    @Transactional
+    public void switchCalendar(Long userId, Long eventId) {
+        UserEvent userEvent = usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
+        if (userEvent == null) {
+            userEvent = new UserEvent();
+            userEvent.setUser(userDAO.findUserById(userId));
+            userEvent.setEvent(eventDAO.findEventById(eventId));
+            userEvent.setIsLiked(false);
+            userEvent.setIsDisliked(false);
+        }
+        userEvent.setInCalendar(!userEvent.getInCalendar());
+        usersEventDAO.save(userEvent);
+    }
+
+    public UserEventDTO getUserEventByIds(Long userId, Long eventId) {
+        UserEvent userEvent = usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
+        if (userEvent == null) {
+            userEvent = new UserEvent();
+            userEvent.setUser(userDAO.findUserById(userId));
+            userEvent.setEvent(eventDAO.findEventById(eventId));
+            userEvent.setIsLiked(false);
+            userEvent.setIsDisliked(false);
+            userEvent.setInCalendar(false);
+        } else {
+            return new UserEventDTO(userEvent.getUser().getId(), userEvent.getEvent().getId(), userEvent.getIsLiked(), userEvent.getIsDisliked(), userEvent.getInCalendar());
+        }
+        usersEventDAO.save(userEvent);
+        return new UserEventDTO(userEvent.getUser().getId(), userEvent.getEvent().getId(), userEvent.getIsLiked(), userEvent.getIsDisliked(), userEvent.getInCalendar());
+    }
+
     public UserEvent findUserEventById(Long userId, Long eventId) {
         return usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
     }
@@ -130,6 +213,19 @@ public class UserService implements UserDetailsManager {
         final int start = (int) pageable.getOffset();
         final int end = Math.min((int) pageable.getOffset() + pageable.getPageSize(), attributeList.size());
         return new PageImpl<>(attributeList.subList(start, end), pageable, attributeList.size());
+    }
+
+    public List<Tag> findUserTagsByUserId(Long userId) {
+        List<UserAttributeValue> UAVs = usersAttributeValueDAO.findByUserAndAttribute(userDAO.findUserById(userId), attributeDAO.findAttributeById(1L));
+        List<Tag> tags = new ArrayList<>();
+        for (UserAttributeValue UAV : UAVs) {
+            tagDAO.findById(Long.parseLong(UAV.getValue())).ifPresent(tags::add);
+        }
+        return tags;
+    }
+
+    public List<UserAttributeValue> findUserAttributeValueByUserIdAndAttributeId(Long userId, Long attributeId) {
+        return usersAttributeValueDAO.findByUserAndAttribute(userDAO.findUserById(userId), attributeDAO.findAttributeById(attributeId));
     }
 
 //    @Transactional
@@ -176,9 +272,14 @@ public class UserService implements UserDetailsManager {
         usersAttributeValueDAO.deleteByUserAndAttributeId(userDAO.findUserById(userId), attrId);
     }
 
+    @Transactional
+    public void deleteUAVByUserAndAttributeAndValue(Long userId, Long attrId, String value) {
+        usersAttributeValueDAO.deleteByUserIdAndAttributeIdAndValue(userId, attrId, value);
+    }
+
     public User getCurrentUser() {
         SecurityContext ctx = securityContextHolderStrategy.getContext();
-        if(Objects.nonNull(ctx)) {
+        if (Objects.nonNull(ctx)) {
             Authentication authentication = ctx.getAuthentication();
             Object principal = authentication.getPrincipal();
 

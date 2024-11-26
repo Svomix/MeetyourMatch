@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -59,12 +61,50 @@ public class AccountController {
             if (Objects.nonNull(currentUser)) {
                 currentUser.setCity(cityService.findCityById(city_id));
                 userService.updateUser(currentUser);
-                return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK, "city set"));
+                return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "Город обновлён!"));
+            }
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO(HttpStatus.UNAUTHORIZED.value(), "Нет авторизации!"));
+        }catch (NoSuchElementException exception){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(HttpStatus.BAD_REQUEST.value(), "Такого города не существует!"));
+        }
+    }
+
+    @PostMapping("/setEmail")
+    public ResponseDTO setEmail(@NonNull @RequestParam("email") String email, HttpServletRequest request, HttpServletResponse response) throws BaseCoreException {
+        if(userService.userExistsByEmail(email))
+            throw new UserAlreadyExistsException("Пользователь с такой почтой уже существует");
+
+        User user = userService.getCurrentUser();
+        SecurityContext context = SecurityContextHolder.getContext();
+
+        user.setEmail(email);
+        userService.updateUser(user);
+
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+
+        token.setDetails(new WebAuthenticationDetails(request));
+
+        context.setAuthentication(token);
+        contextRepository.saveContext(context, request, response);
+
+        return new ResponseDTO(HttpStatus.OK.value(), "changed username successfully");
+    }
+
+    @PostMapping("/setImage")
+    public ResponseEntity<ResponseDTO> setImage(@RequestParam("avatar_path") String avatar_path){
+        try {
+            User currentUser = userService.getCurrentUser();
+
+            if (Objects.nonNull(currentUser)) {
+                currentUser.setAvatarPath(avatar_path);
+                userService.updateUser(currentUser);
+                return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "Image set"));
             }
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }catch (NoSuchElementException exception){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(HttpStatus.BAD_REQUEST, "no such city exists"));
+        } catch (NoSuchElementException exception){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(HttpStatus.BAD_REQUEST.value(), "no image"));
         }
     }
 
@@ -86,28 +126,7 @@ public class AccountController {
         context.setAuthentication(token);
         contextRepository.saveContext(context, request, response);
 
-        return new ResponseDTO(HttpStatus.OK, "changed username successfully");
-    }
-
-    @PostMapping("/setEmail")
-    public ResponseDTO setEmail(@NonNull @RequestParam("email") String email, HttpServletRequest request, HttpServletResponse response) throws BaseCoreException {
-        if(userService.userExistsByEmail(email))
-            throw new UserAlreadyExistsException("Пользователь с такой почтой уже существует");
-
-        User user = userService.getCurrentUser();
-        SecurityContext context = SecurityContextHolder.getContext();
-
-        user.setEmail(email);
-        userService.updateUser(user);
-
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-
-        token.setDetails(new WebAuthenticationDetails(request));
-
-        context.setAuthentication(token);
-        contextRepository.saveContext(context, request, response);
-
-        return new ResponseDTO(HttpStatus.OK, "changed username successfully");
+        return new ResponseDTO(HttpStatus.OK.value(), "changed username successfully");
     }
 
     @PostMapping("/setPassword")
@@ -125,6 +144,6 @@ public class AccountController {
         context.setAuthentication(token);
         contextRepository.saveContext(context, request, response);
 
-        return new ResponseDTO(HttpStatus.OK, "changed password successfully");
+        return new ResponseDTO(HttpStatus.OK.value(), "changed password successfully");
     }
 }
