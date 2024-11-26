@@ -37,10 +37,10 @@ public class AuthController {
     @PostMapping
     public ResponseEntity<ResponseDTO> register(@Valid @ModelAttribute NewUserDTO newUser, HttpServletRequest request, HttpServletResponse response) throws BaseCoreException {
         if (userService.userExists(newUser.getUsername()))
-            throw new UserAlreadyExistsException("username");
+            throw new UserAlreadyExistsException("Пользователь с таким именем уже существует");
 
         if (userService.userExistsByEmail(newUser.getEmail()))
-            throw new UserAlreadyExistsException("email");
+            throw new UserAlreadyExistsException("Пользователь с такой почтой уже существует");
 
         User newUserEnt = new User();
 

@@ -71,7 +71,7 @@ public class AccountController {
     @PostMapping("/setName")
     public ResponseDTO setUsername(@NonNull @RequestParam("username") String username, HttpServletRequest request, HttpServletResponse response) throws BaseCoreException {
         if(userService.userExists(username))
-            throw new UserAlreadyExistsException("username");
+            throw new UserAlreadyExistsException("Пользователь с таким именем уже существует");
 
         User user = userService.getCurrentUser();
         SecurityContext context = SecurityContextHolder.getContext();
@@ -92,7 +92,7 @@ public class AccountController {
     @PostMapping("/setEmail")
     public ResponseDTO setEmail(@NonNull @RequestParam("email") String email, HttpServletRequest request, HttpServletResponse response) throws BaseCoreException {
         if(userService.userExistsByEmail(email))
-            throw new UserAlreadyExistsException("email");
+            throw new UserAlreadyExistsException("Пользователь с такой почтой уже существует");
 
         User user = userService.getCurrentUser();
         SecurityContext context = SecurityContextHolder.getContext();
