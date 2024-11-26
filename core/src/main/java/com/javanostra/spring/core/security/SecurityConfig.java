@@ -56,7 +56,7 @@ public class SecurityConfig {
                                 (request, response, authentication) -> {
                                     response.setStatus(HttpServletResponse.SC_OK);
                                     response.setContentType("application/json;charset=UTF-8");
-                                    response.getWriter().write( mapper.writeValueAsString(new ResponseDTO(HttpStatus.OK, "logged in as "+authentication.getName())) );
+                                    response.getWriter().write( mapper.writeValueAsString(new ResponseDTO(HttpStatus.OK.value(), "logged in as "+authentication.getName())) );
                                 }
                         )
                         .failureHandler(((request, response, exception) -> {
@@ -73,7 +73,7 @@ public class SecurityConfig {
                             .logoutSuccessHandler((request, response, authentication) -> {
                                 response.setStatus(HttpServletResponse.SC_OK);
                                 response.setContentType("application/json;charset=UTF-8");
-                                response.getWriter().write( mapper.writeValueAsString(new ResponseDTO(HttpStatus.OK, "logged out")) );
+                                response.getWriter().write( mapper.writeValueAsString(new ResponseDTO(HttpStatus.OK.value(), "logged out")) );
                             });
                 })
                 .exceptionHandling((handling -> {

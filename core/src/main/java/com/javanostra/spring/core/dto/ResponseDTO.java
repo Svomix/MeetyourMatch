@@ -9,6 +9,6 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @Data
 public class ResponseDTO {
-    HttpStatus code = HttpStatus.OK;
+    int code = HttpStatus.OK.value();
     String message;
 }

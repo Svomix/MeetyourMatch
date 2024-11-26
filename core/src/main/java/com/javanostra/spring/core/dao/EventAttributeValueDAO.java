@@ -1,7 +1,6 @@
 package com.javanostra.spring.core.dao;
 
-import com.javanostra.spring.core.entities.Event;
-import com.javanostra.spring.core.entities.EventAttributeValue;
+import com.javanostra.spring.core.entities.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +13,5 @@ import java.util.List;
 public interface EventAttributeValueDAO extends JpaRepository<EventAttributeValue, Long>, PagingAndSortingRepository<EventAttributeValue, Long> {
     List<EventAttributeValue> findByEvent(Event event);
     void deleteByEventAndAttributeId(Event event, Long id);
+    List<EventAttributeValue> findByEventAndAttribute(Event event, Attribute attribute);
 }
