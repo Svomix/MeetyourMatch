@@ -1,5 +1,4 @@
 .card {
-  position: relative;
   height: 500px;
   width: 350px;
   display: flex;
@@ -8,11 +7,7 @@
   border-radius: var(--border-radius);
   border: 3px solid var(--black);
   overflow: hidden;
-  user-drag: none;
-  -webkit-user-drag: none;
-  transition:
-    transform 200ms ease-in-out,
-    border 200ms ease-in-out;
+  transition: 200ms ease-in-out;
 }
 
 .card:hover {
@@ -70,7 +65,7 @@
   -webkit-line-clamp: 2;
   line-height: 1;
   height: 2em;
-  font-size: 26px;
+  font-size: 30px;
   font-weight: 900;
 }
 
@@ -81,6 +76,8 @@
   -webkit-line-clamp: 1;
   line-height: 1;
   height: 1em;
+  font-size: 16px;
+  font-weight: 500;
   font-size: 18px;
   font-weight: 100;
 }
@@ -103,7 +100,7 @@
 .event_tags {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  white-space: normal;
+  word-break: break-all;
   text-overflow: ellipsis;
   overflow: hidden;
 }

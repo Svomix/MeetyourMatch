@@ -1,12 +1,15 @@
-import classNames from '@/utils/classnames';
 import Heart from '@components/Buttons/HeartButton';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './index.module.css';
 
-export default ({ className, event, width, height, ...rest }) => {
+export default ({ event, width, height }) => {
   return (
-    <Link href={`/events/${event.id}`} className={classNames(styles.card, className)} {...rest}>
+    <Link
+      href={`/events/${event.id}`}
+      className={styles.card}
+      style={{ width: `${width}`, height: `${height}` }}
+    >
       <div className={styles.img_container}>
         <Image
           className={styles.image}
