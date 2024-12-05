@@ -1,4 +1,5 @@
 'use client';
+import { unauthed } from '@/services/axiosInstance';
 import routes from '@routes';
 import { authStates, setAuth } from '@store/authSlice';
 import { ModalPage, setModal } from '@store/modalSlice/index';
@@ -6,17 +7,16 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import InputField from '../InputField';
+import InputField from '../../InputField';
 import styles from './index.module.css';
-import { unauthed } from '@/services/axiosInstance';
 
 export default function Register() {
   const dialog = useRef();
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const [fetching, setFetching] = useState(false)
-  const [error, setError] = useState("")
+  const [fetching, setFetching] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     dialog.current?.showModal();
@@ -41,22 +41,22 @@ export default function Register() {
       return;
     }
 
-    setFetching(true)
-    try{
-      await unauthed.post("/register", new FormData(e.target))
+    setFetching(true);
+    try {
+      await unauthed.post('/register', new FormData(e.target));
       dispatch(setModal(ModalPage.None));
       dispatch(setAuth(authStates.auth));
       router.refresh();
-    }catch(e){
-      if(e.response.data.exception === "UserAlreadyExistsException"){
-        setError(e.response.data.error)
-      }else if(e.response.status == 400){
-        setError("Заполните все поля")
-      }else{
-        alert(e)
+    } catch (e) {
+      if (e.response.data.exception === 'UserAlreadyExistsException') {
+        setError(e.response.data.error);
+      } else if (e.response.status == 400) {
+        setError('Заполните все поля');
+      } else {
+        alert(e);
       }
-      await new Promise(r => setTimeout(r, 2000))
-      setFetching(false)
+      await new Promise((r) => setTimeout(r, 2000));
+      setFetching(false);
     }
   }
 
@@ -71,9 +71,9 @@ export default function Register() {
     setDisabled(!e.target.checked);
   }
 
-  function resetError(){
-    if(!fetching && error){
-      setError("")
+  function resetError() {
+    if (!fetching && error) {
+      setError('');
     }
   }
 

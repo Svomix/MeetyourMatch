@@ -3,12 +3,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import styles from './index.module.css';
 
-export default ({ event, width, height }) => {
+export default ({ event, refLink, width, height }) => {
   return (
     <Link
       href={`/events/${event.id}`}
       className={styles.card}
-      style={{ width: `${width}`, height: `${height}` }}
+      style={{ width: `${width}px`, height: `${height}px` }}
+      ref={refLink}
     >
       <div className={styles.img_container}>
         <Image

@@ -1,7 +1,7 @@
-import Modal from '@components/Modal';
-import Footer from '../Footer';
-import Header from '../Header';
+import Footer from './Footer';
+import Header from './Header';
 import styles from './index.module.css';
+import Modal from './Modal';
 
 export default ({ children }) => {
   return (

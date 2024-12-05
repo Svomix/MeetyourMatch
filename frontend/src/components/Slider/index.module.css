@@ -1,0 +1,62 @@
+.wrapper {
+  width: 100%;
+  display: grid;
+  column-gap: 1vw;
+  row-gap: 2vh;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  touch-action: pan-y;
+}
+
+.slider {
+  padding: 10px;
+  overflow: hidden;
+  box-sizing: border-box;
+  cursor: grab;
+}
+
+.slider_line {
+  transition: 0.5s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+}
+
+.btn_dis {
+  opacity: 0.3;
+  cursor: auto;
+}
+
+.dots {
+  width: fit-content;
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  grid-column: span 3;
+  gap: 0.6em;
+}
+
+.dot {
+  opacity: 0.4;
+  cursor: pointer;
+  width: 0.6em;
+  height: 0.6em;
+  border-radius: 100%;
+  background-color: var(--black);
+}
+
+.dot_active {
+  opacity: 1;
+  cursor: auto;
+  width: 0.9em;
+  height: 0.9em;
+}
+
+.grab,
+.grab > * {
+  cursor: grabbing;
+  transition: none;
+}

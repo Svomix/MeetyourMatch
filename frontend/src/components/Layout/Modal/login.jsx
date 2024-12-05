@@ -1,20 +1,20 @@
 'use client';
+import { unauthed } from '@/services/axiosInstance';
 import { authStates, setAuth } from '@store/authSlice';
 import { ModalPage, setModal } from '@store/modalSlice/index';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import InputField from '../InputField';
+import InputField from '../../InputField';
 import styles from './index.module.css';
-import { unauthed } from '@/services/axiosInstance';
 
 export default function Login() {
   const dialog = useRef();
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const [fetching, setFetching] = useState(false)
-  const [error, setError] = useState("")
+  const [fetching, setFetching] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     dialog.current?.showModal();
@@ -37,27 +37,27 @@ export default function Login() {
 
   async function onSubmit(e) {
     e.preventDefault();
-    setFetching(true)
-    try{
-      await unauthed.post("/login", new FormData(e.target))
-      setFetching(false)
+    setFetching(true);
+    try {
+      await unauthed.post('/login', new FormData(e.target));
+      setFetching(false);
       dispatch(setModal(ModalPage.None));
       dispatch(setAuth(authStates.auth));
       router.refresh();
-    }catch(e){
-      if(e.response.data.exception === "BadCredentialsException"){
-        setError(e.response.data.error)
-        await new Promise(r => setTimeout(r, 2000))
-      }else{
-        alert(e)
+    } catch (e) {
+      if (e.response.data.exception === 'BadCredentialsException') {
+        setError(e.response.data.error);
+        await new Promise((r) => setTimeout(r, 2000));
+      } else {
+        alert(e);
       }
-      setFetching(false)
+      setFetching(false);
     }
   }
 
-  function resetError(){
-    if(!fetching && error){
-      setError("")
+  function resetError() {
+    if (!fetching && error) {
+      setError('');
     }
   }
 
@@ -67,7 +67,7 @@ export default function Login() {
         <h1 className={styles.title}>Вход</h1>
         <form onSubmit={onSubmit} className={styles.form}>
           <InputField placeholder="Имя" name="username" onFocus={resetError} />
-          <InputField type="password" placeholder="Пароль" name="password" onFocus={resetError}  />
+          <InputField type="password" placeholder="Пароль" name="password" onFocus={resetError} />
           {error && <p className={styles.error}>{error}</p>}
           <button type="submit" disabled={fetching} className={styles.button_submit}>
             Войти

@@ -8,6 +8,8 @@
   border: 3px solid var(--black);
   overflow: hidden;
   transition: 200ms ease-in-out;
+  user-drag: none;
+  -webkit-user-drag: none;
 }
 
 .card:hover {

@@ -1,9 +1,10 @@
+import classNames from '@/utils/classnames';
 import styles from './index.module.css';
 
-export const LeftArrow = ({ width, height, onClick }) => {
+export const LeftArrow = ({ width, height, onClick, className, disabled }) => {
   return (
     <svg
-      className={styles.arrow_btn}
+      className={classNames(styles.arrow_btn, disabled && styles.arrow_btn_dis, className)}
       width={width || '24px'}
       height={height || '24px'}
       onClick={onClick}
@@ -17,10 +18,10 @@ export const LeftArrow = ({ width, height, onClick }) => {
   );
 };
 
-export const RightArrow = ({ width, height, onClick }) => {
+export const RightArrow = ({ width, height, onClick, className, disabled }) => {
   return (
     <svg
-      className={styles.arrow_btn}
+      className={classNames(styles.arrow_btn, disabled && styles.arrow_btn_dis, className)}
       width={width || '24px'}
       height={height || '24px'}
       onClick={onClick}

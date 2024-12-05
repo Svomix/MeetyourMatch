@@ -12,3 +12,9 @@
   transform: scale(1.05);
   border: 2px solid var(--gold);
 }
+
+.arrow_btn_dis {
+  pointer-events: none;
+  opacity: 0.3;
+  cursor: auto;
+}
