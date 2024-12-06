@@ -15,7 +15,7 @@ const params = {
   threshold: 0
 };
 
-export default ({ events }) => {
+export default ({ events, cardWidth, cardHeight }) => {
   // Стейт и функция для ручного рендера
   const [, setState] = useState();
   const reRender = () => setState((s) => !s);
@@ -35,7 +35,7 @@ export default ({ events }) => {
   };
 
   const toNextSlide = () => {
-    if (params.slide < events.length - 1) {
+    if (params.slide < events.length - 3) {
       params.slide++;
       moveSlide();
       reRender();
@@ -103,8 +103,7 @@ export default ({ events }) => {
       params.gap = (wrapperRef.current.offsetWidth - 3 * cardRef.current.offsetWidth) / 2 - 10;
       params.step = cardRef.current.offsetWidth + params.gap;
       params.threshold = cardRef.current.offsetWidth / 3;
-      params.initialOffset =
-        (wrapperRef.current.offsetWidth - cardRef.current.offsetWidth) / 2 - 10;
+      params.initialOffset = 0;
       moveSlide();
       reRender();
     }
@@ -163,8 +162,8 @@ export default ({ events }) => {
                 <Card
                   key={event.id}
                   event={event}
-                  height={450}
-                  width={300}
+                  height={cardHeight}
+                  width={cardWidth}
                   refLink={cardRef}
                   className={params.slide === 0 && styles.btn_dis}
                 />
@@ -176,17 +175,21 @@ export default ({ events }) => {
             width={52}
             height={52}
             onClick={toNextSlide}
-            disabled={params.slide == events.length - 1}
+            disabled={params.slide == events.length - 3}
           />
 
           <div className={styles.dots}>
-            {events.map((_, index) => (
-              <div
-                key={index * 1000}
-                className={classNames(styles.dot, params.slide === index && styles.dot_active)}
-                onClick={() => selectSlide(index)}
-              />
-            ))}
+            {events.map(
+              (_, index) =>
+                index != events.length - 1 &&
+                index != events.length - 2 && (
+                  <div
+                    key={index * 1000}
+                    className={classNames(styles.dot, params.slide === index && styles.dot_active)}
+                    onClick={() => selectSlide(index)}
+                  />
+                )
+            )}
           </div>
         </section>
       )}

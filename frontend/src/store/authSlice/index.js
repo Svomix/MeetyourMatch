@@ -1,12 +1,7 @@
 import { getAccessToken } from '@/services/authService';
 import { createSlice } from '@reduxjs/toolkit';
 
-export const authStates = {
-  unAuth: 'unAuth',
-  auth: 'auth'
-};
-
-const initialState = getAccessToken() ? authStates.auth : authStates.unAuth;
+const initialState = !!getAccessToken();
 
 const authSlice = createSlice({
   name: 'auth',

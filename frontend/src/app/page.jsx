@@ -1,21 +1,14 @@
-import Slider from '@components/Slider';
+import { tokenType } from '@/services/authService';
+import SingedMain from '@components/MainPage/SingedMain';
+import UnsignedMain from '@components/MainPage/UnsignedMain';
 import mock_img from '@public/mock_img.jpg';
-import styles from './page.module.css';
+import { cookies } from 'next/headers';
 
-export default () => {
-  return (
-    <div className={styles.wrapper}>
-      <h1 className={styles.title}>Найдите события, хобби, или компанию единомышленников</h1>
-      <div className={styles.section}>
-        <p className={styles.paragraph}>
-          Выбор на любой вкус - от фестивалей настольных игр до рок-концертов
-        </p>
-        <div className={styles.slider}>
-          <Slider events={events} />
-        </div>
-      </div>
-    </div>
-  );
+export default async () => {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(tokenType.ACCESS_TOKEN);
+
+  return <>{token?.value ? <SingedMain events={events} /> : <UnsignedMain events={events} />}</>;
 };
 
 const events = [
@@ -53,5 +46,12 @@ const events = [
     tags: '#Lorem #ipsum #dolor',
     coverImgUrl: mock_img,
     id: 5
+  },
+  {
+    title: 'Lorem, ipsum dolor.',
+    date: '17:00 01.01.2024',
+    tags: '#Lorem #ipsum #dolor',
+    coverImgUrl: mock_img,
+    id: 6
   }
 ];

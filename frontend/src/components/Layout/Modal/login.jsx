@@ -1,6 +1,6 @@
 'use client';
 import { unauthed } from '@/services/axiosInstance';
-import { authStates, setAuth } from '@store/authSlice';
+import { setAuth } from '@store/authSlice';
 import { ModalPage, setModal } from '@store/modalSlice/index';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -42,7 +42,7 @@ export default function Login() {
       await unauthed.post('/login', new FormData(e.target));
       setFetching(false);
       dispatch(setModal(ModalPage.None));
-      dispatch(setAuth(authStates.auth));
+      dispatch(setAuth(true));
       router.refresh();
     } catch (e) {
       if (e.response.data.exception === 'BadCredentialsException') {

@@ -1,0 +1,35 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4vh;
+  margin-top: 4vh;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5vh;
+}
+
+.title {
+  color: var(--white);
+  font-size: 60px;
+  font-weight: 900;
+}
+
+.paragraph {
+  color: var(--white);
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.slider {
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

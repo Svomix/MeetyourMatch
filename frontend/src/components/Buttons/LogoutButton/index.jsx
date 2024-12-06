@@ -1,10 +1,10 @@
 'use client';
+import { authed } from '@/services/axiosInstance';
 import routes from '@routes';
-import { authStates, setAuth } from '@store/authSlice';
+import { setAuth } from '@store/authSlice';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import styles from './index.module.css';
-import { authed } from '@/services/axiosInstance';
 
 export default () => {
   const router = useRouter();
@@ -13,7 +13,7 @@ export default () => {
   async function onClick(e) {
     e.preventDefault();
     await authed.get('/logout');
-    dispatch(setAuth(authStates.unAuth));
+    dispatch(setAuth(false));
     router.replace(routes.HOME);
     router.refresh();
   }
