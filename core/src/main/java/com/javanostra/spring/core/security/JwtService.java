@@ -24,6 +24,7 @@ public class JwtService {
     public String generateToken(User user) {
         return JWT.create()
                 .withClaim("authorities", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
+                .withClaim("id", user.getId())
                 .withSubject(user.getUsername())
                 .withIssuedAt(Date.from(Instant.now()))
                 .sign(algorithm);

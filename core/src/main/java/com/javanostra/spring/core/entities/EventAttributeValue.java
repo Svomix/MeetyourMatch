@@ -19,9 +19,8 @@ public class EventAttributeValue {
     @JoinColumn(name = "event_id")
     private Event event;
 
-    @ManyToOne
-    @JoinColumn(name = "attribute_id")
-    private Attribute attribute;
+    @Column(name = "attribute")
+    private String attribute;
 
     @Column(nullable = false)
     private String value;

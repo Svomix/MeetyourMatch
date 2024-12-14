@@ -1,14 +1,8 @@
 package com.javanostra.spring.core.controllers;
 
-import com.javanostra.spring.core.entities.Attribute;
-import com.javanostra.spring.core.entities.Event;
 import com.javanostra.spring.core.entities.Tag;
-import com.javanostra.spring.core.services.EventService;
 import com.javanostra.spring.core.services.TagService;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

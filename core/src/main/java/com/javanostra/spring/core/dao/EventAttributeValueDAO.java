@@ -11,7 +11,5 @@ import java.util.List;
 
 @Repository
 public interface EventAttributeValueDAO extends JpaRepository<EventAttributeValue, Long>, PagingAndSortingRepository<EventAttributeValue, Long> {
-    List<EventAttributeValue> findByEvent(Event event);
-    void deleteByEventAndAttributeId(Event event, Long id);
-    List<EventAttributeValue> findByEventAndAttribute(Event event, Attribute attribute);
+
 }

@@ -1,15 +1,15 @@
 package com.javanostra.spring.core.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.javanostra.spring.core.dao.UserDAO;
+import com.javanostra.spring.core.dto.FullUserProfileDTO;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.dao.*;
 import com.javanostra.spring.core.dto.UserEventDTO;
-import com.javanostra.spring.core.entities.*;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,14 +21,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-import com.javanostra.spring.core.dao.AttributeDAO;
 import com.javanostra.spring.core.dao.UsersAttributeValueDAO;
 import com.javanostra.spring.core.dao.UsersEventDAO;
-import com.javanostra.spring.core.entities.Attribute;
-import com.javanostra.spring.core.entities.UserAttributeValue;
-import com.javanostra.spring.core.entities.UserEvent;
+import com.javanostra.spring.core.entities.UserAttribute;
+import com.javanostra.spring.core.entities.UserActions;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,13 +42,13 @@ public class UserService implements UserDetailsManager {
     @NonNull
     private final UsersAttributeValueDAO usersAttributeValueDAO;
     @NonNull
-    private final AttributeDAO attributeDAO;
-    @NonNull
     private final TagDAO tagDAO;
 
     AuthenticationManager authenticationManager;
 
     private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
+
+    ObjectMapper mapper = new ObjectMapper();
 
     @Transactional
     @Override
@@ -115,12 +112,12 @@ public class UserService implements UserDetailsManager {
         return userDAO.findUserById(userId);
     }
 
-    public Page<UserEvent> findAllUserEvents(Long userId, Pageable pageable) {
+    public Page<UserActions> findAllUserEvents(Long userId, Pageable pageable) {
         return usersEventDAO.findAllUserEventsByUserId(userId, pageable);
     }
 
     public List<UserEventDTO> findUserEventsInCalendar(Long userId) {
-        List<UserEvent> userEvents = usersEventDAO.findUserEventByUserIdAndInCalendarIsTrue(userId);
+        List<UserActions> userEvents = usersEventDAO.findUserEventByUserIdAndInCalendarIsTrue(userId);
         return userEvents.stream()
                 .map(event -> new UserEventDTO(
                         event.getUser().getId(),
@@ -133,9 +130,9 @@ public class UserService implements UserDetailsManager {
     }
 
     public Integer getLikes(Long eventId) {
-        List<UserEvent> userEvents = usersEventDAO.findUserEventByEvent(eventDAO.findEventById(eventId));
+        List<UserActions> userEvents = usersEventDAO.findUserEventByEvent(eventDAO.findEventById(eventId));
         int counter = 0;
-        for (UserEvent userEvent : userEvents) {
+        for (UserActions userEvent : userEvents) {
             if (userEvent.getIsLiked()) counter++;
         }
         return counter;
@@ -143,9 +140,9 @@ public class UserService implements UserDetailsManager {
 
     @Transactional
     public void switchLiked(Long userId, Long eventId) {
-        UserEvent userEvent = usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
+        UserActions userEvent = usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
         if (userEvent == null) {
-            userEvent = new UserEvent();
+            userEvent = new UserActions();
             userEvent.setUser(userDAO.findUserById(userId));
             userEvent.setEvent(eventDAO.findEventById(eventId));
             userEvent.setIsDisliked(false);
@@ -157,9 +154,9 @@ public class UserService implements UserDetailsManager {
 
     @Transactional
     public void switchDisliked(Long userId, Long eventId) {
-        UserEvent userEvent = usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
+        UserActions userEvent = usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
         if (userEvent == null) {
-            userEvent = new UserEvent();
+            userEvent = new UserActions();
             userEvent.setUser(userDAO.findUserById(userId));
             userEvent.setEvent(eventDAO.findEventById(eventId));
             userEvent.setIsLiked(false);
@@ -171,9 +168,9 @@ public class UserService implements UserDetailsManager {
 
     @Transactional
     public void switchCalendar(Long userId, Long eventId) {
-        UserEvent userEvent = usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
+        UserActions userEvent = usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
         if (userEvent == null) {
-            userEvent = new UserEvent();
+            userEvent = new UserActions();
             userEvent.setUser(userDAO.findUserById(userId));
             userEvent.setEvent(eventDAO.findEventById(eventId));
             userEvent.setIsLiked(false);
@@ -184,9 +181,9 @@ public class UserService implements UserDetailsManager {
     }
 
     public UserEventDTO getUserEventByIds(Long userId, Long eventId) {
-        UserEvent userEvent = usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
+        UserActions userEvent = usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
         if (userEvent == null) {
-            userEvent = new UserEvent();
+            userEvent = new UserActions();
             userEvent.setUser(userDAO.findUserById(userId));
             userEvent.setEvent(eventDAO.findEventById(eventId));
             userEvent.setIsLiked(false);
@@ -199,52 +196,17 @@ public class UserService implements UserDetailsManager {
         return new UserEventDTO(userEvent.getUser().getId(), userEvent.getEvent().getId(), userEvent.getIsLiked(), userEvent.getIsDisliked(), userEvent.getInCalendar());
     }
 
-    public UserEvent findUserEventById(Long userId, Long eventId) {
+    public UserActions findUserEventById(Long userId, Long eventId) {
         return usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
     }
 
-    public Page<Attribute> findUserAttributesByUserId(Long userId, Pageable pageable) {
-        List<Attribute> attributeList = usersAttributeValueDAO
-                .findByUser(userDAO.findUserById(userId))
-                .stream()
-                .map(UserAttributeValue::getAttribute)
-                .toList();
-
-        final int start = (int) pageable.getOffset();
-        final int end = Math.min((int) pageable.getOffset() + pageable.getPageSize(), attributeList.size());
-        return new PageImpl<>(attributeList.subList(start, end), pageable, attributeList.size());
-    }
-
-    public List<Tag> findUserTagsByUserId(Long userId) {
-        List<UserAttributeValue> UAVs = usersAttributeValueDAO.findByUserAndAttribute(userDAO.findUserById(userId), attributeDAO.findAttributeById(1L));
-        List<Tag> tags = new ArrayList<>();
-        for (UserAttributeValue UAV : UAVs) {
-            tagDAO.findById(Long.parseLong(UAV.getValue())).ifPresent(tags::add);
-        }
-        return tags;
-    }
-
-    public List<UserAttributeValue> findUserAttributeValueByUserIdAndAttributeId(Long userId, Long attributeId) {
-        return usersAttributeValueDAO.findByUserAndAttribute(userDAO.findUserById(userId), attributeDAO.findAttributeById(attributeId));
-    }
-
-//    @Transactional
-//    public void saveUser(User user) {
-//        userDAO.save(user);
-//    }
-
     @Transactional
-    public void saveUserEvent(UserEvent event) {
+    public void saveUserEvent(UserActions event) {
         usersEventDAO.save(event);
     }
 
-//    @Transactional
-//    public void updateUser(User user) {
-//        userDAO.save(user);
-//    }
-
     @Transactional
-    public void updateUserEvent(UserEvent event) {
+    public void updateUserEvent(UserActions event) {
         usersEventDAO.save(event);
     }
 
@@ -259,22 +221,34 @@ public class UserService implements UserDetailsManager {
     }
 
     @Transactional
-    public void createUserAttributeValue(Long userId, Long attrId, String value) {
-        UserAttributeValue userAttributeValue = new UserAttributeValue();
+    public void createUserAttributeValue(Long userId, String attribute, String value) {
+        UserAttribute userAttributeValue = new UserAttribute();
         userAttributeValue.setUser(userDAO.findUserById(userId));
-        userAttributeValue.setAttribute(attributeDAO.findAttributeById(attrId));
+        userAttributeValue.setAttribute(attribute);
         userAttributeValue.setValue(value);
         usersAttributeValueDAO.save(userAttributeValue);
     }
 
-    @Transactional
-    public void deleteUserAttributeByAttrId(Long userId, Long attrId) {
-        usersAttributeValueDAO.deleteByUserAndAttributeId(userDAO.findUserById(userId), attrId);
-    }
+//    @Deprecated
+//    public List<UserAttribute> getAttributes(User user){
+//        return usersAttributeValueDAO.findByUser(user);
+//    }
+//
+//    public List<UserAttribute> getAttributes(User user, String attribute){
+//        return usersAttributeValueDAO.findByUserAndAttribute(user, attribute);
+//    }
 
     @Transactional
-    public void deleteUAVByUserAndAttributeAndValue(Long userId, Long attrId, String value) {
-        usersAttributeValueDAO.deleteByUserIdAndAttributeIdAndValue(userId, attrId, value);
+    public void AddAttribute(User user, String attribute, String value){
+        UserAttribute userAttribute = new UserAttribute();
+        userAttribute.setUser(user);
+        userAttribute.setValue(value);
+        userAttribute.setAttribute(attribute);
+        usersAttributeValueDAO.save(userAttribute);
+    }
+
+    public FullUserProfileDTO getFullUserInfo(User user){
+        return mapper.convertValue(user, FullUserProfileDTO.class);
     }
 
     public User getCurrentUser() {

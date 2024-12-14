@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEvent {
+public class UserActions {
     @Id
     @ManyToOne
     @JoinColumn(name = "user_id")

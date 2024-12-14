@@ -3,26 +3,27 @@ package com.javanostra.spring.core.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "user_authority")
+@Table(name = "user_interest")
 @Getter
 @Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserAuthority implements GrantedAuthority {
+public class UserInterest {
+    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
-    private String authority;
+    @Column(nullable = false, unique = true)
+    private String name;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "authorities", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "interests", fetch = FetchType.LAZY)
     private Set<User> users;
 }
-

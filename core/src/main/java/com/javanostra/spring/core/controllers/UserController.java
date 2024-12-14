@@ -40,9 +40,9 @@ public class UserController {
     }
 
     @GetMapping("/{user_id}/events")
-    public Page<UserEvent> findAllUserEvents(@PathVariable("user_id") Long userId,
-                                             @RequestParam(value = "offset", defaultValue = "0") Integer offset,
-                                             @RequestParam(value = "limit", defaultValue = "5") Integer limit) {
+    public Page<UserActions> findAllUserEvents(@PathVariable("user_id") Long userId,
+                                               @RequestParam(value = "offset", defaultValue = "0") Integer offset,
+                                               @RequestParam(value = "limit", defaultValue = "5") Integer limit) {
         return userService.findAllUserEvents(userId, PageRequest.of(offset, limit));
     }
 
@@ -80,19 +80,19 @@ public class UserController {
         userService.switchCalendar(userId, eventId);
     }
 
-    @GetMapping("/{user_id}/tags")
-    public List<Tag> findUserTags(@PathVariable("user_id") Long userId) {
-        return userService.findUserTagsByUserId(userId);
-    }
+//    @GetMapping("/{user_id}/tags")
+//    public List<Tag> findUserTags(@PathVariable("user_id") Long userId) {
+//        return userService.findUserTagsByUserId(userId);
+//    }
 
-    @GetMapping("/{user_id}/attributes")
-    public Page<Attribute> findEventAttributesByEventId(
-            @PathVariable("user_id") Long userId,
-            @RequestParam(value = "offset", defaultValue = "0") Integer offset,
-            @RequestParam(value = "limit", defaultValue = "5") Integer limit
-    ) {
-        return userService.findUserAttributesByUserId(userId, PageRequest.of(offset, limit));
-    }
+//    @GetMapping("/{user_id}/attributes")
+//    public Page<Attribute> findEventAttributesByEventId(
+//            @PathVariable("user_id") Long userId,
+//            @RequestParam(value = "offset", defaultValue = "0") Integer offset,
+//            @RequestParam(value = "limit", defaultValue = "5") Integer limit
+//    ) {
+//        return userService.findUserAttributesByUserId(userId, PageRequest.of(offset, limit));
+//    }
 
     @PostMapping
     public void saveUser(@RequestBody User user) {
@@ -100,25 +100,25 @@ public class UserController {
     }
 
     @PostMapping("/events")
-    public void saveUserEvent(@RequestBody UserEvent event) {
+    public void saveUserEvent(@RequestBody UserActions event) {
         userService.saveUserEvent(event);
     }
 
-    @PostMapping("/{user_id}/attributes/{attr_id}")
-    public void createEventAttributeByEventId(
-            @PathVariable("user_id") Long userId,
-            @PathVariable("attr_id") Long attrId,
-            @RequestBody String value) {
-        userService.createUserAttributeValue(userId, attrId, value);
-    }
+//    @PostMapping("/{user_id}/attributes/{attr_id}")
+//    public void createEventAttributeByEventId(
+//            @PathVariable("user_id") Long userId,
+//            @PathVariable("attr_id") Long attrId,
+//            @RequestBody String value) {
+//        userService.createUserAttributeValue(userId, attrId, value);
+//    }
 
-    @DeleteMapping("/{user_id}/attributes/{attr_id}/{value}")
-    public void deleteEventAttributeByEventId(
-            @PathVariable("user_id") Long userId,
-            @PathVariable("attr_id") Long attrId,
-            @PathVariable("value") String value) {
-        userService.deleteUAVByUserAndAttributeAndValue(userId, attrId, value);
-    }
+//    @DeleteMapping("/{user_id}/attributes/{attr_id}/{value}")
+//    public void deleteEventAttributeByEventId(
+//            @PathVariable("user_id") Long userId,
+//            @PathVariable("attr_id") Long attrId,
+//            @PathVariable("value") String value) {
+//        userService.deleteUAVByUserAndAttributeAndValue(userId, attrId, value);
+//    }
 
     @PutMapping
     public void updateUser(@RequestBody User user) {
@@ -126,7 +126,7 @@ public class UserController {
     }
 
     @PutMapping("/events")
-    public void updateUserEvent(@RequestBody UserEvent event) {
+    public void updateUserEvent(@RequestBody UserActions event) {
         userService.updateUserEvent(event);
     }
 
@@ -140,10 +140,10 @@ public class UserController {
         userService.deleteUserEventById(eventId);
     }
 
-    @DeleteMapping("/{user_id}/attributes/{attr_id}")
-    public void deleteEventAttributeByAttrId(
-            @PathVariable("user_id") Long userId,
-            @PathVariable("attr_id") Long attrId) {
-        userService.deleteUserAttributeByAttrId(userId, attrId);
-    }
+//    @DeleteMapping("/{user_id}/attributes/{attr_id}")
+//    public void deleteEventAttributeByAttrId(
+//            @PathVariable("user_id") Long userId,
+//            @PathVariable("attr_id") Long attrId) {
+//        userService.deleteUserAttributeByAttrId(userId, attrId);
+//    }
 }

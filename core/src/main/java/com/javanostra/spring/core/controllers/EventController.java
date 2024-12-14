@@ -1,6 +1,5 @@
 package com.javanostra.spring.core.controllers;
 
-import com.javanostra.spring.core.entities.Attribute;
 import com.javanostra.spring.core.entities.Event;
 import com.javanostra.spring.core.entities.Tag;
 import lombok.AllArgsConstructor;
@@ -38,34 +37,34 @@ public class EventController {
         return eventService.findEventById(eventId);
     }
 
-    @GetMapping("/{event_id}/tags")
-    public List<Tag> findEventTags(@PathVariable("event_id") Long eventId) {
-        return eventService.findEventTagsByEventId(eventId);
-    }
+//    @GetMapping("/{event_id}/tags")
+//    public List<Tag> findEventTags(@PathVariable("event_id") Long eventId) {
+//        return eventService.findEventTagsByEventId(eventId);
+//    }
 
-    @GetMapping("/{event_id}/attributes")
-    public Page<Attribute> findEventAttributesByEventId(
-            @PathVariable("event_id") Long eventId,
-            @RequestParam(value = "offset", defaultValue = "0") Integer offset,
-            @RequestParam(value = "limit", defaultValue = "30") Integer limit
-    ) {
-        return eventService.findEventAttributesByEventId(eventId, PageRequest.of(offset, limit));
-    }
+//    @GetMapping("/{event_id}/attributes")
+//    public Page<Attribute> findEventAttributesByEventId(
+//            @PathVariable("event_id") Long eventId,
+//            @RequestParam(value = "offset", defaultValue = "0") Integer offset,
+//            @RequestParam(value = "limit", defaultValue = "30") Integer limit
+//    ) {
+//        return eventService.findEventAttributesByEventId(eventId, PageRequest.of(offset, limit));
+//    }
 
-    @PostMapping("/{event_id}/attributes/{attr_id}")
-    public void createEventAttributeByEventId(
-            @PathVariable("event_id") Long eventId,
-            @PathVariable("attr_id") Long attrId,
-            @RequestBody String value) {
-        eventService.createEventAttributeValue(eventId, attrId, value);
-    }
-
-    @DeleteMapping("/{event_id}/attributes/{attr_id}")
-    public void deleteEventAttributeByAttrId(
-            @PathVariable("event_id") Long eventId,
-            @PathVariable("attr_id") Long attrId) {
-        eventService.deleteEventAttributeByAttrId(eventId, attrId);
-    }
+//    @PostMapping("/{event_id}/attributes/{attr_id}")
+//    public void createEventAttributeByEventId(
+//            @PathVariable("event_id") Long eventId,
+//            @PathVariable("attr_id") Long attrId,
+//            @RequestBody String value) {
+//        eventService.createEventAttributeValue(eventId, attrId, value);
+//    }
+//
+//    @DeleteMapping("/{event_id}/attributes/{attr_id}")
+//    public void deleteEventAttributeByAttrId(
+//            @PathVariable("event_id") Long eventId,
+//            @PathVariable("attr_id") Long attrId) {
+//        eventService.deleteEventAttributeByAttrId(eventId, attrId);
+//    }
 
     @PostMapping
     public void saveEvent(@RequestBody Event event) {

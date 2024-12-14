@@ -23,7 +23,6 @@ public class ChatMember {
     private User user;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private UserRole role;
+    private String role;
 }
 

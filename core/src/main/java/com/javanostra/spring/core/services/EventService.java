@@ -1,6 +1,5 @@
 package com.javanostra.spring.core.services;
 
-import com.javanostra.spring.core.dao.AttributeDAO;
 import com.javanostra.spring.core.dao.EventAttributeValueDAO;
 import com.javanostra.spring.core.dao.EventDAO;
 import com.javanostra.spring.core.dao.TagDAO;
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
 public class EventService {
     private final EventDAO eventDAO;
     private final EventAttributeValueDAO eventAttributeValueDAO;
-    private final AttributeDAO attributeDAO;
+    //private final AttributeDAO attributeDAO;
     private final TagDAO tagDAO;
 
     public Page<Event> findAllEvents(Pageable pageable) {
@@ -33,14 +32,14 @@ public class EventService {
         return eventDAO.findById(eventId).orElseThrow(NoSuchElementException::new);
     }
 
-    public List<Tag> findEventTagsByEventId(Long userId) {
-        List<EventAttributeValue> EAVs = eventAttributeValueDAO.findByEventAndAttribute(eventDAO.findEventById(userId), attributeDAO.findAttributeById(1L));
-        List<Tag> tags = new ArrayList<>();
-        for (EventAttributeValue EAV : EAVs) {
-            tagDAO.findById(Long.parseLong(EAV.getValue())).ifPresent(tags::add);
-        }
-        return tags;
-    }
+//    public List<Tag> findEventTagsByEventId(Long userId) {
+//        List<EventAttributeValue> EAVs = eventAttributeValueDAO.findByEventAndAttribute(eventDAO.findEventById(userId), attributeDAO.findAttributeById(1L));
+//        List<Tag> tags = new ArrayList<>();
+//        for (EventAttributeValue EAV : EAVs) {
+//            tagDAO.findById(Long.parseLong(EAV.getValue())).ifPresent(tags::add);
+//        }
+//        return tags;
+//    }
 
     @Transactional
     public void saveEvent(Event event) {
@@ -57,29 +56,29 @@ public class EventService {
         eventDAO.deleteById(eventId);
     }
 
-    public Page<Attribute> findEventAttributesByEventId(Long eventId, Pageable pageable) {
-        List<Attribute> attributeList = eventAttributeValueDAO
-                .findByEvent(eventDAO.findById(eventId).orElseThrow(NoSuchElementException::new))
-                .stream()
-                .map(EventAttributeValue::getAttribute)
-                .toList();
-
-        final int start = (int) pageable.getOffset();
-        final int end = Math.min((int) pageable.getOffset() + pageable.getPageSize(), attributeList.size());
-        return new PageImpl<>(attributeList.subList(start, end), pageable, attributeList.size());
-    }
-
-    @Transactional
-    public void deleteEventAttributeByAttrId(Long eventId, Long attrId) {
-        eventAttributeValueDAO.deleteByEventAndAttributeId(eventDAO.findById(eventId).orElseThrow(NoSuchElementException::new), attrId);
-    }
-
-    @Transactional
-    public void createEventAttributeValue(Long eventId, Long attrId, String value) {
-        EventAttributeValue eventAttributeValue = new EventAttributeValue();
-        eventAttributeValue.setEvent(eventDAO.findById(eventId).orElseThrow(NoSuchElementException::new));
-        eventAttributeValue.setAttribute(attributeDAO.findAttributeById(attrId));
-        eventAttributeValue.setValue(value);
-        eventAttributeValueDAO.save(eventAttributeValue);
-    }
+//    public Page<Attribute> findEventAttributesByEventId(Long eventId, Pageable pageable) {
+//        List<Attribute> attributeList = eventAttributeValueDAO
+//                .findByEvent(eventDAO.findById(eventId).orElseThrow(NoSuchElementException::new))
+//                .stream()
+//                .map(EventAttributeValue::getAttribute)
+//                .toList();
+//
+//        final int start = (int) pageable.getOffset();
+//        final int end = Math.min((int) pageable.getOffset() + pageable.getPageSize(), attributeList.size());
+//        return new PageImpl<>(attributeList.subList(start, end), pageable, attributeList.size());
+//    }
+//
+//    @Transactional
+//    public void deleteEventAttributeByAttrId(Long eventId, Long attrId) {
+//        eventAttributeValueDAO.deleteByEventAndAttributeId(eventDAO.findById(eventId).orElseThrow(NoSuchElementException::new), attrId);
+//    }
+//
+//    @Transactional
+//    public void createEventAttributeValue(Long eventId, Long attrId, String value) {
+//        EventAttributeValue eventAttributeValue = new EventAttributeValue();
+//        eventAttributeValue.setEvent(eventDAO.findById(eventId).orElseThrow(NoSuchElementException::new));
+//        eventAttributeValue.setAttribute(attributeDAO.findAttributeById(attrId));
+//        eventAttributeValue.setValue(value);
+//        eventAttributeValueDAO.save(eventAttributeValue);
+//    }
 }

@@ -1,19 +1,21 @@
 package com.javanostra.spring.core.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.javanostra.spring.core.dto.ResponseDTO;
-import com.javanostra.spring.core.dto.UserProfileDTO;
+import com.javanostra.spring.core.dto.FullUserProfileDTO;
 import com.javanostra.spring.core.entities.User;
+import com.javanostra.spring.core.entities.UserInterest;
 import com.javanostra.spring.core.exceptions.BaseCoreException;
 import com.javanostra.spring.core.exceptions.UserAlreadyExistsException;
 import com.javanostra.spring.core.security.ContextRepository;
 import com.javanostra.spring.core.services.CityService;
+import com.javanostra.spring.core.services.InterestService;
 import com.javanostra.spring.core.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,9 +25,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/account")
@@ -40,15 +42,56 @@ public class AccountController {
     private final ContextRepository contextRepository;
     @NonNull
     private final PasswordEncoder passwordEncoder;
+    @NonNull
+    private final InterestService interestService;
 
     ObjectMapper mapper = new ObjectMapper();
+    {
+        mapper.registerModule(new Hibernate6Module()); //TODO: move to a bean / class
+    }
 
     @GetMapping("/getInfo")
-    public ResponseEntity<UserProfileDTO> getAccountInfo() {
+    public ResponseEntity<FullUserProfileDTO> getAccountInfo() {
         User currentUser = userService.getCurrentUser();
 
         if(Objects.nonNull(currentUser))
-            return ResponseEntity.ok(mapper.convertValue(currentUser, UserProfileDTO.class));
+            return ResponseEntity.ok(mapper.convertValue(currentUser, FullUserProfileDTO.class));
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    }
+
+    @GetMapping("/interests")
+    public ResponseEntity<Set<UserInterest>> getMyInterests() {
+        User currentUser = userService.getCurrentUser();
+
+        if(Objects.nonNull(currentUser))
+            return ResponseEntity.ok(interestService.getUserInterests(currentUser));
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    }
+
+    @PostMapping("/interests")
+    public ResponseEntity<String> addInterest(@RequestParam("id") Integer id) throws BaseCoreException {
+        User currentUser = userService.getCurrentUser();
+
+        if(Objects.nonNull(currentUser)) {
+            UserInterest interest = interestService.getUserInterestById(id);
+            interestService.addUserInterest(currentUser, interest);
+            return ResponseEntity.ok("success");
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    }
+
+    @DeleteMapping("/interests")
+    public ResponseEntity<String> removeInterest(@RequestParam("id") Integer id) throws BaseCoreException {
+        User currentUser = userService.getCurrentUser();
+
+        if(Objects.nonNull(currentUser)) {
+            UserInterest interest = interestService.getUserInterestById(id);
+            interestService.removeUserInterest(currentUser, interest);
+            return ResponseEntity.ok("success");
+        }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
