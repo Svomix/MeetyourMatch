@@ -7,6 +7,7 @@ import com.javanostra.spring.core.exceptions.BaseCoreException;
 import com.javanostra.spring.core.exceptions.UserAlreadyExistsException;
 import com.javanostra.spring.core.security.ContextRepository;
 import com.javanostra.spring.core.security.SecurityConfig;
+import com.javanostra.spring.core.services.AuthenticationService;
 import com.javanostra.spring.core.services.AuthorizationService;
 import com.javanostra.spring.core.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,6 +34,7 @@ public class AuthController {
     private final UserService userService;
     private final AuthorizationService authorizationService;
     private final ContextRepository contextRepository;
+    private final AuthenticationService authenticationService;
 
     @PostMapping
     public ResponseEntity<ResponseDTO> register(@Valid @ModelAttribute NewUserDTO newUser, HttpServletRequest request, HttpServletResponse response) throws BaseCoreException {
@@ -52,13 +54,7 @@ public class AuthController {
 
         userService.createUser(newUserEnt);
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(newUserEnt, null, newUserEnt.getAuthorities());
-
-        token.setDetails(new WebAuthenticationDetails(request));
-
-        SecurityContext context = SecurityContextHolder.getContext();
-        context.setAuthentication(token);
-        contextRepository.saveContext(context, request, response);
+        authenticationService.UpdateToken(newUserEnt, request, response);
 
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "created account " + newUser.getUsername()));
     }

@@ -9,6 +9,7 @@ import com.javanostra.spring.core.entities.UserInterest;
 import com.javanostra.spring.core.exceptions.BaseCoreException;
 import com.javanostra.spring.core.exceptions.UserAlreadyExistsException;
 import com.javanostra.spring.core.security.ContextRepository;
+import com.javanostra.spring.core.services.AuthenticationService;
 import com.javanostra.spring.core.services.CityService;
 import com.javanostra.spring.core.services.InterestService;
 import com.javanostra.spring.core.services.UserService;
@@ -18,11 +19,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.NoSuchElementException;
@@ -44,6 +41,8 @@ public class AccountController {
     private final PasswordEncoder passwordEncoder;
     @NonNull
     private final InterestService interestService;
+    @NonNull
+    private final AuthenticationService authenticationService;
 
     ObjectMapper mapper = new ObjectMapper();
     {
@@ -119,17 +118,11 @@ public class AccountController {
             throw new UserAlreadyExistsException("Пользователь с такой почтой уже существует");
 
         User user = userService.getCurrentUser();
-        SecurityContext context = SecurityContextHolder.getContext();
 
         user.setEmail(email);
         userService.updateUser(user);
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-
-        token.setDetails(new WebAuthenticationDetails(request));
-
-        context.setAuthentication(token);
-        contextRepository.saveContext(context, request, response);
+        authenticationService.UpdateToken(user, request, response);
 
         return new ResponseDTO(HttpStatus.OK.value(), "changed username successfully");
     }
@@ -157,17 +150,11 @@ public class AccountController {
             throw new UserAlreadyExistsException("Пользователь с таким именем уже существует");
 
         User user = userService.getCurrentUser();
-        SecurityContext context = SecurityContextHolder.getContext();
 
         user.setUsername(username);
         userService.updateUser(user);
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-
-        token.setDetails(new WebAuthenticationDetails(request));
-
-        context.setAuthentication(token);
-        contextRepository.saveContext(context, request, response);
+        authenticationService.UpdateToken(user, request, response);
 
         return new ResponseDTO(HttpStatus.OK.value(), "changed username successfully");
     }
@@ -175,17 +162,10 @@ public class AccountController {
     @PostMapping("/setPassword")
     public ResponseDTO setPassword(@NonNull @RequestParam("password") String password, HttpServletRequest request, HttpServletResponse response){
         User user = userService.getCurrentUser();
-        SecurityContext context = SecurityContextHolder.getContext();
 
-        user.setPassword(passwordEncoder.encode(password));
-        userService.updateUser(user);
+        authenticationService.ChangePassword(user, passwordEncoder.encode(password));
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-
-        token.setDetails(new WebAuthenticationDetails(request));
-
-        context.setAuthentication(token);
-        contextRepository.saveContext(context, request, response);
+        authenticationService.UpdateToken(user, request, response);
 
         return new ResponseDTO(HttpStatus.OK.value(), "changed password successfully");
     }
