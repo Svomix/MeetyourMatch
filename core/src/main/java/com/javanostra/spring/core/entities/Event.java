@@ -23,8 +23,7 @@ public class Event {
     @Column(length = 1000)
     private String description;
 
-    @Column(precision = 10)
-    private Double price;
+    private String price;
 
     private Timestamp date;
 

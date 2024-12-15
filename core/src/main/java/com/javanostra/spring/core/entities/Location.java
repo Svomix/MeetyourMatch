@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 
 @Data
 @NoArgsConstructor
@@ -25,6 +27,7 @@ class LocationConverter implements AttributeConverter<Location, String> {
 
     @Override
     public Location convertToEntityAttribute(String s) {
+        if(Objects.isNull(s)) return null;
         String[] fields = s.split(";");
         return new Location(Double.parseDouble(fields[0].substring(9)), Double.parseDouble(fields[1].substring(10)));
     }

@@ -9,16 +9,16 @@ conn = psycopg2.connect(dbname="data", user="postgres", password="25812581", hos
 with conn:
     with conn.cursor() as cursor:
         
-        cursor.execute("TRUNCATE TABLE Attributes RESTART IDENTITY CASCADE")
+        #cursor.execute("TRUNCATE TABLE Attributes RESTART IDENTITY CASCADE")
         
-        cursor.execute("""INSERT INTO Attributes(name)
-VALUES ('tag');
-INSERT INTO Attributes(name)
-VALUES ('vk_id');
-INSERT INTO Attributes(name)
-VALUES ('access_token');
-INSERT INTO Attributes(name)
-VALUES ('last_sync_timestamp');""")
+#        cursor.execute("""INSERT INTO Attributes(name)
+#VALUES ('tag');
+#INSERT INTO Attributes(name)
+#VALUES ('vk_id');
+#INSERT INTO Attributes(name)
+#VALUES ('access_token');
+#INSERT INTO Attributes(name)
+#VALUES ('last_sync_timestamp');""")
         
         #Cities
         cursor.execute("TRUNCATE TABLE cities RESTART IDENTITY CASCADE")
@@ -48,11 +48,11 @@ VALUES ('last_sync_timestamp');""")
         cursor.execute("INSERT INTO user_authority (id, authority) VALUES (%s, %s);", (1, "ROLE_USER"))
         cursor.execute("INSERT INTO user_authority (id, authority) VALUES (%s, %s);", (2, "ROLE_ADMIN"))
         
-        cursor.execute("TRUNCATE TABLE authorities RESTART IDENTITY CASCADE")
+        cursor.execute("TRUNCATE TABLE user_authorities RESTART IDENTITY CASCADE")
         
-        cursor.execute("INSERT INTO authorities (user_id, authority_id) VALUES (%s, %s);", (1, 1))
-        cursor.execute("INSERT INTO authorities (user_id, authority_id) VALUES (%s, %s);", (2, 1))
-        cursor.execute("INSERT INTO authorities (user_id, authority_id) VALUES (%s, %s);", (2, 2))
+        cursor.execute("INSERT INTO user_authorities (user_id, authority_id) VALUES (%s, %s);", (1, 1))
+        cursor.execute("INSERT INTO user_authorities (user_id, authority_id) VALUES (%s, %s);", (2, 1))
+        cursor.execute("INSERT INTO user_authorities (user_id, authority_id) VALUES (%s, %s);", (2, 2))
         
     conn.commit()
 

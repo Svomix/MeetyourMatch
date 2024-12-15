@@ -1,7 +1,7 @@
 package com.javanostra.spring.core.controllers;
 
 import com.javanostra.spring.core.entities.Event;
-import com.javanostra.spring.core.entities.Tag;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,8 +18,8 @@ public class EventController {
 
     @GetMapping
     public Page<Event> findAllEvents(
-            @RequestParam(value = "offset", defaultValue = "0") Integer offset,
-            @RequestParam(value = "limit", defaultValue = "30") Integer limit
+            @RequestParam(value = "offset", defaultValue = "0") @Min(0) Integer offset,
+            @RequestParam(value = "limit", defaultValue = "30") @Min(1) Integer limit
     ) {
         return eventService.findAllEvents(PageRequest.of(offset, limit));
     }
