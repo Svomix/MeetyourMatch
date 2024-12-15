@@ -18,10 +18,10 @@ public class EventController {
 
     @GetMapping
     public Page<Event> findAllEvents(
-            @RequestParam(value = "offset", defaultValue = "0") @Min(0) Integer offset,
+            @RequestParam(value = "page", defaultValue = "1") @Min(1) Integer page,
             @RequestParam(value = "limit", defaultValue = "30") @Min(1) Integer limit
     ) {
-        return eventService.findAllEvents(PageRequest.of(offset, limit));
+        return eventService.findAllEvents(PageRequest.of(page-1, limit));
     }
 
     @GetMapping("/pageout")
