@@ -9,13 +9,38 @@ import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import styles from './page.module.css';
 import { authed, unauthed } from '@/services/axiosInstance';
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 export default () => {
   let [events, setEvents] = useState([]);
+  let [totalPages, setTotalPages] = useState(1);
+
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
+  const num = parseInt(searchParams.get('page'))
+	const page = isNaN(num) ? 1 : num
+
+  const setPage = (page) => {
+    // now you got a read/write object
+    const current = new URLSearchParams(Array.from(searchParams.entries())); // -> has to use this form
+
+    current.set("page", page)
+
+    // cast to string
+    const search = current.toString();
+    // or const query = `${'?'.repeat(search.length && 1)}${search}`;
+    const query = search ? `?${search}` : "";
+
+    router.push(`${pathname}${query}`);
+  };
+
   useEffect(() => {
     const instance = Cookies.get(tokenType.ACCESS_TOKEN) ? authed : unauthed;
-    instance.get("/v1/events?limit=16").then(response => {
+    instance.get(`/v1/events?limit=16&page=${page}`).then(response => {
       setEvents(response.data.content)
+      setTotalPages(response.data.totalPages)
     })
   }, []);
 
@@ -49,127 +74,12 @@ export default () => {
           ))}
         </div>
         <div className={styles.pages}>
-          <CardNavigation />
+          <CardNavigation current={page} total={totalPages}/>
         </div>
       </div>
     </>
   );
 };
-
-const mock_cards = [
-  {
-    title: 'Lorem, ipsum dolor. Lorem, ipsum dolor. Lorem, ipsum dolor. Lorem, ipsum dolor.',
-    date: '17:00 01.01.2020 17:00 01.01.2020 17:00 01.01.2020 ',
-    tags: '#Lorem #ipsum #dolor #Lorem #ipsum #dolor #Lorem #ipsum #dolor',
-    img: mock_img,
-    id: 1
-  },
-  {
-    title: 'Lorem, ipsum dolor.',
-    date: '17:00 01.01.2020',
-    tags: '#Lorem #ipsum #dolor',
-    img: mock_img,
-    id: 2
-  },
-  {
-    title: 'Lorem, ipsum dolor.',
-    date: '17:00 01.01.2020',
-    tags: '#Lorem #ipsum #dolor',
-    img: mock_img,
-    id: 3
-  },
-  {
-    title: 'Lorem, ipsum dolor.',
-    date: '17:00 01.01.2020',
-    tags: '#Lorem #ipsum #dolor',
-    img: mock_img,
-    id: 4
-  },
-  {
-    title: 'Lorem, ipsum dolor.',
-    date: '17:00 01.01.2020',
-    tags: '#Lorem #ipsum #dolor',
-    img: mock_img,
-    id: 5
-  },
-  {
-    title: 'Lorem, ipsum dolor.',
-    date: '17:00 01.01.2020',
-    tags: '#Lorem #ipsum #dolor',
-    img: mock_img,
-    id: 6
-  },
-  {
-    title: 'Lorem, ipsum dolor.',
-    date: '17:00 01.01.2020',
-    tags: '#Lorem #ipsum #dolor',
-    img: mock_img,
-    id: 7
-  },
-  {
-    title: 'Lorem, ipsum dolor.',
-    date: '17:00 01.01.2020',
-    tags: '#Lorem #ipsum #dolor',
-    img: mock_img,
-    id: 8
-  },
-  {
-    title: 'Lorem, ipsum dolor. Lorem, ipsum dolor. Lorem, ipsum dolor. Lorem, ipsum dolor.',
-    date: '17:00 01.01.2020 17:00 01.01.2020 17:00 01.01.2020 ',
-    tags: '#Lorem #ipsum #dolor #Lorem #ipsum #dolor #Lorem #ipsum #dolor',
-    img: mock_img,
-    id: 1
-  },
-  {
-    title: 'Lorem, ipsum dolor.',
-    date: '17:00 01.01.2020',
-    tags: '#Lorem #ipsum #dolor',
-    img: mock_img,
-    id: 2
-  },
-  {
-    title: 'Lorem, ipsum dolor.',
-    date: '17:00 01.01.2020',
-    tags: '#Lorem #ipsum #dolor',
-    img: mock_img,
-    id: 3
-  },
-  {
-    title: 'Lorem, ipsum dolor.',
-    date: '17:00 01.01.2020',
-    tags: '#Lorem #ipsum #dolor',
-    img: mock_img,
-    id: 4
-  },
-  {
-    title: 'Lorem, ipsum dolor.',
-    date: '17:00 01.01.2020',
-    tags: '#Lorem #ipsum #dolor',
-    img: mock_img,
-    id: 5
-  },
-  {
-    title: 'Lorem, ipsum dolor.',
-    date: '17:00 01.01.2020',
-    tags: '#Lorem #ipsum #dolor',
-    img: mock_img,
-    id: 6
-  },
-  {
-    title: 'Lorem, ipsum dolor.',
-    date: '17:00 01.01.2020',
-    tags: '#Lorem #ipsum #dolor',
-    img: mock_img,
-    id: 7
-  },
-  {
-    title: 'Lorem, ipsum dolor.',
-    date: '17:00 01.01.2020',
-    tags: '#Lorem #ipsum #dolor',
-    img: mock_img,
-    id: 8
-  }
-];
 
 const stub_cities = [
   { key: '0', text: 'Абаза' },

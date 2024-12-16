@@ -2,7 +2,7 @@
 import { LeftArrow, RightArrow } from '@components/Buttons/ArrowButtons';
 import styles from './index.module.css';
 
-export default () => {
+export default ({current, setCurrent, total}) => {
   return (
     <div className={styles.wrapper}>
       <LeftArrow width={56} height={56} />

@@ -16,6 +16,12 @@ const nextConfig = {
         hostname: 'image.shutterstock.com',
         port: '',
         pathname: '**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'avatars.mds.yandex.net',
+        port: '',
+        pathname: '**'
       }
     ]
   },
