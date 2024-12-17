@@ -24,6 +24,8 @@ public class EventService {
     //private final AttributeDAO attributeDAO;
     private final TagDAO tagDAO;
 
+    public List<Event> findAllEvents() {return eventDAO.findAll();}
+
     public Page<Event> findAllEvents(Pageable pageable) {
         return eventDAO.findAll(pageable);
     }

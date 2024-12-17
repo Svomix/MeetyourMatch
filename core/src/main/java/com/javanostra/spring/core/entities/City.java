@@ -18,7 +18,9 @@ public class City {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Convert(converter = LocationConverter.class)
-    private Location location;
+    @Column(nullable = false)
+    private Double latitude;
+    @Column(nullable = false)
+    private Double longitude;
 }
 

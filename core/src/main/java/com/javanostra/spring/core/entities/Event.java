@@ -27,7 +27,8 @@ public class Event {
 
     private Timestamp date;
 
-    @Convert(converter = LocationConverter.class)
+    @JoinColumn
+    @ManyToOne
     private Location location;
 
     @Column(name = "cover_img_url")

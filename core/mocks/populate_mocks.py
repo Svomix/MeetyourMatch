@@ -27,9 +27,10 @@ with conn:
             next(spamreader, None)
             for id, row in enumerate(spamreader):
                 city, lat, lon = row[9], float(row[20]), float(row[21])
-                cursor.execute("INSERT INTO cities (id, location, name) VALUES (%s, %s, %s);", (id, location(lat,lon), city))
+                cursor.execute("INSERT INTO cities (id, latitude, longitude, name) VALUES (%s, %s, %s, %s);", (id, lat, lon, city))
         
         cursor.execute("TRUNCATE TABLE tags RESTART IDENTITY CASCADE")
+        cursor.execute("TRUNCATE TABLE locations RESTART IDENTITY CASCADE")
         cursor.execute("TRUNCATE TABLE Events RESTART IDENTITY CASCADE")
         cursor.execute("TRUNCATE TABLE Events_attribute_value RESTART IDENTITY CASCADE")
         
