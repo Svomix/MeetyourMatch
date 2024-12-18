@@ -200,6 +200,10 @@ public class UserService implements UserDetailsManager {
         return usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
     }
 
+    public User findByEmail(String email) {
+        return userDAO.findByEmail(email);
+    }
+
     @Transactional
     public void saveUserEvent(UserActions event) {
         usersEventDAO.save(event);

@@ -56,5 +56,8 @@ public class User implements UserDetails {
             inverseJoinColumns = { @JoinColumn(name = "interest_id", referencedColumnName = "id") }
     )
     private Set<UserInterest> interests;
+
+    @Column(name = "is_enabled")
+    private Boolean isEnabled;
 }
 
