@@ -2,11 +2,13 @@ import Providers from '@/store/Provider';
 import Layout from '@components/Layout';
 import localFont from 'next/font/local';
 import './globals.css';
+import ChristmasLights from '@components/ChristmasLights';
 
 export default function RootLayout({ children }) {
   return (
     <html lang="ru">
       <body className={sansation.className}>
+        <ChristmasLights/>
         <Providers>
           <Layout>{children}</Layout>
         </Providers>
