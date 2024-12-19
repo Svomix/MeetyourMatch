@@ -1,5 +1,6 @@
 import Calendar from '@components/Buttons/CalendarButton';
 import Heart from '@components/Buttons/HeartButton';
+import mock_event_img from '@public/mock_event_img.jpg';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './index.module.css';
@@ -26,7 +27,13 @@ export default ({ path, event }) => {
               </div>
             </div>
             <div className={styles.right_side}>
-              <Image alt={"event image"} className={styles.img} src={event.coverImgUrl} width={2000} height={2000} />
+              <Image
+                alt={'event image'}
+                className={styles.img}
+                src={event.coverImgUrl || mock_event_img}
+                width={2000}
+                height={2000}
+              />
               <div className={styles.fade_out}></div>
             </div>
           </div>

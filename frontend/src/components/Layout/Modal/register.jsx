@@ -1,7 +1,7 @@
 'use client';
 import { unauthed } from '@/services/axiosInstance';
 import routes from '@routes';
-import { authStates, setAuth } from '@store/authSlice';
+import { setAuth } from '@store/authSlice';
 import { ModalPage, setModal } from '@store/modalSlice/index';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -45,7 +45,7 @@ export default function Register() {
     try {
       await unauthed.post('/register', new FormData(e.target));
       dispatch(setModal(ModalPage.None));
-      dispatch(setAuth(authStates.auth));
+      dispatch(setAuth(true));
       router.refresh();
     } catch (e) {
       if (e.response.data.exception === 'UserAlreadyExistsException') {

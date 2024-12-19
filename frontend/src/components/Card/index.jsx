@@ -1,9 +1,11 @@
 import Heart from '@components/Buttons/HeartButton';
+import mock_event_img from '@public/mock_event_img.jpg';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './index.module.css';
 
 export default ({ event, refLink, width, height }) => {
+  console.log(event);
   return (
     <Link
       href={`/events/${event.id}`}
@@ -14,7 +16,7 @@ export default ({ event, refLink, width, height }) => {
       <div className={styles.img_container}>
         <Image
           className={styles.image}
-          src={event.coverImgUrl}
+          src={event.coverImgUrl || mock_event_img}
           width={1024}
           height={1024}
           alt="img"
@@ -24,7 +26,7 @@ export default ({ event, refLink, width, height }) => {
 
       <div className={styles.description}>
         <h3 className={styles.event_title}>{event.title}</h3>
-        <p className={styles.event_date}>{new Date(event.date).toLocaleString('ru-RU')}</p>
+        <p className={styles.event_date}>{new Date(event.date || 0).toLocaleString('ru-RU')}</p>
         <p className={styles.event_tags}>#отдых #искусство</p>
         <Heart width={40} height={40} className={styles.heart} />
       </div>

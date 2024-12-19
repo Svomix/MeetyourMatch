@@ -1,11 +1,63 @@
 .wrapper {
   width: fit-content;
   display: flex;
-  gap: 3vw;
+  justify-content: center;
+  align-items: center;
+  gap: 1vw;
 }
 
-.page {
+.pages {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5vw;
+}
+
+.btn1,
+.btn2,
+.btn3,
+.btn4,
+.btn5 {
   display: flex;
-  color: var(--white);
+  justify-content: center;
   align-items: center;
+  width: 50px;
+  height: 50px;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--white);
+  border: 2px solid var(--black);
+  border-radius: 12px;
+  transition: ease-in-out 200ms;
+}
+
+.btn1:hover,
+.btn2:hover,
+.btn3:hover,
+.btn4:hover,
+.btn5:hover {
+  transform: scale(1.04);
+  border-color: var(--gold);
+}
+
+.btn1 {
+  grid-column-start: 1;
+}
+
+.btn2 {
+  grid-column-start: 2;
+}
+
+.btn3 {
+  grid-column-start: 3;
+  color: var(--gold);
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.btn4 {
+  grid-column-start: 4;
+}
+
+.btn5 {
+  grid-column-start: 5;
 }

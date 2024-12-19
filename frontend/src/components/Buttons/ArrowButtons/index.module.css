@@ -4,7 +4,7 @@
   padding: 4px;
   background-color: var(--grey);
   border-radius: 100%;
-  border: 3px solid var(--grey);
+  border: 2px solid var(--black);
   transition: 200ms ease-in-out;
 }
 
