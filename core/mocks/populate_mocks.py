@@ -41,9 +41,9 @@ with conn:
         #$2a$10$PaiePy.c9ynQumHOH/QFeOP/9j1WbWyIBZ7ggCoG9V.gaYHRrbkvO
         cursor.execute("TRUNCATE TABLE users RESTART IDENTITY CASCADE")
         
-        cursor.execute("INSERT INTO users (id, email, username, password) VALUES (%s, %s, %s, %s);", (1, "test@example.org", "user", "$2a$10$PaiePy.c9ynQumHOH/QFeOP/9j1WbWyIBZ7ggCoG9V.gaYHRrbkvO"))
-        cursor.execute("INSERT INTO users (id, email, username, password) VALUES (%s, %s, %s, %s);", (2, "admin@example.org", "admin", "$2a$10$PaiePy.c9ynQumHOH/QFeOP/9j1WbWyIBZ7ggCoG9V.gaYHRrbkvO"))
-        
+        cursor.execute("INSERT INTO users (id, email, username, password, is_enabled) VALUES (%s, %s, %s, %s, TRUE);", (1, "test@example.org", "user", "$2a$10$PaiePy.c9ynQumHOH/QFeOP/9j1WbWyIBZ7ggCoG9V.gaYHRrbkvO"))
+        cursor.execute("INSERT INTO users (id, email, username, password, is_enabled) VALUES (%s, %s, %s, %s, TRUE);", (2, "admin@example.org", "admin", "$2a$10$PaiePy.c9ynQumHOH/QFeOP/9j1WbWyIBZ7ggCoG9V.gaYHRrbkvO"))
+
         cursor.execute("TRUNCATE TABLE user_authority RESTART IDENTITY CASCADE")
         
         cursor.execute("INSERT INTO user_authority (id, authority) VALUES (%s, %s);", (1, "ROLE_USER"))
