@@ -4,3 +4,20 @@
   border: var(--border-width) solid var(--gold);
   border-radius: var(--border-radius);
 }
+
+.icon {
+  display: block;
+  text-align: center;
+  opacity: .9;
+  line-height: 26px;
+  background-color: var(--grey);
+  border-radius: 100%;
+  border: 3px solid var(--gold);
+  color: var(--white)
+}
+
+.icon_active {
+  opacity: 1;
+  font-weight: bold;
+  border: 3px dashed var(--gold);
+}

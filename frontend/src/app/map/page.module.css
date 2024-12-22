@@ -4,7 +4,7 @@
   flex-direction: column;
   width: 95%;
   height: 80vh;
-  gap: 4vh;
+  gap: 3vh;
   justify-self: center;
   margin: auto;
   padding-top: 40px;
@@ -19,4 +19,28 @@
 .dbar {
   --border-width: 4px;
   --border-radius: 8px;
+}
+
+.map_container {
+  flex: 1;
+  gap: 12px;
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+}
+
+.map_cards_container {
+  position: relative;
+}
+
+.map_cards {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  color: var(--white);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }

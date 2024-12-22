@@ -1,9 +1,23 @@
+'use client'
 import Map from '@components/Map';
 import SDropdown from '@components/SDropdown';
 import Search from '@components/Search';
 import styles from './page.module.css';
+import { useEffect, useState } from 'react';
+import { unauthed } from '@/services/axiosInstance';
 
 export default function MapPage() {
+
+  const [data, setData] = useState([])
+
+  const [selected, setSelected] = useState(null)
+
+  useEffect(() => {
+    unauthed.get(`/maps/locations`).then(response => {
+      setData(response.data)
+    })
+  }, [])
+
   return (
     <>
       <div className={styles.wrap}>
@@ -26,7 +40,16 @@ export default function MapPage() {
             ]}
           />
         </section>
-        <Map />
+        <section className={styles.map_container}>
+          <div className={styles.map_cards_container}>
+            <div className={styles.map_cards}>
+                  {selected && selected.events.map((el) => (
+                    <div key={el.id}>{el.title}</div>
+                  ))}
+            </div>
+          </div>
+          <Map data={data} selected={selected} onSelect={setSelected}/>
+        </section>
       </div>
     </>
   );
