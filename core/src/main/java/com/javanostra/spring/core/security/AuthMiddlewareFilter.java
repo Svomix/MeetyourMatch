@@ -26,7 +26,6 @@ public class AuthMiddlewareFilter extends OncePerRequestFilter {
         if(Objects.nonNull(context)){
             SecurityContextHolder.setContext(context);
         }
-
         filterChain.doFilter(request, response);
     }
 }

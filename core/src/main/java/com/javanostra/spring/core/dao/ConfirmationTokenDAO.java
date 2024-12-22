@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ConfirmationTokenDAO extends JpaRepository<ConfirmationToken, Long> {
     ConfirmationToken findByUserId(Long userId);
+
+    void deleteAllByUserId(Long userId);
 }

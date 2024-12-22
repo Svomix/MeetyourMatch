@@ -39,13 +39,15 @@ public class SecurityConfig {
     ObjectMapper mapper = new ObjectMapper();
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, ContextRepository contextRepository, AuthMiddlewareFilter middlewareFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, ContextRepository contextRepository,
+                                                   AuthMiddlewareFilter middlewareFilter, UnconfirmedAndExpiredAccountFilter accountFilter) throws Exception {
         http
                 .csrf((csrf) -> csrf.disable()) //TODO: add csrf
                 .cors((cors) -> cors.disable()) //TODO: add cors
                 .securityContext((context) -> context.securityContextRepository(contextRepository))
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(middlewareFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(accountFilter, AuthMiddlewareFilter.class)
                 .authorizeHttpRequests((requests) ->
                         requests
                                 .requestMatchers("/api/account**").authenticated()

@@ -11,6 +11,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,6 +28,7 @@ import com.javanostra.spring.core.dao.UsersEventDAO;
 import com.javanostra.spring.core.entities.UserAttribute;
 import com.javanostra.spring.core.entities.UserActions;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,6 +46,8 @@ public class UserService implements UserDetailsManager {
     private final UsersAttributeValueDAO usersAttributeValueDAO;
     @NonNull
     private final TagDAO tagDAO;
+    @NonNull
+    private final ConfirmationTokenDAO tokenDAO;
 
     AuthenticationManager authenticationManager;
 
@@ -70,6 +75,14 @@ public class UserService implements UserDetailsManager {
     public void deleteUser(String username) {
         User user_ent = userDAO.findByUsername(username);
         userDAO.delete(user_ent);
+    }
+
+    @Transactional
+    public void delete(User user) {
+        usersEventDAO.deleteAllByUserId(user.getId());
+        usersAttributeValueDAO.deleteAllByUserId(user.getId());
+        tokenDAO.deleteAllByUserId(user.getId());
+        userDAO.delete(user);
     }
 
     @Transactional
@@ -266,5 +279,16 @@ public class UserService implements UserDetailsManager {
             }
         }
         return null;
+    }
+
+    @Transactional
+    @Scheduled(cron = "0 0 2 * * ?")
+    @Async
+    public void deleteUnconfirmedAccounts() {
+        LocalDateTime filterTime = LocalDateTime.now().minusHours(2);
+        List<User> unconfirmedUsers = userDAO.findAllByIsEnabledFalseAndCreatedAtBefore(filterTime);
+        for (User user : unconfirmedUsers) {
+            delete(user);
+        }
     }
 }

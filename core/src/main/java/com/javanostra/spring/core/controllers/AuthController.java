@@ -63,6 +63,7 @@ public class AuthController {
         newUserEnt.setEmail(newUser.getEmail());
         newUserEnt.setIsEnabled(false);
         newUserEnt.setAuthorities(Set.of(authorizationService.getDefaultGroup()));
+        newUserEnt.setCreatedAt(LocalDateTime.now());
         userService.createUser(newUserEnt);
 
         ConfirmationToken token = ConfirmationToken.createConfirmationTokenForUser(newUserEnt);
@@ -74,7 +75,7 @@ public class AuthController {
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<String> verifyRegister(@Valid @ModelAttribute ConfirmationTokenDTO token) throws BaseCoreException {
+    public ResponseEntity<ResponseDTO> verifyRegister(@Valid @ModelAttribute ConfirmationTokenDTO token) throws BaseCoreException {
         User user = userService.findByEmail(token.getEmail());
         if (user != null) {
             if (user.getIsEnabled()) {
@@ -90,7 +91,7 @@ public class AuthController {
                 user.setIsEnabled(true);
                 userService.updateUser(user);
                 confirmationTokenService.deleteConfirmationToken(validToken);
-                return ResponseEntity.ok("Электронная почта подтверждена!");
+                return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "Электронная почта подтверждена!"));
             }
             else {
                 throw new EmailVerificationCodeException("Введен неправильный код");
@@ -102,7 +103,7 @@ public class AuthController {
     }
 
     @PutMapping("/update-code")
-    public ResponseEntity<String> updateVerificationCode(@Valid @ModelAttribute UpdateConfirmationTokenDTO tokenDTO) throws BaseCoreException {
+    public ResponseEntity<ResponseDTO> updateVerificationCode(@Valid @ModelAttribute UpdateConfirmationTokenDTO tokenDTO) throws BaseCoreException {
         User user = userService.findByEmail(tokenDTO.getEmail());
 
         if (user != null) {
@@ -113,7 +114,7 @@ public class AuthController {
             token.setId(confirmationTokenService.getConfirmationToken(user.getId()).getId());
             confirmationTokenService.updateConfirmationToken(token);
             mailService.sendVerificationCodeEmail(user.getEmail(), "Подтвердите вашу электронную почту", token.getToken(), user.getUsername());
-            return ResponseEntity.ok("Код был выслан на вашу электронную почту");
+            return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "Код был выслан на вашу электронную почту"));
         }
         else {
             throw new UserDoesNotExistException("Пользователя с данной электронной почтой не существует");

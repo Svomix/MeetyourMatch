@@ -21,4 +21,6 @@ public interface UsersEventDAO extends JpaRepository<UserActions, Long>, PagingA
     List<UserActions> findUserEventByUserIdAndInCalendarIsTrue(Long userId);
 
     void deleteUserEventByEventId(Long eventId);
+
+    void deleteAllByUserId(Long userId);
 }

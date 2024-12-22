@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -59,5 +60,8 @@ public class User implements UserDetails {
 
     @Column(name = "is_enabled")
     private Boolean isEnabled;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 }
 

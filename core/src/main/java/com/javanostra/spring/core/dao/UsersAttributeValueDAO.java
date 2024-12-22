@@ -8,5 +8,5 @@ import java.util.List;
 
 
 public interface UsersAttributeValueDAO extends JpaRepository<UserAttribute, Long>, PagingAndSortingRepository<UserAttribute, Long> {
-
+    void deleteAllByUserId(Long userId);
 }
