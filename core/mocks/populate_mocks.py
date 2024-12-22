@@ -9,17 +9,6 @@ conn = psycopg2.connect(dbname="data", user="postgres", password="25812581", hos
 with conn:
     with conn.cursor() as cursor:
         
-        #cursor.execute("TRUNCATE TABLE Attributes RESTART IDENTITY CASCADE")
-        
-#        cursor.execute("""INSERT INTO Attributes(name)
-#VALUES ('tag');
-#INSERT INTO Attributes(name)
-#VALUES ('vk_id');
-#INSERT INTO Attributes(name)
-#VALUES ('access_token');
-#INSERT INTO Attributes(name)
-#VALUES ('last_sync_timestamp');""")
-        
         #Cities
         cursor.execute("TRUNCATE TABLE cities RESTART IDENTITY CASCADE")
         with open('city.csv', newline='', encoding="utf-8") as csvfile:
@@ -31,13 +20,15 @@ with conn:
         
         cursor.execute("TRUNCATE TABLE tags RESTART IDENTITY CASCADE")
         cursor.execute("TRUNCATE TABLE locations RESTART IDENTITY CASCADE")
+        cursor.execute("TRUNCATE TABLE User_interest RESTART IDENTITY CASCADE")
         cursor.execute("TRUNCATE TABLE Events RESTART IDENTITY CASCADE")
         cursor.execute("TRUNCATE TABLE Events_attribute_value RESTART IDENTITY CASCADE")
         
         for file in glob.glob("*.sql"):
                 with open(file, "r", encoding="utf-8") as f:
                    cursor.execute(f.read())
-                   
+        
+        #1257
         #$2a$10$PaiePy.c9ynQumHOH/QFeOP/9j1WbWyIBZ7ggCoG9V.gaYHRrbkvO
         cursor.execute("TRUNCATE TABLE users RESTART IDENTITY CASCADE")
         
