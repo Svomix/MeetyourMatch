@@ -5,10 +5,16 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -33,10 +39,11 @@ public class MailService {
 
 
     private String buildVerificationCodeEmail(String token, String username) {
-        Path path = Paths.get("src/main/resources/static/verificationCodeEmail.html");
+        //Path path = Paths.get("src/main/resources/static/verificationCodeEmail.html");
         Document doc = null;
         try {
-            doc = Jsoup.parse(path);
+            File file = new ClassPathResource("static/verificationCodeEmail.html").getFile();
+            doc = Jsoup.parse(file);
             doc.getElementById("greetingUser").appendText("Здравствуйте, %s".formatted(username));
             doc.getElementById("code").appendText(token);
         } catch (IOException e) {
