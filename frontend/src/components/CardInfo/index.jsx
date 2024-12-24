@@ -15,7 +15,7 @@ export default ({ path, event }) => {
               <h1 className={styles.title}>{event.title}</h1>
               <h2 className={styles.meta}>Дата: {new Date(event.date).toLocaleString('ru-RU')}</h2>
               <h3 className={styles.meta}>Место: {event.place}</h3>
-              <h4 className={styles.meta}>Цена: {event.price}₽</h4>
+              <h4 className={styles.meta}>Цена: {event.price}</h4>
               <div className={styles.actions}>
                 <div className={styles.icons}>
                   <Heart width={50} height={50} />

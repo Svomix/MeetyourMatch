@@ -30,6 +30,7 @@
 }
 
 .interest_item_wrap::before {
+  background: var(--black);
   z-index: 0;
 }
 
@@ -40,13 +41,12 @@
   width: inherit;
   min-height: inherit;
   padding: 1rem;
-
   align-content: flex-start;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  row-gap: 1vh;
-  column-gap: 0.5vw;
+  row-gap: 1.5vh;
+  column-gap: 0.75vw;
 }
 
 .interest_item_wrap {
@@ -61,6 +61,23 @@
   z-index: 1;
   font-size: 1.75rem;
   padding: 0.25rem 1rem;
-  background: var(--bgc-strong);
+  background: var(--grey);
   border-radius: var(--border-radius);
+  display: flex;
+  gap: 0.2vw;
+}
+
+.interest_remove {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.interest_remove path {
+  transition: 200ms ease-in-out;
+  fill: var(--black);
+}
+
+.interest_remove:hover path {
+  fill: var(--red);
 }
