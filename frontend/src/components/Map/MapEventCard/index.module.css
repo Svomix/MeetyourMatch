@@ -1,0 +1,26 @@
+
+.card {
+    border: 2px solid var(--black);
+    
+    margin: 2px 0;
+    border-radius: calc(var(--border-radius) / 2);
+    background: var(--bgc-strong);
+}
+
+.container {
+    position: relative;
+    padding: 4px 2px;
+}
+
+.title {
+    color: var(--white);
+    font-size: 1rem;
+    padding: 1px;
+}
+
+.date {
+    color: color-mix(in hsl, var(--white), var(--black) 50%);
+    font-size: 0.8rem;
+    font-weight: 400;
+    padding: 1px;
+}

@@ -30,9 +30,13 @@
 
 .map_cards_container {
   position: relative;
+  border: 2px solid var(--black);
+  border-radius: calc(var(--border-radius) / 2);
+  background: var(--grey);
 }
 
 .map_cards {
+  margin: 4px;
   position: absolute;
   top: 0;
   left: 0;
@@ -43,4 +47,14 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+}
+
+.place_container {
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-align: center;
+  padding: 8px 4px;
+  background: var(--black);
+  border: 2px solid var(--grey);
+  border-radius: calc(var(--border-radius) / 3);
 }

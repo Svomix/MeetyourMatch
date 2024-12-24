@@ -5,6 +5,7 @@ import Search from '@components/Search';
 import styles from './page.module.css';
 import { useEffect, useState } from 'react';
 import { unauthed } from '@/services/axiosInstance';
+import MapEventCard from '@components/Map/MapEventCard';
 
 export default function MapPage() {
 
@@ -43,8 +44,10 @@ export default function MapPage() {
         <section className={styles.map_container}>
           <div className={styles.map_cards_container}>
             <div className={styles.map_cards}>
+                  {selected && <div className={styles.place_container}>{selected.title}</div>}
+                  
                   {selected && selected.events.map((el) => (
-                    <div key={el.id}>{el.title}</div>
+                    <MapEventCard key={el.id} data={el}/>
                   ))}
             </div>
           </div>
