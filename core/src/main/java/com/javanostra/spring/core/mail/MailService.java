@@ -39,7 +39,6 @@ public class MailService {
 
 
     private String buildVerificationCodeEmail(String token, String username) {
-        //Path path = Paths.get("src/main/resources/static/verificationCodeEmail.html");
         Document doc = null;
         try {
             File file = new ClassPathResource("static/verificationCodeEmail.html").getFile();

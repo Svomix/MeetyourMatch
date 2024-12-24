@@ -16,4 +16,5 @@ import java.util.Set;
 public class FullUserProfileDTO extends UserProfileDTO {
     private Set<UserAuthority> authorities;
     private String email;
+    private Boolean isEnabled;
 }

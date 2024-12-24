@@ -28,6 +28,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.SecureRandom;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Set;
@@ -63,19 +65,19 @@ public class AuthController {
         newUserEnt.setEmail(newUser.getEmail());
         newUserEnt.setIsEnabled(false);
         newUserEnt.setAuthorities(Set.of(authorizationService.getDefaultGroup()));
-        newUserEnt.setCreatedAt(LocalDateTime.now());
+        newUserEnt.setCreatedAt(Timestamp.from(Instant.now()));
         userService.createUser(newUserEnt);
 
         ConfirmationToken token = ConfirmationToken.createConfirmationTokenForUser(newUserEnt);
         confirmationTokenService.saveConfirmationToken(token);
         mailService.sendVerificationCodeEmail(newUserEnt.getEmail(),"Подтвердите вашу электронную почту", token.getToken(), newUserEnt.getUsername());
-        authenticationService.UpdateToken(newUserEnt, request, response);
+        //authenticationService.UpdateToken(newUserEnt, request, response);
 
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "created account " + newUser.getUsername()));
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<ResponseDTO> verifyRegister(@Valid @ModelAttribute ConfirmationTokenDTO token) throws BaseCoreException {
+    public ResponseEntity<ResponseDTO> verifyRegister(@Valid @ModelAttribute ConfirmationTokenDTO token, HttpServletRequest request, HttpServletResponse response) throws BaseCoreException {
         User user = userService.findByEmail(token.getEmail());
         if (user != null) {
             if (user.getIsEnabled()) {
@@ -91,6 +93,7 @@ public class AuthController {
                 user.setIsEnabled(true);
                 userService.updateUser(user);
                 confirmationTokenService.deleteConfirmationToken(validToken);
+                authenticationService.UpdateToken(user, request, response);
                 return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "Электронная почта подтверждена!"));
             }
             else {

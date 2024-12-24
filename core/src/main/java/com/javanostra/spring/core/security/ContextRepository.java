@@ -75,13 +75,13 @@ public class ContextRepository implements SecurityContextRepository {
         if (Objects.nonNull(auth) && auth.isAuthenticated()) {
             response.addCookie(getCookie(ACCESS_TOKEN, jwtService.generateToken((User) auth.getPrincipal())));
         } else {
-            response.addCookie(getCookie(ACCESS_TOKEN, ""));
+            response.addCookie(getCookie(ACCESS_TOKEN, null));
         }
     }
 
     @Override
     public boolean containsContext(HttpServletRequest request) {
         String token = extractTokenFromHeader(request);
-        return Objects.nonNull(token);
+        return Objects.nonNull(token) && !token.isEmpty();
     }
 }

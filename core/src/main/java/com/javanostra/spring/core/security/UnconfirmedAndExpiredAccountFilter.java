@@ -8,54 +8,47 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.web.context.HttpRequestResponseHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
-@Component
+@Service
 @AllArgsConstructor
 public class UnconfirmedAndExpiredAccountFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserService userService;
+    ContextRepository contextRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        Optional<Cookie> cookieToken = getAccessTokenCookie(request);
-        if (cookieToken.isPresent()) {
-            Cookie cookie = cookieToken.get();
-            String username = jwtService.extractToken(cookie.getValue());
+        SecurityContext context = contextRepository.loadContext(new HttpRequestResponseHolder(request, null)); //TODO: FIX
+
+        if(Objects.nonNull(context)) {
+            String username = ((User) context.getAuthentication().getPrincipal()).getUsername();
 
             User user = (User) userService.loadUserByUsername(username);
-            if (!user.getIsEnabled() && user.getCreatedAt().isBefore(LocalDateTime.now().minusHours(2))) {
+            if (!user.getIsEnabled() && user.getCreatedAt().before(Timestamp.from(Instant.now().minus(2, ChronoUnit.HOURS)))) {
                 userService.delete(user);
-                deleteAccessTokenCookie(cookie, response);
+                SecurityContextHolder.setContext(null);
+                contextRepository.saveContext(new SecurityContextImpl(null), request, response);
+                return;
             }
         }
+
         filterChain.doFilter(request, response);
-    }
-
-    private Optional<Cookie> getAccessTokenCookie(HttpServletRequest request) {
-        Optional<Cookie[]> optionalCookies = Optional.ofNullable(request.getCookies());
-
-        if (optionalCookies.isPresent()) {
-            Cookie[] cookies = optionalCookies.get();
-            return Arrays.stream(cookies)
-                    .filter(cookie -> cookie.getName().equals("accessToken"))
-                    .findFirst();
-        }
-        else {
-            return Optional.empty();
-        }
-    }
-
-    private void deleteAccessTokenCookie(Cookie cookie, HttpServletResponse response) {
-        cookie.setValue(null);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
     }
 }
