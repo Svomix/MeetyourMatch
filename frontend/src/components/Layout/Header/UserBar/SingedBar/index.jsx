@@ -11,6 +11,7 @@ import ActiveLink from '../../ActiveLink';
 import styles from './index.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfileInfo } from '@store/profileSlice';
+import { ModalPage, setModal } from '@store/modalSlice';
 
 export default () => {
   const path = usePathname();
@@ -18,6 +19,10 @@ export default () => {
   let [name, setName] = useState('username');
 
   const info = useSelector(state => state.profileInfo)
+
+  if(info && info.isEnabled === false){
+    dispatch(setModal(ModalPage.Verify));
+  }
 
   useEffect(() => {
     dispatch(fetchProfileInfo())

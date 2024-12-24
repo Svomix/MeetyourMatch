@@ -9,3 +9,22 @@
 .image {
   height: 50vh;
 }
+
+.code {
+  margin: 1rem;
+}
+
+.button_submit {
+  display: flex;
+  padding: 8px 20px;
+  margin: 0 auto;
+  margin-top: 1rem;
+  margin-bottom: 4rem;
+  color: var(--grey);
+  font-size: 32px;
+  border: 2px solid var(--gold);
+  border-radius: var(--border-radius);
+  background: var(--gold);
+
+  transition: background-color 100ms;
+}

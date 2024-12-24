@@ -44,7 +44,8 @@ export default function Register() {
     setFetching(true);
     try {
       await unauthed.post('/register', new FormData(e.target));
-      dispatch(setModal(ModalPage.None));
+      localStorage.setItem("temp_email", e.target[1].value)
+      dispatch(setModal(ModalPage.Verify));
       dispatch(setAuth(true));
       router.refresh();
     } catch (e) {
