@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MapObjectDTO {
-    private Long id;
+    private String id;
     private String title;
     private String address;
     private Double latitude;
