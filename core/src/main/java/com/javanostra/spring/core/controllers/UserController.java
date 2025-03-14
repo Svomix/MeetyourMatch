@@ -1,16 +1,21 @@
 package com.javanostra.spring.core.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.javanostra.spring.core.dto.UserEventDTO;
+import com.javanostra.spring.core.dto.UserProfileDTO;
 import com.javanostra.spring.core.entities.*;
 import com.javanostra.spring.core.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -18,6 +23,11 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    ObjectMapper mapper = new ObjectMapper();
+    {
+        mapper.registerModule(new Hibernate6Module()); //TODO: move to a bean / class
+    }
 
     @GetMapping("/authorities")
     public List<UserAuthority> getMyAuthorities() {
@@ -35,8 +45,10 @@ public class UserController {
     }
 
     @GetMapping("/{user_id}")
-    public User findUserById(@PathVariable("user_id") Long userId) {
-        return userService.findUserById(userId);
+    public ResponseEntity<UserProfileDTO> findUserById(@PathVariable("user_id") Long userId) {
+        User user = userService.findUserById(userId);
+        if(Objects.isNull(user)){ return ResponseEntity.notFound().build(); }
+        return ResponseEntity.ok(mapper.convertValue(user, UserProfileDTO.class));
     }
 
     @GetMapping("/{user_id}/events")
