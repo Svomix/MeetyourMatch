@@ -20,7 +20,10 @@ import com.javanostra.meetyourmatch.persistance.RetrofitClient;
 import com.javanostra.meetyourmatch.persistance.api_service.AccountApiService;
 import com.javanostra.meetyourmatch.persistance.api_service.LoginApiService;
 import com.javanostra.meetyourmatch.persistance.api_service.RegistrationApiService;
+import com.javanostra.meetyourmatch.persistance.entity.ResponseDTO;
 import com.javanostra.meetyourmatch.persistance.entity.UserRegistrationData;
+
+import java.io.IOException;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -55,15 +58,6 @@ public class RegistrationActivity2 extends AppCompatActivity {
             startResendTimer();
         });
 
-        findViewById(R.id.buttonCompleteReg).setOnClickListener(v -> {
-            performRegister(userData);
-            performLogin(userData.getUsername(), userData.getPassword());
-            performCityUpdate(userData.getCityId());
-
-            //Intent intent = new Intent(RegistrationActivity2.this, InterestSelectionActivity.class);
-            //startActivity(intent);
-        });
-
         findViewById(R.id.buttonClose2).setOnClickListener(v -> {
             finish();
         });
@@ -72,13 +66,50 @@ public class RegistrationActivity2 extends AppCompatActivity {
         etDigit2 = findViewById(R.id.etDigit2);
         etDigit3 = findViewById(R.id.etDigit3);
         etDigit4 = findViewById(R.id.etDigit4);
-        finishRegistration = findViewById(R.id.buttonCompleteReg);
         setupOtpInputs();
 
         etDigit1.addTextChangedListener(inputWatcher);
         etDigit2.addTextChangedListener(inputWatcher);
         etDigit3.addTextChangedListener(inputWatcher);
         etDigit4.addTextChangedListener(inputWatcher);
+
+        finishRegistration = findViewById(R.id.buttonCompleteReg);
+        finishRegistration.setEnabled(false);
+        finishRegistration.setOnClickListener(v -> {
+            testCode(getCode(), userData.getEmail());
+        });
+    }
+
+    private String getCode() {
+        String code = "";
+        code += etDigit1.getText();
+        code += etDigit2.getText();
+        code += etDigit3.getText();
+        code += etDigit4.getText();
+        return code;
+    }
+
+    private void testCode(String code, String email) {
+        RegistrationApiService apiService = RetrofitClient.getRetrofit(this).create(RegistrationApiService.class);
+        Call<ResponseDTO> call = apiService.verifyRegister(code, email);
+
+        call.enqueue(new Callback<ResponseDTO>() {
+            @Override
+            public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+                if (response.isSuccessful() && response.code() == 200) {
+                    Toast.makeText(RegistrationActivity2.this, "Код подтвержден", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(RegistrationActivity2.this, InterestSelectionActivity.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(RegistrationActivity2.this, "Неправильный код: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDTO> call, Throwable t) {
+                Toast.makeText(RegistrationActivity2.this, "Ошибка сети COD: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void setupOtpInputs() {
@@ -197,70 +228,5 @@ public class RegistrationActivity2 extends AppCompatActivity {
         } else {
             finishRegistration.setEnabled(false);
         }
-    }
-
-    private void performRegister(UserRegistrationData userData) {
-        RegistrationApiService apiService = RetrofitClient.getRetrofit(this).create(RegistrationApiService.class);
-
-        Call<String> call = apiService.register(userData.getUsername(), userData.getPassword(), userData.getEmail());
-
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(RegistrationActivity2.this, "Пользователь зарегистрирован", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(RegistrationActivity2.this, "Ошибка регистрации: " + response.message(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Toast.makeText(RegistrationActivity2.this, "Ошибка сети REG: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void performLogin(String username, String password) {
-        LoginApiService apiService = RetrofitClient.getRetrofit(this).create(LoginApiService.class);
-
-        Call<ResponseBody> call = apiService.login(username, password);
-
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful() && response.code() == 200) {
-                } else {
-                    Toast.makeText(RegistrationActivity2.this, "Ошибка входа: " + response.message(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(RegistrationActivity2.this, "Ошибка сети LOG: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    private void performCityUpdate(int cityID) {
-        AccountApiService userApiService = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
-
-        Call<String> call = userApiService.setCity((long) cityID);
-
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(RegistrationActivity2.this, "response.body()", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(RegistrationActivity2.this, "Ошибка обновления: " + response.message(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Toast.makeText(RegistrationActivity2.this, "Ошибка сети CIT: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }

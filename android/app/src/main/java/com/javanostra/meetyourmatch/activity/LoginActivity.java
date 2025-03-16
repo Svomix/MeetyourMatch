@@ -18,6 +18,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.javanostra.meetyourmatch.R;
 import com.javanostra.meetyourmatch.persistance.RetrofitClient;
 import com.javanostra.meetyourmatch.persistance.api_service.LoginApiService;
+import com.javanostra.meetyourmatch.persistance.entity.ResponseDTO;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -28,6 +29,21 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText inputUserName, inputPassword;
     private Button loginButton;
+
+    private final TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            validateInputFields();
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,24 +59,11 @@ public class LoginActivity extends AppCompatActivity {
 
         inputUserName = findViewById(R.id.inputUserName);
         inputPassword = findViewById(R.id.inputPassword);
+        Button loginButtonVK = findViewById(R.id.buttonLoginVK);
         loginButton = findViewById(R.id.buttonLogin);
+        Button registerButton = findViewById(R.id.buttonToRegistration);
 
         loginButton.setEnabled(false);
-
-        TextWatcher textWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                validateInputFields();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        };
 
         inputUserName.addTextChangedListener(textWatcher);
         inputPassword.addTextChangedListener(textWatcher);
@@ -71,18 +74,13 @@ public class LoginActivity extends AppCompatActivity {
             performLogin(username, password);
         });
 
-        Button loginButtonVK = findViewById(R.id.buttonLoginVK);
+
         loginButtonVK.setOnClickListener(view -> {
-//            String username = inputUserName.getText().toString().trim();
-//            String password = inputPassword.getText().toString().trim();
-//            performLogin(username, password);
-//
-//            Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class);
-//            startActivity(intent);
-//            finish();
+            Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class);
+            startActivity(intent);
+            finish();
         });
 
-        Button registerButton = findViewById(R.id.buttonToRegistration);
         registerButton.setOnClickListener(view -> {
             Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
             startActivity(intent);
@@ -98,11 +96,11 @@ public class LoginActivity extends AppCompatActivity {
     private void performLogin(String username, String password) {
         LoginApiService apiService = RetrofitClient.getRetrofit(this).create(LoginApiService.class);
 
-        Call<ResponseBody> call = apiService.login(username, password);
+        Call<ResponseDTO> call = apiService.login(username, password);
 
-        call.enqueue(new Callback<ResponseBody>() {
+        call.enqueue(new Callback<ResponseDTO>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
                 if (response.isSuccessful() && response.code() == 200) {
 
                     Toast.makeText(LoginActivity.this, "Успешный вход", Toast.LENGTH_SHORT).show();
@@ -117,7 +115,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<ResponseDTO> call, Throwable t) {
 
                 Toast.makeText(LoginActivity.this, "Ошибка соединения: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }

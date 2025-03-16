@@ -28,8 +28,12 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.javanostra.meetyourmatch.R;
 import com.javanostra.meetyourmatch.persistance.RetrofitClient;
+import com.javanostra.meetyourmatch.persistance.api_service.AccountApiService;
 import com.javanostra.meetyourmatch.persistance.api_service.CityApiService;
+import com.javanostra.meetyourmatch.persistance.api_service.LoginApiService;
+import com.javanostra.meetyourmatch.persistance.api_service.RegistrationApiService;
 import com.javanostra.meetyourmatch.persistance.entity.City;
+import com.javanostra.meetyourmatch.persistance.entity.ResponseDTO;
 import com.javanostra.meetyourmatch.persistance.entity.UserRegistrationData;
 
 import java.util.ArrayList;
@@ -37,6 +41,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -50,8 +55,8 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private int cityID;
 
-    private List<City> cityList;
-    private List<String> cityNamesList;
+    private List<City> cityList = new ArrayList<>();
+    private List<String> cityNamesList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,10 +155,78 @@ public class RegistrationActivity extends AppCompatActivity {
                     inputPassword.getText().toString(),
                     cityID
             );
-            Intent intent = new Intent(RegistrationActivity.this, RegistrationActivity2.class);
-            intent.putExtra("user_registration_data", userData);
-            startActivity(intent);
+
+            performRegister(userData);
         });
+    }
+
+    private void performRegister(UserRegistrationData userData) {
+        RegistrationApiService apiService = RetrofitClient.getRetrofit(this).create(RegistrationApiService.class);
+
+        Call<ResponseDTO> call = apiService.register(userData.getUsername(), userData.getPassword(), userData.getEmail());
+
+        call.enqueue(new Callback<ResponseDTO>() {
+            @Override
+            public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(RegistrationActivity.this, "Пользователь зарегистрирован", Toast.LENGTH_SHORT).show();
+                    performLogin(userData);
+                } else {
+                    Toast.makeText(RegistrationActivity.this, "Ошибка регистрации: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDTO> call, Throwable t) {
+                Toast.makeText(RegistrationActivity.this, "Ошибка сети REG: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void performLogin(UserRegistrationData userData) {
+        LoginApiService apiService = RetrofitClient.getRetrofit(this).create(LoginApiService.class);
+
+        Call<ResponseDTO> call = apiService.login(userData.getUsername(), userData.getPassword());
+        call.enqueue(new Callback<ResponseDTO>() {
+            @Override
+            public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+                if (response.isSuccessful() && response.code() == 200) {
+                    Intent intent = new Intent(RegistrationActivity.this, RegistrationActivity2.class);
+                    intent.putExtra("user_registration_data", userData);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(RegistrationActivity.this, "Ошибка входа: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDTO> call, Throwable t) {
+                Toast.makeText(RegistrationActivity.this, "Ошибка сети LOG: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void performCityUpdate(UserRegistrationData userData) {
+        AccountApiService userApiService = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
+
+        Call<String> call = userApiService.setCity((long) userData.getCityId());
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(RegistrationActivity.this, "response.body()", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(RegistrationActivity.this, "Ошибка обновления: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(RegistrationActivity.this, "Ошибка сети CIT: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     private void loadCities() {
@@ -164,7 +237,6 @@ public class RegistrationActivity extends AppCompatActivity {
             public void onResponse(Call<List<City>> call, Response<List<City>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     cityList = response.body();
-                    cityNamesList = new ArrayList<>();
                     for (City city : cityList) {
                         cityNamesList.add(city.getName());
                     }

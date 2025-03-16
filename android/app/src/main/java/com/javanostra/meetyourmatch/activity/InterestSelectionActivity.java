@@ -38,7 +38,7 @@ public class InterestSelectionActivity extends AppCompatActivity {
 
     private Button buttonContinue;
 
-    private List<Tag> tags;
+    private List<Tag> tags = new ArrayList<>();
     private Long currentUserId;
 
     @Override
@@ -46,7 +46,8 @@ public class InterestSelectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_interest_selec);
 
-        performGetAll();
+        //performGetAll(); retrofit
+        getFakeTags();
 
         elementList = new ArrayList<>();
         for (int i = 0; i < tags.size(); i++) {
@@ -78,7 +79,7 @@ public class InterestSelectionActivity extends AppCompatActivity {
 
         buttonContinue = findViewById(R.id.buttonCompleteReg2);
         buttonContinue.setOnClickListener(v -> {
-            performSaveUserTags();
+            //performSaveUserTags(); retrofit
 
             Intent intent = new Intent(InterestSelectionActivity.this, MainScreenActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -149,5 +150,14 @@ public class InterestSelectionActivity extends AppCompatActivity {
                 });
             }
         }
+    }
+
+    private void getFakeTags() {
+        tags.add(new Tag(0L, "Test1"));
+        tags.add(new Tag(0L, "Test2"));
+        tags.add(new Tag(0L, "Test3"));
+        tags.add(new Tag(0L, "Test4"));
+        tags.add(new Tag(0L, "Test5"));
+        tags.add(new Tag(0L, "Test6"));
     }
 }
