@@ -17,59 +17,85 @@ import com.javanostra.meetyourmatch.fragment.EventSearchFragment;
 import com.javanostra.meetyourmatch.fragment.MapFragment;
 import com.javanostra.meetyourmatch.fragment.RecomendationsFragment;
 
-public class MainScreenActivity extends AppCompatActivity implements RecomendationsFragment.OnRecommendationsInteractionListener {
+import java.util.ArrayList;
 
-    ChatFragment chatFragment;
-    CalendarFragment calendarFragment;
-    MapFragment mapFragment;
-    RecomendationsFragment recomendationsFragment;
-    EventSearchFragment searchFragment;
+public class MainScreenActivity extends AppCompatActivity implements RecomendationsFragment.OnRecommendationsInteractionListener, FragmentManager.OnBackStackChangedListener {
 
+    private static final int[] BUTTON_IDS = {
+            R.id.chatButton,
+            R.id.rangeButton,
+            R.id.recsButton,
+            R.id.searchButton,
+            R.id.locationPinButton
+    };
+
+    private static final int[] BUTTON_IMAGES = {
+            R.drawable.chat,
+            R.drawable.range,
+            R.drawable.recs,
+            R.drawable.search,
+            R.drawable.location_pin
+    };
+
+    private static final int[] BUTTON_IMAGES_CHOSEN = {
+            R.drawable.chosen_chat,
+            R.drawable.chosen_range,
+            R.drawable.chosen_recs,
+            R.drawable.chosen_search,
+            R.drawable.chosen_location_pin
+    };
+
+    private ChatFragment chatFragment;
+    private CalendarFragment calendarFragment;
+    private MapFragment mapFragment;
+    private RecomendationsFragment recomendationsFragment;
+    private EventSearchFragment searchFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
+
         chatFragment = new ChatFragment();
         calendarFragment = new CalendarFragment();
         mapFragment = new MapFragment();
         recomendationsFragment = new RecomendationsFragment();
         searchFragment = new EventSearchFragment();
+
         loadFragment(chatFragment);
+        getSupportFragmentManager().addOnBackStackChangedListener(this);
     }
 
     public void chooseFragment(View view) {
-        ImageButton imageButton = (ImageButton) view;
-        if (view.getId() == R.id.chatButton) {
-            loadFragment(chatFragment);
-            imageButton.setImageResource(R.drawable.chosen_chat);
-        }
-        else if (view.getId() == R.id.rangeButton) {
-            loadFragment(calendarFragment);
-            imageButton.setImageResource(R.drawable.chosen_range);
-        }
-        else if (view.getId() == R.id.recsButton) {
-            loadFragment(recomendationsFragment);
-            imageButton.setImageResource(R.drawable.chosen_recs);
-        }
-        else if (view.getId() == R.id.searchButton) {
-            loadFragment(searchFragment);
-            imageButton.setImageResource(R.drawable.chosen_search);
-        }
-        else {
-            loadFragment(mapFragment);
-            imageButton.setImageResource(R.drawable.chosen_location_pin);
-        }
+        int selectedButtonId = view.getId();
+        resetButtonImages();
 
-        if (view.getId() != R.id.chatButton)
-            ((ImageButton) findViewById(R.id.chatButton)).setImageResource(R.drawable.chat);
-        if (view.getId() != R.id.rangeButton)
-            ((ImageButton) findViewById(R.id.rangeButton)).setImageResource(R.drawable.range);
-        if (view.getId() != R.id.recsButton)
-            ((ImageButton) findViewById(R.id.recsButton)).setImageResource(R.drawable.recs);
-        if (view.getId() != R.id.searchButton)
-            ((ImageButton) findViewById(R.id.searchButton)).setImageResource(R.drawable.search);
-        if (view.getId() != R.id.locationPinButton)
-            ((ImageButton) findViewById(R.id.locationPinButton)).setImageResource(R.drawable.location_pin);
+        for (int i = 0; i < BUTTON_IDS.length; i++) {
+            if (selectedButtonId == BUTTON_IDS[i]) {
+                ((ImageButton) view).setImageResource(BUTTON_IMAGES_CHOSEN[i]);
+                loadFragment(getFragmentById(selectedButtonId));
+                break;
+            }
+        }
+    }
+
+    private Fragment getFragmentById(int buttonId) {
+        if (buttonId == R.id.rangeButton) {
+            return calendarFragment;
+        } else if (buttonId == R.id.recsButton) {
+            return recomendationsFragment;
+        } else if (buttonId == R.id.searchButton) {
+            return searchFragment;
+        } else if (buttonId == R.id.locationPinButton) {
+            return mapFragment;
+        } else {
+            return chatFragment;
+        }
+    }
+
+    private void resetButtonImages() {
+        for (int i = 0; i < BUTTON_IDS.length; i++) {
+            ((ImageButton) findViewById(BUTTON_IDS[i])).setImageResource(BUTTON_IMAGES[i]);
+        }
     }
 
     public void openAccount(View view) {
@@ -81,18 +107,53 @@ public class MainScreenActivity extends AppCompatActivity implements Recomendati
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-    }
-
-    @Override
     public void onSwitchToSearch() {
         loadFragment(searchFragment);
     }
 
-    public void loadFragment(Fragment fragment) {
+    @Override
+    public void onBackPressed() {
+        int backStackEntryCount = getSupportFragmentManager().getBackStackEntryCount();
+
+        if (backStackEntryCount <= 1) {
+            finish();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+
+        if (currentFragment == null) {
+            finish();
+            return;
+        }
+
+        resetButtonImages();
+
+        if (currentFragment instanceof ChatFragment) {
+            ((ImageButton) findViewById(R.id.chatButton)).setImageResource(R.drawable.chosen_chat);
+        } else if (currentFragment instanceof CalendarFragment) {
+            ((ImageButton) findViewById(R.id.rangeButton)).setImageResource(R.drawable.chosen_range);
+        } else if (currentFragment instanceof RecomendationsFragment) {
+            ((ImageButton) findViewById(R.id.recsButton)).setImageResource(R.drawable.chosen_recs);
+        } else if (currentFragment instanceof EventSearchFragment) {
+            ((ImageButton) findViewById(R.id.searchButton)).setImageResource(R.drawable.chosen_search);
+        } else if (currentFragment instanceof MapFragment) {
+            ((ImageButton) findViewById(R.id.locationPinButton)).setImageResource(R.drawable.chosen_location_pin);
+        }
+    }
+
+    private void loadFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
+
+        if (currentFragment != null && currentFragment.getClass().equals(fragment.getClass())) {
+            return;
+        }
+
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.addToBackStack(null);

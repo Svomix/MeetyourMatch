@@ -21,8 +21,6 @@ public class AccountActivity extends AppCompatActivity {
 
     public void goBack(View view) {
         finish();
-        //Intent intent = new Intent(this, MainScreenActivity.class);
-        //startActivity(intent);
     }
 
     public void exitAccount(View view) {

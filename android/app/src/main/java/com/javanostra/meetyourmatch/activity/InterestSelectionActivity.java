@@ -46,8 +46,7 @@ public class InterestSelectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_interest_selec);
 
-        //performGetAll(); retrofit
-        getFakeTags();
+        performGetAll();
 
         elementList = new ArrayList<>();
         for (int i = 0; i < tags.size(); i++) {
