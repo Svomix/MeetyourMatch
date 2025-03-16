@@ -4,6 +4,8 @@ import mock_event_img from '@public/mock_event_img.jpg';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './index.module.css';
+import CommentBox from '@components/CommentBox';
+import { comment } from 'postcss';
 
 export default ({ path, event }) => {
   return (
@@ -38,15 +40,33 @@ export default ({ path, event }) => {
             </div>
           </div>
           <div className={styles.extra_info}>
-            <p className={styles.description}>
-              Описание:
-              <br />
-              {event.description}
-            </p>
+            <h4 className={styles.desc_name}>Описание:</h4>
+            <p className={styles.description}>{event.description}</p>
             <p className={styles.tags}>#отдых #искусство</p>
+          </div>
+          <div className={styles.comments}>
+            <CommentBox comments={comments} />
           </div>
         </article>
       )}
     </>
   );
 };
+
+let comments = [
+  {
+    comment_id: 1,
+    author: 'Goy Goyev',
+    text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod vero provident corrupti ab voluptates blanditiis nesciunt. Sint minus quasi reiciendis!'
+  },
+  {
+    comment_id: 2,
+    author: 'Goy Goyev',
+    text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod vero provident corrupti ab voluptates blanditiis nesciunt. Sint minus quasi reiciendis!'
+  },
+  {
+    comment_id: 3,
+    author: 'Goy Goyev',
+    text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod vero provident corrupti ab voluptates blanditiis nesciunt. Sint minus quasi reiciendis!'
+  }
+];

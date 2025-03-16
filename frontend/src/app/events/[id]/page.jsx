@@ -12,11 +12,8 @@ export default function EventsPage({ params }) {
 
   useEffect(() => {
     const instance = Cookies.get(tokenType.ACCESS_TOKEN) ? authed : unauthed;
-    instance.get(`/v1/events/${slug}`).then(response => setEvent(response.data))
+    instance.get(`/v1/events/${slug}`).then((response) => setEvent(response.data));
   }, []);
-
-  console.log(event);
-  
 
   return event && <CardInfo path={slug} event={event} />;
 }

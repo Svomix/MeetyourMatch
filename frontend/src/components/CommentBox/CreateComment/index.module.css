@@ -1,0 +1,65 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+}
+
+.input {
+  overscroll-behavior: contain;
+  min-height: 10vh;
+  padding: 20px;
+  font-size: 18px;
+  color: var(--white);
+  background-color: var(--grey);
+  border: 2px solid var(--black);
+  border-radius: var(--border-radius);
+}
+
+.input:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--gold), transparent 50%);
+  box-shadow: 0 6px 15px rgba(255, 174, 47, 0.3);
+}
+
+.input {
+  scrollbar-width: none;
+}
+
+.input::-webkit-scrollbar {
+  display: none;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.rating {
+  width: 10vw;
+  background-color: var(--black);
+}
+
+.submit_btn {
+  padding: 5px 15px;
+  border-radius: calc(var(--border-radius) * 1.5);
+  background-color: var(--black);
+  border: 2px solid var(--black);
+  color: var(--white);
+  font-size: 20px;
+  font-weight: 600;
+  transition: 200ms ease-in-out;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.submit_btn:hover {
+  border: 2px solid var(--gold);
+  background-color: var(--gold);
+  color: var(--black);
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(255, 174, 47, 0.5);
+}
+
+.submit_btn:active {
+  color: var(--white);
+  background-color: var(--black);
+}

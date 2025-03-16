@@ -1,0 +1,27 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  padding: 20px;
+  border: 2px solid var(--black);
+  border-radius: var(--border-radius);
+}
+
+.author {
+  width: fit-content;
+  color: var(--white);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.author:hover {
+  text-shadow: 0 2px 15px color-mix(in srgb, var(--white), transparent 30%);
+}
+
+.text {
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  line-height: 1.3;
+}

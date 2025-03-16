@@ -1,32 +1,54 @@
 .icon {
   cursor: pointer;
   pointer-events: all;
+  transition:
+    transform 100ms ease-out,
+    filter 100ms ease-in-out;
+  will-change: transform;
+}
+
+.icon {
+  stroke: var(--black);
 }
 
 .icon path {
-  fill: transparent;
-  stroke: var(--black);
-  stroke-width: 2px;
-  transition: 200ms ease-in-out;
+  transition:
+    stroke 100ms ease-in-out,
+    filter 100ms ease-in-out;
 }
 
+/* Стандартный hover */
 .icon:hover {
   transform: scale(1.1);
+  filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.4));
 }
 
-.active path {
+.icon:active {
+  transform: scale(0.95);
+}
+
+/* Active состояние */
+.active {
   stroke: var(--gold);
 }
 
+/* Active состояние с анимацией */
 .active {
-  animation: 200ms fillAnimation;
+  animation: fillAnimation 300ms ease-in-out forwards;
+}
+
+.icon {
+  animation: fillAnimation 300ms ease-in-out backwards;
 }
 
 @keyframes fillAnimation {
   0% {
     transform: scale(0.9);
   }
+  50% {
+    transform: scale(1.15);
+  }
   100% {
-    transform: scale(1.2);
+    transform: scale(1);
   }
 }

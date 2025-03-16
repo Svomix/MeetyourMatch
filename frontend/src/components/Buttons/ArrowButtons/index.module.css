@@ -1,20 +1,33 @@
 .arrow_btn {
-  line-height: 0;
-  cursor: pointer;
-  padding: 4px;
-  background-color: var(--grey);
-  border-radius: 100%;
   border: 2px solid var(--black);
-  transition: 200ms ease-in-out;
+  border-radius: 100%;
+  stroke: var(--black);
+  cursor: pointer;
+  pointer-events: all;
+  transition:
+    transform 100ms ease-out,
+    filter 100ms ease-in-out;
+  will-change: transform;
+}
+
+.arrow_btn path {
+  transition:
+    stroke 100ms ease-in-out,
+    filter 100ms ease-in-out;
 }
 
 .arrow_btn:hover {
-  transform: scale(1.05);
-  border: 2px solid var(--gold);
+  transform: scale(1.1);
+  border-color: var(--gold);
+  stroke: var(--gold);
 }
 
 .arrow_btn_dis {
-  pointer-events: none;
   opacity: 0.3;
-  cursor: auto;
+  pointer-events: none;
+}
+
+.arrow_btn_dis:hover {
+  transform: none;
+  stroke: none;
 }
