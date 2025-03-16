@@ -55,7 +55,7 @@ public class RegistrationActivity2 extends AppCompatActivity {
         startResendTimer();
 
         buttonSendCode.setOnClickListener(v -> {
-            Toast.makeText(RegistrationActivity2.this, "Код отправлен заново", Toast.LENGTH_SHORT).show();
+            updateCode(userData.getEmail());
             startResendTimer();
         });
 
@@ -109,6 +109,27 @@ public class RegistrationActivity2 extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Call<ResponseDTO> call, @NonNull Throwable t) {
                 Toast.makeText(RegistrationActivity2.this, "Ошибка сети COD: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updateCode(String email) {
+        RegistrationApiService apiService = RetrofitClient.getRetrofit(this).create(RegistrationApiService.class);
+        Call<ResponseDTO> call = apiService.updateCode(email);
+
+        call.enqueue(new Callback<ResponseDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseDTO> call, @NonNull Response<ResponseDTO> response) {
+                if (response.isSuccessful() && response.code() == 200) {
+                    Toast.makeText(RegistrationActivity2.this, "Код отправлен заново", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(RegistrationActivity2.this, "Неправильный email: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseDTO> call, @NonNull Throwable t) {
+                Toast.makeText(RegistrationActivity2.this, "Ошибка сети UPD: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

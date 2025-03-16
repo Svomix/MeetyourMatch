@@ -7,6 +7,7 @@ import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 
 public interface RegistrationApiService {
     @FormUrlEncoded
@@ -23,6 +24,13 @@ public interface RegistrationApiService {
             @Field("token")
             String code,
 
+            @Field("email")
+            String email
+    );
+
+    @FormUrlEncoded
+    @PUT("/api/register/update-code")
+    Call<ResponseDTO> updateCode(
             @Field("email")
             String email
     );
