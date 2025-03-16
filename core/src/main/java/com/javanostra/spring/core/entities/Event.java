@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Events")
@@ -26,6 +29,14 @@ public class Event {
     private String price;
 
     private Timestamp date;
+
+    @OneToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "event_comments",
+            joinColumns = { @JoinColumn(name = "event_id", referencedColumnName = "id") },
+            inverseJoinColumns = { @JoinColumn(name = "comment_id", referencedColumnName = "id") }
+    )
+    private List<EventComment> comments;
 
     @JoinColumn
     @ManyToOne

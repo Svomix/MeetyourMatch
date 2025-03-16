@@ -1,23 +1,46 @@
 package com.javanostra.spring.core.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
+import com.javanostra.spring.core.dto.CommentDTO;
+import com.javanostra.spring.core.dto.CommentRequestDTO;
+import com.javanostra.spring.core.dto.EventDTO;
+import com.javanostra.spring.core.dto.FullEventDTO;
 import com.javanostra.spring.core.entities.Event;
+import com.javanostra.spring.core.entities.EventComment;
+import com.javanostra.spring.core.entities.User;
+import com.javanostra.spring.core.exceptions.BaseCoreException;
+import com.javanostra.spring.core.services.UserService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.web.bind.annotation.*;
 import com.javanostra.spring.core.services.EventService;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
+import static org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO;
+
+@EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)
 @RestController
 @RequestMapping("/api/v1/events")
 @AllArgsConstructor
 public class EventController {
     private final EventService eventService;
+    private final UserService userService;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    {
+        objectMapper.registerModule(new Hibernate6Module()); //TODO: move to a bean / class
+    }
 
     @GetMapping
-    public Page<Event> findAllEvents(
+    public Page<EventDTO> findAllEvents(
             @RequestParam(value = "page", defaultValue = "1") @Min(1) Integer page,
             @RequestParam(value = "limit", defaultValue = "30") @Min(1) Integer limit
     ) {
@@ -25,7 +48,7 @@ public class EventController {
     }
 
     @GetMapping("/pageout")
-    public List<Event> findAllEventsPageout(
+    public List<EventDTO> findAllEventsPageout(
             @RequestParam(value = "offset", defaultValue = "0") Integer offset,
             @RequestParam(value = "limit", defaultValue = "5") Integer limit
     ) {
@@ -33,8 +56,26 @@ public class EventController {
     }
 
     @GetMapping("/{event_id}")
-    public Event findEventById(@PathVariable("event_id") Long eventId) {
-        return eventService.findEventById(eventId);
+    public FullEventDTO findEventById(@PathVariable("event_id") Long eventId) {
+        return eventService.findEventDtoById(eventId);
+    }
+
+    @PostMapping("/{event_id}/comments")
+    public CommentDTO addComment(@PathVariable("event_id") Long eventId, @Valid @RequestBody CommentRequestDTO commentDTO) throws BaseCoreException {
+        User currentUser = userService.getCurrentUser();
+        EventComment comment = new EventComment();
+        comment.setContent(commentDTO.getContent());
+        comment.setDate(Timestamp.from(Instant.now()));
+        comment.setUser(currentUser);
+        return objectMapper.convertValue(eventService.addComment(eventId, comment), CommentDTO.class);
+    }
+
+    @DeleteMapping("/{event_id}/comments")
+    public EventComment removeComment(@PathVariable("event_id") Long eventId, @RequestParam("id") Integer id) throws BaseCoreException {
+        User currentUser = userService.getCurrentUser();
+        EventComment comment = eventService.getComment(id);
+        eventService.removeComment(eventId, comment);
+        return comment;
     }
 
 //    @GetMapping("/{event_id}/tags")
