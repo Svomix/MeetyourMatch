@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
@@ -37,11 +38,8 @@ import com.javanostra.meetyourmatch.persistance.entity.ResponseDTO;
 import com.javanostra.meetyourmatch.persistance.entity.UserRegistrationData;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -110,12 +108,12 @@ public class RegistrationActivity extends AppCompatActivity {
 
         TextView termsTextView = findViewById(R.id.textView3);
 
-        String text = "Я прочитал и согласен с Условиями пользования и Политикой приватности";
-        SpannableString spannableString = new SpannableString(text);
+
+        SpannableString spannableString = new SpannableString(getResources().getString(R.string.policy));
 
         ClickableSpan termsClickableSpan = new ClickableSpan() {
             @Override
-            public void onClick(View view) {
+            public void onClick(@NonNull View view) {
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://policies.google.com/terms"));
                 startActivity(browserIntent);
             }
@@ -123,7 +121,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
         ClickableSpan privacyClickableSpan = new ClickableSpan() {
             @Override
-            public void onClick(View view) {
+            public void onClick(@NonNull View view) {
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://policies.google.com/privacy"));
                 startActivity(browserIntent);
             }
@@ -167,7 +165,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
         call.enqueue(new Callback<ResponseDTO>() {
             @Override
-            public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+            public void onResponse(@NonNull Call<ResponseDTO> call, @NonNull Response<ResponseDTO> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(RegistrationActivity.this, "Пользователь зарегистрирован", Toast.LENGTH_SHORT).show();
                     performLogin(userData);
@@ -177,7 +175,7 @@ public class RegistrationActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ResponseDTO> call, Throwable t) {
+            public void onFailure(@NonNull Call<ResponseDTO> call, @NonNull Throwable t) {
                 Toast.makeText(RegistrationActivity.this, "Ошибка сети REG: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -189,7 +187,7 @@ public class RegistrationActivity extends AppCompatActivity {
         Call<ResponseDTO> call = apiService.login(userData.getUsername(), userData.getPassword());
         call.enqueue(new Callback<ResponseDTO>() {
             @Override
-            public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+            public void onResponse(@NonNull Call<ResponseDTO> call, @NonNull Response<ResponseDTO> response) {
                 if (response.isSuccessful() && response.code() == 200) {
                     Intent intent = new Intent(RegistrationActivity.this, RegistrationActivity2.class);
                     intent.putExtra("user_registration_data", userData);
@@ -200,7 +198,7 @@ public class RegistrationActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ResponseDTO> call, Throwable t) {
+            public void onFailure(@NonNull Call<ResponseDTO> call, @NonNull Throwable t) {
                 Toast.makeText(RegistrationActivity.this, "Ошибка сети LOG: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
@@ -212,7 +210,7 @@ public class RegistrationActivity extends AppCompatActivity {
         Call<String> call = userApiService.setCity((long) userData.getCityId());
         call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(RegistrationActivity.this, "response.body()", Toast.LENGTH_SHORT).show();
 
@@ -222,7 +220,7 @@ public class RegistrationActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                 Toast.makeText(RegistrationActivity.this, "Ошибка сети CIT: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -234,7 +232,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
         apiService.getCities().enqueue(new Callback<List<City>>() {
             @Override
-            public void onResponse(Call<List<City>> call, Response<List<City>> response) {
+            public void onResponse(@NonNull Call<List<City>> call, @NonNull Response<List<City>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     cityList = response.body();
                     for (City city : cityList) {
@@ -246,7 +244,7 @@ public class RegistrationActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<City>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<City>> call, @NonNull Throwable t) {
                 Toast.makeText(RegistrationActivity.this, "Ошибка: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

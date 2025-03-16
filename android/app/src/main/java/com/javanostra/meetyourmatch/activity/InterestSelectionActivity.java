@@ -3,6 +3,7 @@ package com.javanostra.meetyourmatch.activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -94,16 +95,14 @@ public class InterestSelectionActivity extends AppCompatActivity {
 
         call.enqueue(new Callback<List<Tag>>() {
             @Override
-            public void onResponse(Call<List<Tag>> call, Response<List<Tag>> response) {
+            public void onResponse(@NonNull Call<List<Tag>> call, @NonNull Response<List<Tag>> response) {
                 if (response.isSuccessful()) {
                     tags = response.body();
-                } else {
-
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Tag>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<Tag>> call, @NonNull Throwable t) {
             }
         });
     }
@@ -114,7 +113,7 @@ public class InterestSelectionActivity extends AppCompatActivity {
         Call<UserProfileDTO> firstCall = apiServiceAcc.getAccountInfo();
         firstCall.enqueue(new Callback<UserProfileDTO>() {
             @Override
-            public void onResponse(Call<UserProfileDTO> call, Response<UserProfileDTO> response) {
+            public void onResponse(@NonNull Call<UserProfileDTO> call, @NonNull Response<UserProfileDTO> response) {
                 if (response.isSuccessful()) {
                     currentUserId = response.body().getId();
                 } else {
@@ -122,7 +121,7 @@ public class InterestSelectionActivity extends AppCompatActivity {
                 }
             }
             @Override
-            public void onFailure(Call<UserProfileDTO> call, Throwable t) {
+            public void onFailure(@NonNull Call<UserProfileDTO> call, @NonNull Throwable t) {
                 throw new RuntimeException();
             }
         });
@@ -135,7 +134,7 @@ public class InterestSelectionActivity extends AppCompatActivity {
 
                 secondCall.enqueue(new Callback<Void>() {
                     @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
+                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if (response.isSuccessful()) {
 
                         } else {
@@ -143,20 +142,11 @@ public class InterestSelectionActivity extends AppCompatActivity {
                         }
                     }
                     @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
+                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                         throw new RuntimeException();
                     }
                 });
             }
         }
-    }
-
-    private void getFakeTags() {
-        tags.add(new Tag(0L, "Test1"));
-        tags.add(new Tag(0L, "Test2"));
-        tags.add(new Tag(0L, "Test3"));
-        tags.add(new Tag(0L, "Test4"));
-        tags.add(new Tag(0L, "Test5"));
-        tags.add(new Tag(0L, "Test6"));
     }
 }

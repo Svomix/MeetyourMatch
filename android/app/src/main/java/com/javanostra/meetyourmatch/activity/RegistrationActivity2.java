@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -95,7 +96,7 @@ public class RegistrationActivity2 extends AppCompatActivity {
 
         call.enqueue(new Callback<ResponseDTO>() {
             @Override
-            public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+            public void onResponse(@NonNull Call<ResponseDTO> call, @NonNull Response<ResponseDTO> response) {
                 if (response.isSuccessful() && response.code() == 200) {
                     Toast.makeText(RegistrationActivity2.this, "Код подтвержден", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(RegistrationActivity2.this, InterestSelectionActivity.class);
@@ -106,7 +107,7 @@ public class RegistrationActivity2 extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ResponseDTO> call, Throwable t) {
+            public void onFailure(@NonNull Call<ResponseDTO> call, @NonNull Throwable t) {
                 Toast.makeText(RegistrationActivity2.this, "Ошибка сети COD: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -223,10 +224,6 @@ public class RegistrationActivity2 extends AppCompatActivity {
         String digit3 = etDigit3.getText().toString().trim();
         String digit4 = etDigit4.getText().toString().trim();
 
-        if (!digit1.isEmpty() && !digit2.isEmpty() && !digit3.isEmpty() && !digit4.isEmpty()) {
-            finishRegistration.setEnabled(true);
-        } else {
-            finishRegistration.setEnabled(false);
-        }
+        finishRegistration.setEnabled(!digit1.isEmpty() && !digit2.isEmpty() && !digit3.isEmpty() && !digit4.isEmpty());
     }
 }

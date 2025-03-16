@@ -17,7 +17,6 @@ import com.javanostra.meetyourmatch.fragment.EventSearchFragment;
 import com.javanostra.meetyourmatch.fragment.MapFragment;
 import com.javanostra.meetyourmatch.fragment.RecomendationsFragment;
 
-import java.util.ArrayList;
 
 public class MainScreenActivity extends AppCompatActivity implements RecomendationsFragment.OnRecommendationsInteractionListener, FragmentManager.OnBackStackChangedListener {
 

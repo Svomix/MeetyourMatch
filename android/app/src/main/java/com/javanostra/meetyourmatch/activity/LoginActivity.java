@@ -5,11 +5,11 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.Button;
-import android.content.SharedPreferences;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -20,7 +20,6 @@ import com.javanostra.meetyourmatch.persistance.RetrofitClient;
 import com.javanostra.meetyourmatch.persistance.api_service.LoginApiService;
 import com.javanostra.meetyourmatch.persistance.entity.ResponseDTO;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -100,24 +99,24 @@ public class LoginActivity extends AppCompatActivity {
 
         call.enqueue(new Callback<ResponseDTO>() {
             @Override
-            public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+            public void onResponse(@NonNull Call<ResponseDTO> call, @NonNull Response<ResponseDTO> response) {
                 if (response.isSuccessful() && response.code() == 200) {
 
-                    Toast.makeText(LoginActivity.this, "Успешный вход", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, R.string.successfulLogin, Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
 
-                    Toast.makeText(LoginActivity.this, "Неверный логин или пароль", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, R.string.invalidLogin, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseDTO> call, Throwable t) {
+            public void onFailure(@NonNull Call<ResponseDTO> call, @NonNull Throwable t) {
 
-                Toast.makeText(LoginActivity.this, "Ошибка соединения: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, R.string.connectionError + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
