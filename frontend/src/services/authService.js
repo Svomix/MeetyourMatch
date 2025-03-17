@@ -5,6 +5,10 @@ export const tokenType = {
   REFRESH_TOKEN: 'refreshToken'
 };
 
+export const getIsLoggedIn = () => {
+  return Boolean(Cookies.get(tokenType.ACCESS_TOKEN));
+};
+
 export const getAccessToken = () => {
   return Cookies.get(tokenType.ACCESS_TOKEN) || null;
 };

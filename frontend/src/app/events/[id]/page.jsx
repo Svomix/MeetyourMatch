@@ -1,19 +1,18 @@
 'use client';
-import { tokenType } from '@/services/authService';
-import { authed, unauthed } from '@/services/axiosInstance';
 import CardInfo from '@components/CardInfo';
-import Cookies from 'js-cookie';
+import { fetchEventInfo } from '@store/eventStore';
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function EventsPage({ params }) {
   const slug = params.id;
+  const dispatch = useDispatch();
 
-  let [event, setEvent] = useState(undefined);
+  const info = useSelector(state => state.eventInfo)
 
   useEffect(() => {
-    const instance = Cookies.get(tokenType.ACCESS_TOKEN) ? authed : unauthed;
-    instance.get(`/v1/events/${slug}`).then((response) => setEvent(response.data));
+    dispatch(fetchEventInfo(slug))
   }, []);
 
-  return event && <CardInfo path={slug} event={event} />;
+  return info && <CardInfo path={slug} event={info.data} />;
 }

@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import modalSlice from '@store/modalSlice';
 import authSlice from './authSlice';
 import profileSlice from "./profileSlice";
+import eventSlice from "./eventStore";
 
 // const reHydrateStore = () => {
 //   if (typeof window === 'undefined') return undefined;
@@ -21,7 +22,8 @@ export const store = configureStore({
   reducer: {
     modal: modalSlice,
     auth: authSlice,
-    profileInfo: profileSlice
+    profileInfo: profileSlice,
+    eventInfo: eventSlice,
   },
   // preloadedState: reHydrateStore(),
   //middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(appMiddleware)

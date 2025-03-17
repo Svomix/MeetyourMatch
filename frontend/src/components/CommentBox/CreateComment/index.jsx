@@ -1,12 +1,17 @@
+'use client'
+import { useRef } from 'react';
 import styles from './index.module.css';
+import { getIsLoggedIn } from '@/services/authService';
 
-export default () => {
+export default ({onClick}) => {
+  let textarea = useRef();
+
   return (
     <from className={styles.wrapper}>
-      <textarea className={styles.input} type="text" placeholder="Оставить комментарий..." />
+      <textarea className={styles.input} ref={textarea} type="text" disabled={!getIsLoggedIn()} placeholder="Оставить комментарий..." />
       <div className={styles.buttons}>
         <div className={styles.rating} />
-        <button className={styles.submit_btn} type="submit">
+        <button className={styles.submit_btn} type="submit" disabled={!getIsLoggedIn()} onClick={async function (e) { e.text = textarea.current.value; await onClick(e); textarea.current.value = "" }}>
           Отправить
         </button>
       </div>

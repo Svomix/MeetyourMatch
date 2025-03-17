@@ -1,3 +1,4 @@
+'use client'
 import Calendar from '@components/Buttons/CalendarButton';
 import Heart from '@components/Buttons/HeartButton';
 import mock_event_img from '@public/mock_event_img.jpg';
@@ -5,9 +6,27 @@ import Image from 'next/image';
 import Link from 'next/link';
 import styles from './index.module.css';
 import CommentBox from '@components/CommentBox';
-import { comment } from 'postcss';
+import { authed } from '@/services/axiosInstance';
+import { useDispatch } from 'react-redux';
+import { fetchEventInfo } from '@store/eventStore';
 
 export default ({ path, event }) => {
+  const dispatch = useDispatch();
+
+  async function onSubmitComment(e) {
+    try {
+      await authed.post(`v1/events/${event.id}/comments`, {
+        content: e.text
+      });
+    } catch (e) {
+      alert(e);
+    } finally {
+      dispatch(fetchEventInfo(event.id));
+    }
+  }
+
+  const comments_mapped = event.comments.map(c => {return {comment_id: c.id, author: c.user.username, text: c.content} });
+
   return (
     <>
       {event && (
@@ -45,7 +64,7 @@ export default ({ path, event }) => {
             <p className={styles.tags}>#отдых #искусство</p>
           </div>
           <div className={styles.comments}>
-            <CommentBox comments={comments} />
+            <CommentBox comments={comments_mapped} onSubmit={onSubmitComment} />
           </div>
         </article>
       )}
