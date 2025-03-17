@@ -17,7 +17,9 @@
     <string name="hintUsername">Имя пользователя</string>
     <string name="hintPassword">Пароль</string>
     <string name="successfulLogin">Успешный вход</string>
+    <string name="successfulInterest">Успешно получены все интересы</string>
     <string name="invalidLogin">Неверный логин или пароль</string>
+    <string name="invalidInterest">Не получены интересы</string>
     <string name="connectionError">Ошибка соединения: </string>
     <string name="policy">Я прочитал и согласен с Условиями пользования и Политикой приватности</string>
     <!--  TODO: Remove or change this placeholder text  -->

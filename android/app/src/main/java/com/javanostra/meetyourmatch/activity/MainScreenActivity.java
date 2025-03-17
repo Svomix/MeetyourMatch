@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -16,6 +18,16 @@ import com.javanostra.meetyourmatch.fragment.ChatFragment;
 import com.javanostra.meetyourmatch.fragment.EventSearchFragment;
 import com.javanostra.meetyourmatch.fragment.MapFragment;
 import com.javanostra.meetyourmatch.fragment.RecomendationsFragment;
+import com.javanostra.meetyourmatch.persistance.RetrofitClient;
+import com.javanostra.meetyourmatch.persistance.api_service.AccountApiService;
+import com.javanostra.meetyourmatch.persistance.cookie.CookieManager;
+import com.javanostra.meetyourmatch.persistance.entity.ResponseDTO;
+import com.javanostra.meetyourmatch.persistance.entity.User;
+import com.javanostra.meetyourmatch.persistance.entity.UserProfileDTO;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class MainScreenActivity extends AppCompatActivity implements RecomendationsFragment.OnRecommendationsInteractionListener, FragmentManager.OnBackStackChangedListener {
@@ -49,10 +61,14 @@ public class MainScreenActivity extends AppCompatActivity implements Recomendati
     private MapFragment mapFragment;
     private RecomendationsFragment recomendationsFragment;
     private EventSearchFragment searchFragment;
+    private UserProfileDTO currentUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
+
+        getCurrentUser();
 
         chatFragment = new ChatFragment();
         calendarFragment = new CalendarFragment();
@@ -77,6 +93,28 @@ public class MainScreenActivity extends AppCompatActivity implements Recomendati
         }
     }
 
+    private void getCurrentUser() {
+        AccountApiService userApiService = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
+        Call<UserProfileDTO> call = userApiService.getAccountInfo();
+        call.enqueue(new Callback<UserProfileDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<UserProfileDTO> call, @NonNull Response<UserProfileDTO> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(MainScreenActivity.this, "Удачно взят юзер", Toast.LENGTH_SHORT).show();
+                    currentUser = response.body();
+                } else {
+                    Toast.makeText(MainScreenActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<UserProfileDTO> call, @NonNull Throwable t) {
+                System.out.println(t.getMessage());
+                Toast.makeText(MainScreenActivity.this, "Ошибка сети GET: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private Fragment getFragmentById(int buttonId) {
         if (buttonId == R.id.rangeButton) {
             return calendarFragment;
@@ -98,7 +136,11 @@ public class MainScreenActivity extends AppCompatActivity implements Recomendati
     }
 
     public void openAccount(View view) {
-        startActivity(new Intent(this, AccountActivity.class));
+        Intent intent = new Intent(this, AccountActivity.class);
+        intent.putExtra("username", currentUser.getUsername());
+        intent.putExtra("email", currentUser.getEmail());
+        intent.putExtra("city", currentUser.getCity().getName());
+        startActivity(intent);
     }
 
     public void openNotifications(View view) {
@@ -155,7 +197,6 @@ public class MainScreenActivity extends AppCompatActivity implements Recomendati
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, fragment);
-        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 }

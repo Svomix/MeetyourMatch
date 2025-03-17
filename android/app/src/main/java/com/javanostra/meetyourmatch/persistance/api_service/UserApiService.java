@@ -1,6 +1,7 @@
 package com.javanostra.meetyourmatch.persistance.api_service;
 
 import com.javanostra.meetyourmatch.persistance.entity.Attribute;
+import com.javanostra.meetyourmatch.persistance.entity.Interest;
 import com.javanostra.meetyourmatch.persistance.entity.User;
 import com.javanostra.meetyourmatch.persistance.entity.UserAuthority;
 import com.javanostra.meetyourmatch.persistance.entity.UserEvent;
@@ -94,4 +95,7 @@ public interface UserApiService {
             @Path("user_id") Long userId,
             @Path("attr_id") Long attrId
     );
+
+    @GET("/api/interests")
+    Call<List<Interest>> getAllInterests();
 }

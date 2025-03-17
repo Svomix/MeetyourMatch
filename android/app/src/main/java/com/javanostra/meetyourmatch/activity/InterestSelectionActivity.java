@@ -1,14 +1,15 @@
 package com.javanostra.meetyourmatch.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +20,9 @@ import com.javanostra.meetyourmatch.persistance.RetrofitClient;
 import com.javanostra.meetyourmatch.persistance.api_service.AccountApiService;
 import com.javanostra.meetyourmatch.persistance.api_service.TagApiService;
 import com.javanostra.meetyourmatch.persistance.api_service.UserApiService;
+import com.javanostra.meetyourmatch.persistance.cookie.CookieManager;
 import com.javanostra.meetyourmatch.persistance.entity.Element;
+import com.javanostra.meetyourmatch.persistance.entity.Interest;
 import com.javanostra.meetyourmatch.persistance.entity.Tag;
 import com.javanostra.meetyourmatch.persistance.entity.UserProfileDTO;
 
@@ -36,10 +39,9 @@ public class InterestSelectionActivity extends AppCompatActivity {
     private ElementAdapter adapter;
     private List<Element> elementList;
     private EditText searchEditText;
-
     private Button buttonContinue;
 
-    private List<Tag> tags = new ArrayList<>();
+    private List<Interest> interests = new ArrayList<>();
     private Long currentUserId;
 
     @Override
@@ -47,17 +49,8 @@ public class InterestSelectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_interest_selec);
 
+        String previousActivity = getIntent().getExtras().get("previousActivity").toString();
         performGetAll();
-
-        elementList = new ArrayList<>();
-        for (int i = 0; i < tags.size(); i++) {
-            elementList.add(new Element(i+1, tags.get(i).getName(), false));
-        }
-
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ElementAdapter(elementList);
-        recyclerView.setAdapter(adapter);
 
         searchEditText = findViewById(R.id.searchEditText);
         searchEditText.addTextChangedListener(new TextWatcher() {
@@ -79,74 +72,68 @@ public class InterestSelectionActivity extends AppCompatActivity {
 
         buttonContinue = findViewById(R.id.buttonCompleteReg2);
         buttonContinue.setOnClickListener(v -> {
-            //performSaveUserTags(); retrofit
-
-            Intent intent = new Intent(InterestSelectionActivity.this, MainScreenActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
+            performSaveUserTags();
+            if (previousActivity.equals("Account")) {
+                finish();
+            } else if (previousActivity.equals("Register")) {
+                Intent intent = new Intent(InterestSelectionActivity.this, MainScreenActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
         });
     }
 
     private void performGetAll() {
-        TagApiService tagApiService = RetrofitClient.getRetrofit(this).create(TagApiService.class);
+        UserApiService userApiService = RetrofitClient.getRetrofit(this).create(UserApiService.class);
 
-        Call<List<Tag>> call = tagApiService.getAllTags();
-
-        call.enqueue(new Callback<List<Tag>>() {
+        Call<List<Interest>> call = userApiService.getAllInterests();
+        Context context = this;
+        call.enqueue(new Callback<List<Interest>>() {
             @Override
-            public void onResponse(@NonNull Call<List<Tag>> call, @NonNull Response<List<Tag>> response) {
+            public void onResponse(Call<List<Interest>> call, Response<List<Interest>> response) {
                 if (response.isSuccessful()) {
-                    tags = response.body();
+                    interests = response.body();
+                    Toast.makeText(InterestSelectionActivity.this, R.string.successfulInterest, Toast.LENGTH_SHORT).show();
+
+                    elementList = new ArrayList<>();
+                    for (int i = 0; i < interests.size(); i++) {
+                        elementList.add(new Element(i+1, interests.get(i).getName(), false));
+                    }
+
+                    recyclerView = findViewById(R.id.recyclerView);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                    adapter = new ElementAdapter(elementList);
+                    recyclerView.setAdapter(adapter);
+                } else {
+                    Toast.makeText(InterestSelectionActivity.this, R.string.invalidInterest, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<Tag>> call, @NonNull Throwable t) {
+            public void onFailure(Call<List<Interest>> call, Throwable t) {
+                Toast.makeText(InterestSelectionActivity.this, R.string.connectionError + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void performSaveUserTags() {
         AccountApiService apiServiceAcc = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
-
-        Call<UserProfileDTO> firstCall = apiServiceAcc.getAccountInfo();
-        firstCall.enqueue(new Callback<UserProfileDTO>() {
+        Call<List<Interest>> firstCall = apiServiceAcc.getMyInterests();
+        firstCall.enqueue(new Callback<List<Interest>>() {
             @Override
-            public void onResponse(@NonNull Call<UserProfileDTO> call, @NonNull Response<UserProfileDTO> response) {
+            public void onResponse(Call<List<Interest>> call, Response<List<Interest>> response) {
                 if (response.isSuccessful()) {
-                    currentUserId = response.body().getId();
+                    Toast.makeText(InterestSelectionActivity.this, R.string.successfulInterest, Toast.LENGTH_SHORT).show();
+
                 } else {
-                    throw new RuntimeException();
+                    Toast.makeText(InterestSelectionActivity.this, R.string.invalidInterest, Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
-            public void onFailure(@NonNull Call<UserProfileDTO> call, @NonNull Throwable t) {
-                throw new RuntimeException();
+            public void onFailure(Call<List<Interest>> call, Throwable t) {
+                Toast.makeText(InterestSelectionActivity.this, R.string.connectionError + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
-        UserApiService apiServiceUser = RetrofitClient.getRetrofit(this).create(UserApiService.class);
-
-        for (Element element : elementList) {
-            if (element.isSelected()) {
-                Call<Void> secondCall = apiServiceUser.createUserAttribute(currentUserId, 1L, element.getName());
-
-                secondCall.enqueue(new Callback<Void>() {
-                    @Override
-                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                        if (response.isSuccessful()) {
-
-                        } else {
-                            throw new RuntimeException();
-                        }
-                    }
-                    @Override
-                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                        throw new RuntimeException();
-                    }
-                });
-            }
-        }
     }
 }

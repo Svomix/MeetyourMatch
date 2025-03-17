@@ -51,8 +51,8 @@
 
             <TextView
                 style="@style/UserInformationTextStyle"
+                android:id="@+id/hometown"
                 android:layout_weight="3"
-                android:text="Самара"
                 android:textAlignment="textEnd"/>
         </LinearLayout>
 
@@ -66,14 +66,15 @@
 
             <TextView
                 style="@style/UserInformationTextStyle"
+                android:id="@+id/email"
                 android:layout_weight="3"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@string/email"
                 android:textAlignment="textEnd"/>
         </LinearLayout>
 
         <LinearLayout
+            android:onClick="changeInterests"
             style="@style/UserInformationView">
             <TextView
                 style="@style/UserInformationTextStyle"
@@ -89,6 +90,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:visibility="invisible"
             style="@style/UserInformationView">
             <TextView
                 style="@style/UserInformationTextStyle"

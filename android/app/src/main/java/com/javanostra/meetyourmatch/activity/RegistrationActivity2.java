@@ -7,6 +7,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -50,6 +51,8 @@ public class RegistrationActivity2 extends AppCompatActivity {
         });
 
         UserRegistrationData userData = (UserRegistrationData) getIntent().getSerializableExtra("user_registration_data");
+        TextView text = findViewById(R.id.textView6);
+        text.append(userData.getEmail());
 
         buttonSendCode = findViewById(R.id.buttonSendCode);
         startResendTimer();
@@ -100,6 +103,7 @@ public class RegistrationActivity2 extends AppCompatActivity {
                 if (response.isSuccessful() && response.code() == 200) {
                     Toast.makeText(RegistrationActivity2.this, "Код подтвержден", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(RegistrationActivity2.this, InterestSelectionActivity.class);
+                    intent.putExtra("previousActivity", "Register");
                     startActivity(intent);
                 } else {
                     Toast.makeText(RegistrationActivity2.this, "Неправильный код: " + response.message(), Toast.LENGTH_SHORT).show();

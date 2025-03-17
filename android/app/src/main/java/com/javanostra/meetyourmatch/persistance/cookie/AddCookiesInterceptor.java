@@ -17,13 +17,10 @@ public class AddCookiesInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request.Builder builder = chain.request().newBuilder();
 
-//        String cookie = cookieManager.getCookie();
-//        if (cookie != null) {
-//            builder.addHeader("Cookie", cookie);
-//        }
         String token = cookieManager.getCookie();
+
         if (token != null && !token.isEmpty()) {
-            builder.addHeader("Authorization", "Bearer " + token);
+            builder.addHeader("Authorization", "Bearer " + token.split("=")[1].split(";")[0]);
         }
 
         return chain.proceed(builder.build());

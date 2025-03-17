@@ -15,20 +15,18 @@ public class RetrofitClient {
     private static Retrofit retrofit;
 
     public static Retrofit getRetrofit(Context context) {
-        if (retrofit == null) {
-            CookieManager cookieManager = new CookieManager(context);
+        CookieManager cookieManager = new CookieManager(context);
 
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .addInterceptor(new ReceivedCookiesInterceptor(cookieManager))
-                    .addInterceptor(new AddCookiesInterceptor(cookieManager))
-                    .build();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(new ReceivedCookiesInterceptor(cookieManager))
+                .addInterceptor(new AddCookiesInterceptor(cookieManager))
+                .build();
 
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .client(client)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-        }
+        retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
         return retrofit;
     }
 }

@@ -189,6 +189,7 @@ public class RegistrationActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<ResponseDTO> call, @NonNull Response<ResponseDTO> response) {
                 if (response.isSuccessful() && response.code() == 200) {
+                    performCityUpdate(userData);
                     Intent intent = new Intent(RegistrationActivity.this, RegistrationActivity2.class);
                     intent.putExtra("user_registration_data", userData);
                     startActivity(intent);
@@ -206,21 +207,22 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private void performCityUpdate(UserRegistrationData userData) {
         AccountApiService userApiService = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
-
-        Call<String> call = userApiService.setCity((long) userData.getCityId());
-        call.enqueue(new Callback<String>() {
+        System.out.println(userData.getCityId());
+        Call<ResponseDTO> call = userApiService.setCity((long) userData.getCityId());
+        call.enqueue(new Callback<ResponseDTO>() {
             @Override
-            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+            public void onResponse(@NonNull Call<ResponseDTO> call, @NonNull Response<ResponseDTO> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(RegistrationActivity.this, "response.body()", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegistrationActivity.this, "Удачно установлен город", Toast.LENGTH_SHORT).show();
 
                 } else {
-                    Toast.makeText(RegistrationActivity.this, "Ошибка обновления: " + response.message(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegistrationActivity.this, response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ResponseDTO> call, @NonNull Throwable t) {
+                System.out.println(t.getMessage());
                 Toast.makeText(RegistrationActivity.this, "Ошибка сети CIT: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -238,6 +240,7 @@ public class RegistrationActivity extends AppCompatActivity {
                     for (City city : cityList) {
                         cityNamesList.add(city.getName());
                     }
+                    Toast.makeText(RegistrationActivity.this, "Загружен список городов", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(RegistrationActivity.this, "Невозможно загрузить список городов", Toast.LENGTH_SHORT).show();
                 }

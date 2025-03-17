@@ -65,7 +65,7 @@
         android:layout_marginTop="12dp"
         android:layout_marginEnd="64dp"
         android:fontFamily="@font/pt_sans"
-        android:text="4-х значный код был отправлен на youremail@email.com"
+        android:text="4-х значный код был отправлен на "
         android:textAlignment="center"
         android:textColor="#8D8DA9"
         android:textSize="14sp"
