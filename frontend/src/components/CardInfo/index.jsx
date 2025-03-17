@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import Calendar from '@components/Buttons/CalendarButton';
 import Heart from '@components/Buttons/HeartButton';
 import mock_event_img from '@public/mock_event_img.jpg';
@@ -25,7 +25,25 @@ export default ({ path, event }) => {
     }
   }
 
-  const comments_mapped = event.comments.map(c => {return {comment_id: c.id, author: c.user.username, text: c.content} });
+  async function onDeleteComment(e) {
+    try {
+      await authed.delete(`v1/events/${event.id}/comments`, { params: { id: e.id } });
+    } catch (e) {
+      alert(e);
+    } finally {
+      dispatch(fetchEventInfo(event.id));
+    }
+  }
+
+  const comments_mapped = event.comments.map((c) => {
+    return {
+      id: c.id,
+      author: c.user.username,
+      author_id: c.user.id,
+      text: c.content,
+      date: c.date
+    };
+  });
 
   return (
     <>
@@ -64,28 +82,14 @@ export default ({ path, event }) => {
             <p className={styles.tags}>#отдых #искусство</p>
           </div>
           <div className={styles.comments}>
-            <CommentBox comments={comments_mapped} onSubmit={onSubmitComment} />
+            <CommentBox
+              comments={comments_mapped}
+              onSubmit={onSubmitComment}
+              onDelete={onDeleteComment}
+            />
           </div>
         </article>
       )}
     </>
   );
 };
-
-let comments = [
-  {
-    comment_id: 1,
-    author: 'Goy Goyev',
-    text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod vero provident corrupti ab voluptates blanditiis nesciunt. Sint minus quasi reiciendis!'
-  },
-  {
-    comment_id: 2,
-    author: 'Goy Goyev',
-    text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod vero provident corrupti ab voluptates blanditiis nesciunt. Sint minus quasi reiciendis!'
-  },
-  {
-    comment_id: 3,
-    author: 'Goy Goyev',
-    text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod vero provident corrupti ab voluptates blanditiis nesciunt. Sint minus quasi reiciendis!'
-  }
-];

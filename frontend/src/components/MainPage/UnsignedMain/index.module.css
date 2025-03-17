@@ -8,6 +8,7 @@
 .title {
   color: var(--white);
   font-size: 52px;
+  line-height: 1;
   font-weight: 900;
 }
 
