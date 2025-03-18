@@ -4,7 +4,7 @@ import styles from './index.module.css';
 import Link from 'next/link';
 
 export default ({ comment, onDelete }) => {
-  const user_id = useSelector((state) => state.profileInfo.id);
+  const user_id = useSelector((state) => state.profileInfo?.id);
 
   function formatDate(isoString) {
     const date = new Date(isoString);
@@ -21,7 +21,7 @@ export default ({ comment, onDelete }) => {
     <div className={styles.wrapper}>
       <div className={styles.container}>
         <div className={styles.obertka}>
-          <Link className={styles.author} href="/">
+          <Link className={styles.author} href={`/user/${comment.author_id}`}>
             {comment.author}
           </Link>
           <span className={styles.date}>{new Date(comment.date).toLocaleString('ru-RU')}</span>

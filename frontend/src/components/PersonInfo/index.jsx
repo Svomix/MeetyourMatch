@@ -41,7 +41,7 @@ export default ({ person }) => {
         </span>
         <span className={styles.city}>
           <span className={styles.accent}>Город:&nbsp;</span>
-          {person?.city.name}
+          {person?.city?.name}
         </span>
       </div>
       <Link href={`/`} onClick={onClick} className={styles.write}>
