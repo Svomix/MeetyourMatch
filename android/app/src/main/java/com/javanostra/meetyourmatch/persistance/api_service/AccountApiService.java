@@ -7,6 +7,7 @@ import com.javanostra.meetyourmatch.persistance.entity.UserProfileDTO;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -22,4 +23,10 @@ public interface AccountApiService {
 
     @POST("/api/account/setCity")
     Call<ResponseDTO> setCity(@Query("city") Long cityId);
+
+    @POST("/api/account/interests")
+    Call<String> addInterest(@Query("id") Integer interestId);
+
+    @DELETE("/api/account/interests")
+    Call<String> deleteInterest(@Query("id") Integer interestId);
 }

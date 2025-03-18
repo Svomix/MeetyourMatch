@@ -18,7 +18,7 @@ import java.util.List;
 
 public class ElementAdapter extends RecyclerView.Adapter<ElementAdapter.ElementViewHolder> {
 
-    private List<Element> elementsList;
+    public List<Element> elementsList;
     private List<Element> filteredList;
 
     public ElementAdapter(List<Element> elements) {
@@ -26,6 +26,8 @@ public class ElementAdapter extends RecyclerView.Adapter<ElementAdapter.ElementV
         this.filteredList = new ArrayList<>(elements);
         sortElementsForDisplay();
     }
+
+
 
     @NonNull
     @Override

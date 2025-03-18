@@ -7,8 +7,11 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -42,7 +45,6 @@ public class InterestSelectionActivity extends AppCompatActivity {
     private Button buttonContinue;
 
     private List<Interest> interests = new ArrayList<>();
-    private Long currentUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +52,7 @@ public class InterestSelectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_interest_selec);
 
         String previousActivity = getIntent().getExtras().get("previousActivity").toString();
-        performGetAll();
+        performGetAllInterests();
 
         searchEditText = findViewById(R.id.searchEditText);
         searchEditText.addTextChangedListener(new TextWatcher() {
@@ -84,7 +86,7 @@ public class InterestSelectionActivity extends AppCompatActivity {
         });
     }
 
-    private void performGetAll() {
+    private void performGetAllInterests() {
         UserApiService userApiService = RetrofitClient.getRetrofit(this).create(UserApiService.class);
 
         Call<List<Interest>> call = userApiService.getAllInterests();
@@ -105,6 +107,8 @@ public class InterestSelectionActivity extends AppCompatActivity {
                     recyclerView.setLayoutManager(new LinearLayoutManager(context));
                     adapter = new ElementAdapter(elementList);
                     recyclerView.setAdapter(adapter);
+
+                    performGetUserInterests();
                 } else {
                     Toast.makeText(InterestSelectionActivity.this, R.string.invalidInterest, Toast.LENGTH_SHORT).show();
                 }
@@ -117,14 +121,16 @@ public class InterestSelectionActivity extends AppCompatActivity {
         });
     }
 
-    private void performSaveUserTags() {
+    private void performGetUserInterests() {
         AccountApiService apiServiceAcc = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
         Call<List<Interest>> firstCall = apiServiceAcc.getMyInterests();
         firstCall.enqueue(new Callback<List<Interest>>() {
             @Override
             public void onResponse(Call<List<Interest>> call, Response<List<Interest>> response) {
                 if (response.isSuccessful()) {
+                    response.body().forEach(System.out::println);
                     Toast.makeText(InterestSelectionActivity.this, R.string.successfulInterest, Toast.LENGTH_SHORT).show();
+                    setAllUserInterests(response.body());
 
                 } else {
                     Toast.makeText(InterestSelectionActivity.this, R.string.invalidInterest, Toast.LENGTH_SHORT).show();
@@ -135,5 +141,43 @@ public class InterestSelectionActivity extends AppCompatActivity {
                 Toast.makeText(InterestSelectionActivity.this, R.string.connectionError + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void setAllUserInterests(List<Interest> userInterests) {
+        int size = adapter.getItemCount();
+        for (int i = 0; i < size; ++i) {
+            boolean hasInterest = false;
+            for (int j = 0; j < userInterests.size(); ++j) {
+                if (userInterests.get(j).getName().equals(adapter.elementsList.get(i).getName())) {
+                    hasInterest = true;
+                    break;
+                }
+            }
+            if (hasInterest) adapter.elementsList.get(i).setSelected(true);
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    private void performSaveUserTags() {
+        AccountApiService apiServiceAcc = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
+        int size = adapter.getItemCount();
+        Call<String> firstCall;
+        for (int i = 0; i < size; ++i) {
+            Element element = adapter.elementsList.get(i);
+            if (element.isSelected()) {
+                firstCall = apiServiceAcc.addInterest((int)element.getId());
+            } else {
+                firstCall = apiServiceAcc.deleteInterest((int)element.getId());
+            }
+
+            firstCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                }
+            });
+        }
     }
 }
