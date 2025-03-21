@@ -32,7 +32,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -43,5 +42,8 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     compileOnly(libs.lombok)
-
+    implementation(libs.ucrop)
+    implementation(libs.github.glide)
+    annotationProcessor(libs.compiler)
+    implementation(libs.picasso)
 }

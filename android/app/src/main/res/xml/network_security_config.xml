@@ -3,6 +3,8 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">localhost</domain>
         <domain includeSubdomains="true">10.0.2.2</domain>
+        <domain includeSubdomains="true">46.0.192.151</domain>
         <domain includeSubdomains="true">192.168.1.65</domain>
+        <domain includeSubdomains="true">avatars.mds.yandex.net</domain>
     </domain-config>
 </network-security-config>

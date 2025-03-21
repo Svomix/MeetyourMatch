@@ -3,10 +3,10 @@ package com.javanostra.meetyourmatch.activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -39,7 +39,7 @@ public class InterestSelectionActivity extends AppCompatActivity {
 
     private Button buttonContinue;
 
-    private List<Tag> tags = new ArrayList<>();
+    private List<Tag> tags;
     private Long currentUserId;
 
     @Override
@@ -47,17 +47,12 @@ public class InterestSelectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_interest_selec);
 
-        performGetAll();
-
+        tags = new ArrayList<>();
         elementList = new ArrayList<>();
-        for (int i = 0; i < tags.size(); i++) {
-            elementList.add(new Element(i+1, tags.get(i).getName(), false));
-        }
+        loadTags();
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ElementAdapter(elementList);
-        recyclerView.setAdapter(adapter);
 
         searchEditText = findViewById(R.id.searchEditText);
         searchEditText.addTextChangedListener(new TextWatcher() {
@@ -74,79 +69,92 @@ public class InterestSelectionActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.buttonClose3).setOnClickListener(v -> {
-            finish();
-        });
-
-        buttonContinue = findViewById(R.id.buttonCompleteReg2);
-        buttonContinue.setOnClickListener(v -> {
-            //performSaveUserTags(); retrofit
-
             Intent intent = new Intent(InterestSelectionActivity.this, MainScreenActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
         });
+
+        buttonContinue = findViewById(R.id.buttonCompleteReg2);
+        buttonContinue.setOnClickListener(v -> {
+            performGetAccountInfo(this::performSaveUserTags);
+        });
     }
 
-    private void performGetAll() {
-        TagApiService tagApiService = RetrofitClient.getRetrofit(this).create(TagApiService.class);
+    private void loadTags() {
+        TagApiService apiService = RetrofitClient.getRetrofit(this).create(TagApiService.class);
 
-        Call<List<Tag>> call = tagApiService.getAllTags();
-
-        call.enqueue(new Callback<List<Tag>>() {
+        apiService.getAllTags().enqueue(new Callback<List<Tag>>() {
             @Override
-            public void onResponse(@NonNull Call<List<Tag>> call, @NonNull Response<List<Tag>> response) {
-                if (response.isSuccessful()) {
-                    tags = response.body();
+            public void onResponse(Call<List<Tag>> call, Response<List<Tag>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d("TagsLoader", "Success: " + response.body());
+                    tags.addAll(response.body());
+                    elementList.clear();
+                    for (int i = 0; i < tags.size(); i++) {
+                        elementList.add(new Element(i + 1, "#" + tags.get(i).getName(), false));
+                    }
+                    adapter = new ElementAdapter(elementList);
+                    recyclerView.setAdapter(adapter);
+                } else {
+                    Log.d("TagsLoader", "Load error: " + response.message());
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<Tag>> call, @NonNull Throwable t) {
+            public void onFailure(Call<List<Tag>> call, Throwable t) {
+                Log.d("TagsLoader", "Network error: " + t.getMessage());
+            }
+        });
+    }
+
+    private void performGetAccountInfo(Runnable onComplete) {
+        AccountApiService apiServiceAcc = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
+
+        apiServiceAcc.getAccountInfo().enqueue(new Callback<UserProfileDTO>() {
+            @Override
+            public void onResponse(Call<UserProfileDTO> call, Response<UserProfileDTO> response) {
+                if (response.isSuccessful()) {
+                    Log.d("GetAccountInfo", "Successful: " + response.body().getUsername());
+                    currentUserId = response.body().getId();
+                    onComplete.run();
+                } else {
+                    Log.d("GetAccountInfo", "Error: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserProfileDTO> call, Throwable t) {
+                Log.d("GetAccountInfo", "Network error: " + t.getMessage());
             }
         });
     }
 
     private void performSaveUserTags() {
-        AccountApiService apiServiceAcc = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
-
-        Call<UserProfileDTO> firstCall = apiServiceAcc.getAccountInfo();
-        firstCall.enqueue(new Callback<UserProfileDTO>() {
-            @Override
-            public void onResponse(@NonNull Call<UserProfileDTO> call, @NonNull Response<UserProfileDTO> response) {
-                if (response.isSuccessful()) {
-                    currentUserId = response.body().getId();
-                } else {
-                    throw new RuntimeException();
-                }
-            }
-            @Override
-            public void onFailure(@NonNull Call<UserProfileDTO> call, @NonNull Throwable t) {
-                throw new RuntimeException();
-            }
-        });
-
         UserApiService apiServiceUser = RetrofitClient.getRetrofit(this).create(UserApiService.class);
 
         for (Element element : elementList) {
             if (element.isSelected()) {
-                Call<Void> secondCall = apiServiceUser.createUserAttribute(currentUserId, 1L, element.getName());
-
-                secondCall.enqueue(new Callback<Void>() {
+                apiServiceUser.createUserAttribute(currentUserId, 1L, element.getId()).enqueue(new Callback<Void>() {
                     @Override
-                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                    public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.isSuccessful()) {
-
+                            Log.d("SaveUserTags", "Successful: " + currentUserId + " " + 1 + " " + element.getId());
                         } else {
-                            throw new RuntimeException();
+                            Log.d("SaveUserTags", "Error: " + response.message());
                         }
                     }
                     @Override
-                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                        throw new RuntimeException();
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Log.d("SaveUserTags", "Network error: " + t.getMessage());
                     }
                 });
             }
         }
+
+        Intent intent = new Intent(InterestSelectionActivity.this, MainScreenActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }

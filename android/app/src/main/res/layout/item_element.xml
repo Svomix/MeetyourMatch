@@ -17,7 +17,7 @@
         android:fontFamily="@font/fira_sans"
         android:paddingLeft="8sp"
         android:text="Элемент"
-        android:textColor="#FFFFFF"
+        android:textColor="#D9D9D9"
         android:textSize="20sp"
         android:textStyle="bold" />
 

@@ -43,4 +43,36 @@ public class UserProfileDTO {
     public String getAvatarPath() {
         return avatarPath;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setAuthorities(Set<UserAuthority> authorities) {
+        this.authorities = authorities;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setAvatarPath(String avatarPath) {
+        this.avatarPath = avatarPath;
+    }
 }

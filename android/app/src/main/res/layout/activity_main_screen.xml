@@ -57,10 +57,10 @@
         android:background="@color/bars">
 
         <ImageButton
-            style="@style/NavigationButtons"
             android:id="@+id/chatButton"
-            android:src="@drawable/chosen_chat"
-            android:onClick="chooseFragment"/>
+            style="@style/NavigationButtons"
+            android:onClick="chooseFragment"
+            android:src="@drawable/chat" />
 
         <ImageButton
             style="@style/NavigationButtons"
@@ -75,7 +75,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="chooseFragment"
-            android:src="@drawable/recs" />
+            android:src="@drawable/chosen_recs" />
 
         <ImageButton
             style="@style/NavigationButtons"

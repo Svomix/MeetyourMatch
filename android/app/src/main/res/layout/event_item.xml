@@ -39,8 +39,10 @@
 
     <TextView
         android:id="@+id/event_title"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="28dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:paddingStart="8dp"
         android:paddingTop="4dp"
         android:paddingEnd="8dp"
@@ -55,8 +57,10 @@
 
     <TextView
         android:id="@+id/event_tags"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="24dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:paddingBottom="4dp"

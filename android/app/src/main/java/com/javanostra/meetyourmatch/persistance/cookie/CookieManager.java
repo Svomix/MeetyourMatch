@@ -2,6 +2,7 @@ package com.javanostra.meetyourmatch.persistance.cookie;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class CookieManager {
     private static final String PREFS_NAME = "CookiePrefs";
@@ -18,6 +19,7 @@ public class CookieManager {
     }
 
     public String getCookie() {
+        Log.d("CookieManager", sharedPreferences.getString(COOKIE_KEY, "null"));
         return sharedPreferences.getString(COOKIE_KEY, null);
     }
 }

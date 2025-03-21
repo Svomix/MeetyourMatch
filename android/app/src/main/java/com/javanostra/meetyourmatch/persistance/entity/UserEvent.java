@@ -1,9 +1,9 @@
 package com.javanostra.meetyourmatch.persistance.entity;
 
 public class UserEvent {
-    private Integer user_id;
+    private Long user_id;
 
-    private Integer event_id;
+    private Long event_id;
 
     private Boolean isLiked = false;
 
@@ -11,7 +11,7 @@ public class UserEvent {
 
     private Boolean inCalendar = false;
 
-    public UserEvent(Integer user_id, Integer event_id, Boolean isLiked, Boolean isDisliked, Boolean inCalendar) {
+    public UserEvent(Long user_id, Long event_id, Boolean isLiked, Boolean isDisliked, Boolean inCalendar) {
         this.user_id = user_id;
         this.event_id = event_id;
         this.isLiked = isLiked;
@@ -19,19 +19,19 @@ public class UserEvent {
         this.inCalendar = inCalendar;
     }
 
-    public Integer getUser_id() {
+    public Long getUser_id() {
         return user_id;
     }
 
-    public void setUser_id(Integer user_id) {
+    public void setUser_id(Long user_id) {
         this.user_id = user_id;
     }
 
-    public Integer getEvent_id() {
+    public Long getEvent_id() {
         return event_id;
     }
 
-    public void setEvent_id(Integer event_id) {
+    public void setEvent_id(Long event_id) {
         this.event_id = event_id;
     }
 

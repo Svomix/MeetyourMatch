@@ -45,44 +45,9 @@
         android:textSize="36sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/backgroundWave"
         app:layout_constraintTop_toTopOf="@+id/backgroundWave" />
-
-    <TextView
-        android:id="@+id/welcomeText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="@font/sansation_bold"
-        android:text="@string/welcome"
-        android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/backgroundWave"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <EditText
-        android:id="@+id/inputUserName"
-        android:layout_width="0dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:background="@drawable/round_border_background"
-        android:drawableStart="@drawable/ic_username"
-        android:drawablePadding="5dp"
-        android:ems="10"
-        android:fontFamily="@font/sansation_regular"
-        android:hint="@string/hintUsername"
-        android:inputType="text"
-        android:paddingStart="21dp"
-        android:paddingEnd="20dp"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#8A8A8A"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/backgroundWave" />
 
     <EditText
         android:id="@+id/inputPassword"
@@ -103,26 +68,31 @@
         android:textColor="#FFFFFF"
         android:textColorHint="#8A8A8A"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inputUserName" />
 
-    <Button
-        android:id="@+id/buttonForgotPass"
+    <EditText
+        android:id="@+id/inputUserName"
         android:layout_width="0dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="8dp"
-        android:background="#00FFFFFF"
-        android:fontFamily="@font/sansation_bold"
-        android:shadowColor="#000000"
-        android:shadowDx="4"
-        android:shadowDy="4"
-        android:shadowRadius="10"
-        android:text="@string/buttonForgotPassword"
-        android:textAllCaps="false"
-        android:textColor="#FFC269"
+        android:layout_height="55dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/round_border_background"
+        android:drawableStart="@drawable/ic_username"
+        android:drawablePadding="5dp"
+        android:ems="10"
+        android:fontFamily="@font/sansation_regular"
+        android:hint="@string/hintUsername"
+        android:inputType="text"
+        android:paddingStart="21dp"
+        android:paddingEnd="20dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#8A8A8A"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/backgroundWave" />
 
     <Button
         android:id="@+id/buttonLogin"
@@ -145,23 +115,53 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonForgotPass" />
+        app:layout_constraintTop_toBottomOf="@+id/inputPassword" />
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/buttonLoginVK"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="48dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="276dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="48dp"
+        android:background="@drawable/button_background"
+        android:backgroundTint="#2196F3"
+        android:drawableStart="@drawable/ic_vkontakte"
+        android:drawablePadding="8sp"
         android:fontFamily="@font/sansation_regular"
-        android:text="@string/preToSignin"
+        android:includeFontPadding="true"
+        android:paddingStart="45sp"
+        android:paddingEnd="45sp"
+        android:text="@string/vkidSignin"
+        android:textAlignment="gravity"
+        android:textAllCaps="false"
         android:textColor="#FFFFFF"
-        android:textSize="17sp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonLogin" />
+        app:layout_constraintTop_toBottomOf="@+id/inputPassword" />
 
+    <Button
+        android:id="@+id/buttonForgotPass"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="8dp"
+        android:background="#00FFFFFF"
+        android:fontFamily="@font/sansation_bold"
+        android:shadowColor="#000000"
+        android:shadowDx="4"
+        android:shadowDy="4"
+        android:shadowRadius="10"
+        android:text="@string/buttonForgotPassword"
+        android:textAllCaps="false"
+        android:textColor="#FFC269"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputPassword" />
 
     <Button
         android:id="@+id/buttonToRegistration"
@@ -181,31 +181,38 @@
         android:textColor="#FFC269"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
-    <Button
-        android:id="@+id/buttonLoginVK"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/welcomeText"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:background="@drawable/button_background"
-        android:backgroundTint="#2196F3"
-        android:drawableStart="@drawable/ic_vkontakte"
-        android:drawablePadding="8sp"
-        android:fontFamily="@font/sansation_regular"
-        android:includeFontPadding="true"
-        android:paddingStart="45sp"
-        android:paddingEnd="45sp"
-        android:text="@string/vkidSignin"
-        android:textAllCaps="false"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/sansation_bold"
+        android:text="@string/welcome"
         android:textColor="#FFFFFF"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/backgroundWave"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="48dp"
+        android:fontFamily="@font/sansation_regular"
+        android:text="@string/preToSignin"
+        android:textColor="#FFFFFF"
+        android:textSize="17sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonToRegistration"/>
+        app:layout_constraintTop_toBottomOf="@+id/buttonLogin" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

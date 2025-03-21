@@ -65,7 +65,7 @@
         android:layout_marginTop="12dp"
         android:layout_marginEnd="64dp"
         android:fontFamily="@font/pt_sans"
-        android:text="4-х значный код был отправлен на youremail@email.com"
+        android:text="4-х значный код был отправлен на"
         android:textAlignment="center"
         android:textColor="#8D8DA9"
         android:textSize="14sp"
@@ -73,6 +73,39 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <TextView
+        android:id="@+id/textMail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginEnd="64dp"
+        android:fontFamily="@font/pt_sans"
+        android:text="вашу почту"
+        android:textAlignment="center"
+        android:textColor="#8D8DA9"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="64dp"
+        android:fontFamily="@font/pt_sans"
+        android:text="Письмо придёт в течении 30 секунд"
+        android:textAlignment="center"
+        android:textColor="#8D8DA9"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textMail" />
 
     <TextView
         android:id="@+id/textView5"
@@ -104,13 +137,12 @@
         android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6">
+        app:layout_constraintTop_toBottomOf="@+id/textView8">
 
         <EditText
             android:id="@+id/etDigit1"

@@ -21,14 +21,23 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.javanostra.meetyourmatch.R;
 import com.javanostra.meetyourmatch.activity.EventDetailsActivity;
+import com.javanostra.meetyourmatch.persistance.RetrofitClient;
+import com.javanostra.meetyourmatch.persistance.api_service.EventApiService;
+import com.javanostra.meetyourmatch.persistance.api_service.UserApiService;
 import com.javanostra.meetyourmatch.persistance.entity.Event;
 import com.javanostra.meetyourmatch.persistance.entity.Location;
+import com.javanostra.meetyourmatch.persistance.entity.Tag;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class EventSearchFragment extends Fragment {
 
@@ -63,35 +72,13 @@ public class EventSearchFragment extends Fragment {
             public void afterTextChanged(Editable s) {}
         });
 
-        events = new ArrayList<>();
-        events.add(new Event("Event 1", "Tags 1", 200.00,
-                new Timestamp(2024, 7, 12, 0, 0, 0, 0),
-                new Location(10.0, 10.0)));
-        events.add(new Event("Event 2", "Tags 2", 980.00,
-                new Timestamp(2024, 8, 12, 0, 0, 0, 0),
-                new Location(10.0, 10.0)));
-        events.add(new Event("Event 3", "Tags 3", 100.00,
-                new Timestamp(2024, 9, 1, 0, 0, 0, 0),
-                new Location(10.0, 10.0)));
-        events.add(new Event("Event 4", "Tags 4", 190.00,
-                new Timestamp(2024, 9, 19, 0, 0, 0, 0),
-                new Location(10.0, 10.0)));
-        events.add(new Event("Event 5", "Tags 5", 2600.00,
-                new Timestamp(2024, 8, 26, 0, 0, 0, 0),
-                new Location(10.0, 10.0)));
-        events.add(new Event("Event 6", "Tags 6", 210.00,
-                new Timestamp(2024, 7, 21, 0, 0, 0, 0),
-                new Location(10.0, 10.0)));
-        events.add(new Event("Event 7", "Tags 7", 1500.00,
-                new Timestamp(2024, 6, 12, 0, 0, 0, 0),
-                new Location(10.0, 10.0)));
-
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int screenWidth = displayMetrics.widthPixels;
         itemSize = screenWidth / 2 - 84-20;
 
-        populateGrid();
+        events = new ArrayList<>();
+        fetchAllEvents();
 
         return view;
     }
@@ -193,19 +180,47 @@ public class EventSearchFragment extends Fragment {
     }
 
     private void setItemParams(View eventItem, int i) {
+        Event eventPiece = events.get(i);
+
         CardView eventCardImage = eventItem.findViewById(R.id.cardView);
         ImageView eventImage = eventItem.findViewById(R.id.event_image);
         TextView eventTitle = eventItem.findViewById(R.id.event_title);
         TextView eventTags = eventItem.findViewById(R.id.event_tags);
 
-        eventImage.setImageResource(R.drawable.ic_mym_128);
-        eventTitle.setText(events.get(i).getTitle());
-        eventTags.setText(events.get(i).getDescription());
+        Glide.with(this)
+                .load(eventPiece.getCoverImgUrl())
+                .placeholder(R.drawable.ic_mym_128)
+                .error(R.drawable.ic_mym_128)
+                .into(eventImage);
+        //eventImage.setImageResource(R.drawable.ic_mym_128);
+        eventTitle.setText(eventPiece.getTitle());
+        eventTags.setText(eventPiece.getDescription());
 
         eventCardImage.getLayoutParams().width = itemSize;
         eventCardImage.getLayoutParams().height = itemSize;
 
-        int finalI = i;
-        eventItem.setOnClickListener(v -> openEventDetails(events.get(finalI)));
+        eventItem.setOnClickListener(v -> openEventDetails(eventPiece));
+    }
+
+    public void fetchAllEvents() {
+        EventApiService apiService = RetrofitClient.getRetrofit(getActivity().getApplicationContext()).create(EventApiService.class);
+
+        apiService.findAllEventsPageout(0, 15).enqueue(new Callback<List<Event>>() {
+            @Override
+            public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
+                if (response.isSuccessful()) {
+                    events = response.body();
+                    populateGrid();
+                    // Handle the list of events
+                } else {
+                    // Handle request errors
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Event>> call, Throwable t) {
+                // Handle failure
+            }
+        });
     }
 }
