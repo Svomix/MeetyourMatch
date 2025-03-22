@@ -23,8 +23,8 @@ public interface RegistrationApiService {
     @FormUrlEncoded
     @POST("/api/register/verify")
     Call<ResponseDTO> verifyRegister(
-            @Field("email") String email,
-            @Field("token") String token
+            @Field("token") String token,
+            @Field("email") String email
     );
 
     @FormUrlEncoded

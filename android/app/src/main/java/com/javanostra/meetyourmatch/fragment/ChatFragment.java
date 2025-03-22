@@ -21,21 +21,11 @@ import java.util.List;
 
 public class ChatFragment extends Fragment implements ChatRecyclerViewInterface {
 
-
     public static final List<User> users = List.of(
-            new User("Руслан Максудов", "fish@lang.com", "Password"),
-            new User("Максим Корчак", "fish@lang.com", "Password"),
-            new User("Дмитрий Чернышов", "fish@lang.com", "Password"),
-            new User("Кирилл Новосельцев", "fish@lang.com", "Password"),
-            new User("Максим Новосельцев", "fish@lang.com", "Password"),
-            new User("Антон Перепелкин", "fish@lang.com", "Password"),
-            new User("Вован Сараев", "fish@lang.com", "Password"),
-            new User("Александр Коваленко", "fish@lang.com", "Password"),
-            new User("Валерия Ткаченко", "fish@lang.com", "Password"),
-            new User("Рефат Решитов", "fish@lang.com", "Password"),
-            new User("Рамазан Шихларов", "fish@lang.com", "Password"),
-            new User("Рычка Игорь", "fish@lang.com", "Password"),
-            new User("Рабош Никита", "fish@lang.com", "Password")
+            new User("TEST1", "fish@lang.com", "Password"),
+            new User("TEST2", "fish@lang.com", "Password"),
+            new User("TEST3", "fish@lang.com", "Password"),
+            new User("TEST4", "fish@lang.com", "Password")
     );
 
     @Nullable

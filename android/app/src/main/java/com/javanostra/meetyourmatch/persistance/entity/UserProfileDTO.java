@@ -1,6 +1,5 @@
 package com.javanostra.meetyourmatch.persistance.entity;
 
-import java.io.Serializable;
 import java.util.Set;
 
 public class UserProfileDTO {

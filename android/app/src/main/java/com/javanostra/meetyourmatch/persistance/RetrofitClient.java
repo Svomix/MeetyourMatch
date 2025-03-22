@@ -18,7 +18,7 @@ public class RetrofitClient {
     private static Retrofit retrofit;
 
     public static Retrofit getRetrofit(Context context) {
-        if (retrofit == null) {
+        //if (retrofit == null) {
             CookieManager cookieManager = new CookieManager(context);
 
             OkHttpClient client = new OkHttpClient.Builder()
@@ -34,7 +34,7 @@ public class RetrofitClient {
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
-        }
+        //}
         return retrofit;
     }
 }

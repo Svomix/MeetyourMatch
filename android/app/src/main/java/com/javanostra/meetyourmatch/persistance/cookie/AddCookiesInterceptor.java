@@ -20,7 +20,7 @@ public class AddCookiesInterceptor implements Interceptor {
         Request.Builder builder = chain.request().newBuilder();
 
         String token = cookieManager.getCookie();
-        Log.d("AddInterceptor", "Token added to request: " + token);
+        System.out.println(token);
         if (token != null && !token.isEmpty()) {
             builder.addHeader("Authorization", "Bearer " + token);
         }

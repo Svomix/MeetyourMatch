@@ -18,7 +18,7 @@ import java.util.List;
 
 public class ElementAdapter extends RecyclerView.Adapter<ElementAdapter.ElementViewHolder> {
 
-    public List<Element> elementsList;
+    private List<Element> elementsList;
     private List<Element> filteredList;
 
     public ElementAdapter(List<Element> elements) {
@@ -26,8 +26,6 @@ public class ElementAdapter extends RecyclerView.Adapter<ElementAdapter.ElementV
         this.filteredList = new ArrayList<>(elements);
         sortElementsForDisplay();
     }
-
-
 
     @NonNull
     @Override
@@ -77,7 +75,15 @@ public class ElementAdapter extends RecyclerView.Adapter<ElementAdapter.ElementV
         notifyDataSetChanged();
     }
 
-    private void sortElementsForDisplay() {
+    public Element getElement(int position) {
+        return elementsList.get(position);
+    }
+
+    public void setElementSelected(int position) {
+        elementsList.get(position).setSelected(true);
+    }
+
+    public void sortElementsForDisplay() {
         Collections.sort(filteredList, (e1, e2) -> Boolean.compare(e2.isSelected(), e1.isSelected()));
     }
 

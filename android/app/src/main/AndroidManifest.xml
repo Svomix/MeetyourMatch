@@ -38,9 +38,6 @@
             android:name=".activity.InterestSelectionActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.InterestREselectionActivity"
-            android:exported="false" />
-        <activity
             android:name=".activity.RegistrationActivity2"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
