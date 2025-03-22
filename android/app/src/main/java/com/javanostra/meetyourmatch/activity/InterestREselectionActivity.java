@@ -2,14 +2,13 @@ package com.javanostra.meetyourmatch.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,11 +25,12 @@ import com.javanostra.meetyourmatch.persistance.entity.UserProfileDTO;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class InterestSelectionActivity extends AppCompatActivity {
+public class InterestREselectionActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private ElementAdapter adapter;
@@ -41,15 +41,22 @@ public class InterestSelectionActivity extends AppCompatActivity {
 
     private List<Tag> tags;
     private Long currentUserId;
+    private List<Tag> currentUserTags;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_interest_selec);
+        setContentView(R.layout.activity_interest_reselec);
 
         tags = new ArrayList<>();
         elementList = new ArrayList<>();
-        loadTags();
+
+        if(currentUserTags != null) currentUserTags.clear();
+        loadTags(() ->
+                performGetAccountInfo(() ->
+                        performGetUserTags(currentUserId)
+                )
+        );
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -57,7 +64,8 @@ public class InterestSelectionActivity extends AppCompatActivity {
         searchEditText = findViewById(R.id.searchEditText);
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -65,23 +73,20 @@ public class InterestSelectionActivity extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
 
         findViewById(R.id.buttonClose3).setOnClickListener(v -> {
-            Intent intent = new Intent(InterestSelectionActivity.this, MainScreenActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+            setResult(RESULT_CANCELED, new Intent());
             finish();
         });
 
         buttonContinue = findViewById(R.id.buttonCompleteReg2);
-        buttonContinue.setOnClickListener(v -> {
-            performGetAccountInfo(this::performSaveUserTags);
-        });
+        buttonContinue.setOnClickListener(v -> performSaveUserTags());
     }
 
-    private void loadTags() {
+    private void loadTags(Runnable onComplete) {
         TagApiService apiService = RetrofitClient.getRetrofit(this).create(TagApiService.class);
 
         apiService.getAllTags().enqueue(new Callback<List<Tag>>() {
@@ -96,6 +101,8 @@ public class InterestSelectionActivity extends AppCompatActivity {
                     }
                     adapter = new ElementAdapter(elementList);
                     recyclerView.setAdapter(adapter);
+
+                    onComplete.run();
                 } else {
                     Log.d("TagsLoader", "Load error: " + response.message());
                 }
@@ -130,11 +137,43 @@ public class InterestSelectionActivity extends AppCompatActivity {
         });
     }
 
+    private void performGetUserTags(Long userId) {
+        UserApiService apiServiceAcc = RetrofitClient.getRetrofit(this).create(UserApiService.class);
+
+        apiServiceAcc.getUserTags(userId).enqueue(new Callback<List<Tag>>() {
+            @Override
+            public void onResponse(Call<List<Tag>> call, Response<List<Tag>> response) {
+                if (response.isSuccessful()) {
+                    Log.d("GetUserTags", "Successful: " + response.message());
+                    currentUserTags = response.body();
+
+                    if (!currentUserTags.isEmpty()) {
+                        for (Element element : elementList) {
+                            for (Tag tag : currentUserTags) {
+                                if (element.getName().substring(1).equals(tag.getName()))
+                                    element.setSelected(true);
+                            }
+                        }
+                    }
+                    adapter = new ElementAdapter(elementList);
+                    recyclerView.setAdapter(adapter);
+                } else {
+                    Log.e("GetUserTags", "Error: " + response.message() + response.errorBody());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Tag>> call, Throwable t) {
+                Log.e("GetUserTags", "Network error: " + t.getMessage());
+            }
+        });
+    }
+
     private void performSaveUserTags() {
         UserApiService apiServiceUser = RetrofitClient.getRetrofit(this).create(UserApiService.class);
 
         for (Element element : elementList) {
-            if (element.isSelected()) {
+            if (element.isSelected() && !isContaining(element)) {
                 apiServiceUser.createUserAttribute(currentUserId, 1L, element.getId()).enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
@@ -144,17 +183,41 @@ public class InterestSelectionActivity extends AppCompatActivity {
                             Log.d("SaveUserTags", "Error: " + response.message());
                         }
                     }
+
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
                         Log.d("SaveUserTags", "Network error: " + t.getMessage());
                     }
                 });
+            } else if (!element.isSelected() && isContaining(element)) {
+                apiServiceUser.deleteUserAttribute(currentUserId, 1L, Long.toString(element.getId())).enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            Log.d("DeleteUserTags", "Successful: " + currentUserId + " " + 1 + " " + element.getId());
+                        } else {
+                            Log.d("DeleteUserTags", "Error: " + response.errorBody().toString() + response.message());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Log.d("DeleteUserTags", "Network error: " + t.getMessage());
+                    }
+                });
             }
         }
 
-        Intent intent = new Intent(InterestSelectionActivity.this, MainScreenActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        setResult(RESULT_OK, new Intent());
         finish();
+        //performGetUserTags(currentUserId);
+    }
+
+    private boolean isContaining(Element element) {
+        if (currentUserTags == null) return false;
+        for (Tag tag : currentUserTags) {
+            if (tag.getName().equals(element.getName().substring(1))) return true;
+        }
+        return false;
     }
 }

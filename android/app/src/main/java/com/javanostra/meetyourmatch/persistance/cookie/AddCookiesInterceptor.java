@@ -1,5 +1,7 @@
 package com.javanostra.meetyourmatch.persistance.cookie;
 
+import android.util.Log;
+
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -18,9 +20,9 @@ public class AddCookiesInterceptor implements Interceptor {
         Request.Builder builder = chain.request().newBuilder();
 
         String token = cookieManager.getCookie();
-
+        Log.d("AddInterceptor", "Token added to request: " + token);
         if (token != null && !token.isEmpty()) {
-            builder.addHeader("Authorization", "Bearer " + token.split("=")[1].split(";")[0]);
+            builder.addHeader("Authorization", "Bearer " + token);
         }
 
         return chain.proceed(builder.build());

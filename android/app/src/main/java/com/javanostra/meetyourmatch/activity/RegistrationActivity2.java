@@ -5,13 +5,13 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -22,10 +22,10 @@ import com.javanostra.meetyourmatch.persistance.RetrofitClient;
 import com.javanostra.meetyourmatch.persistance.api_service.AccountApiService;
 import com.javanostra.meetyourmatch.persistance.api_service.LoginApiService;
 import com.javanostra.meetyourmatch.persistance.api_service.RegistrationApiService;
+import com.javanostra.meetyourmatch.persistance.cookie.CookieManager;
+import com.javanostra.meetyourmatch.persistance.entity.NewUserDTO;
 import com.javanostra.meetyourmatch.persistance.entity.ResponseDTO;
 import com.javanostra.meetyourmatch.persistance.entity.UserRegistrationData;
-
-import java.io.IOException;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -51,15 +51,35 @@ public class RegistrationActivity2 extends AppCompatActivity {
         });
 
         UserRegistrationData userData = (UserRegistrationData) getIntent().getSerializableExtra("user_registration_data");
-        TextView text = findViewById(R.id.textView6);
-        text.append(userData.getEmail());
+        NewUserDTO truncatedUserData = new NewUserDTO(userData.getUsername(), userData.getEmail(), userData.getPassword());
+
+        TextView textMail = findViewById(R.id.textMail);
+        if (userData.getEmail() != null && !userData.getEmail().isEmpty()) {
+            textMail.setText(userData.getEmail());
+        }
 
         buttonSendCode = findViewById(R.id.buttonSendCode);
         startResendTimer();
 
         buttonSendCode.setOnClickListener(v -> {
-            updateCode(userData.getEmail());
+            Toast.makeText(RegistrationActivity2.this, "Код отправлен заново", Toast.LENGTH_SHORT).show();
+            sendUpdateCodeRequest(userData.getEmail());
             startResendTimer();
+        });
+
+        findViewById(R.id.buttonCompleteReg).setOnClickListener(v -> {
+            String verificationCode = etDigit1.getText().toString() + etDigit2.getText().toString() +
+                    etDigit3.getText().toString() + etDigit4.getText().toString();
+
+            performVerify(userData.getEmail(), verificationCode, () -> {
+                performLogin(userData.getUsername(), userData.getPassword(), () -> {
+                    performCityUpdate(userData.getCityId());
+                    Intent intent = new Intent(RegistrationActivity2.this, InterestSelectionActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                });
+            });
         });
 
         findViewById(R.id.buttonClose2).setOnClickListener(v -> {
@@ -70,72 +90,13 @@ public class RegistrationActivity2 extends AppCompatActivity {
         etDigit2 = findViewById(R.id.etDigit2);
         etDigit3 = findViewById(R.id.etDigit3);
         etDigit4 = findViewById(R.id.etDigit4);
+        finishRegistration = findViewById(R.id.buttonCompleteReg);
         setupOtpInputs();
 
         etDigit1.addTextChangedListener(inputWatcher);
         etDigit2.addTextChangedListener(inputWatcher);
         etDigit3.addTextChangedListener(inputWatcher);
         etDigit4.addTextChangedListener(inputWatcher);
-
-        finishRegistration = findViewById(R.id.buttonCompleteReg);
-        finishRegistration.setEnabled(false);
-        finishRegistration.setOnClickListener(v -> {
-            testCode(getCode(), userData.getEmail());
-        });
-    }
-
-    private String getCode() {
-        String code = "";
-        code += etDigit1.getText();
-        code += etDigit2.getText();
-        code += etDigit3.getText();
-        code += etDigit4.getText();
-        return code;
-    }
-
-    private void testCode(String code, String email) {
-        RegistrationApiService apiService = RetrofitClient.getRetrofit(this).create(RegistrationApiService.class);
-        Call<ResponseDTO> call = apiService.verifyRegister(code, email);
-
-        call.enqueue(new Callback<ResponseDTO>() {
-            @Override
-            public void onResponse(@NonNull Call<ResponseDTO> call, @NonNull Response<ResponseDTO> response) {
-                if (response.isSuccessful() && response.code() == 200) {
-                    Toast.makeText(RegistrationActivity2.this, "Код подтвержден", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(RegistrationActivity2.this, InterestSelectionActivity.class);
-                    intent.putExtra("previousActivity", "Register");
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(RegistrationActivity2.this, "Неправильный код: " + response.message(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ResponseDTO> call, @NonNull Throwable t) {
-                Toast.makeText(RegistrationActivity2.this, "Ошибка сети COD: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void updateCode(String email) {
-        RegistrationApiService apiService = RetrofitClient.getRetrofit(this).create(RegistrationApiService.class);
-        Call<ResponseDTO> call = apiService.updateCode(email);
-
-        call.enqueue(new Callback<ResponseDTO>() {
-            @Override
-            public void onResponse(@NonNull Call<ResponseDTO> call, @NonNull Response<ResponseDTO> response) {
-                if (response.isSuccessful() && response.code() == 200) {
-                    Toast.makeText(RegistrationActivity2.this, "Код отправлен заново", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(RegistrationActivity2.this, "Неправильный email: " + response.message(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ResponseDTO> call, @NonNull Throwable t) {
-                Toast.makeText(RegistrationActivity2.this, "Ошибка сети UPD: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void setupOtpInputs() {
@@ -249,6 +210,92 @@ public class RegistrationActivity2 extends AppCompatActivity {
         String digit3 = etDigit3.getText().toString().trim();
         String digit4 = etDigit4.getText().toString().trim();
 
-        finishRegistration.setEnabled(!digit1.isEmpty() && !digit2.isEmpty() && !digit3.isEmpty() && !digit4.isEmpty());
+        if (!digit1.isEmpty() && !digit2.isEmpty() && !digit3.isEmpty() && !digit4.isEmpty()) {
+            finishRegistration.setEnabled(true);
+        } else {
+            finishRegistration.setEnabled(false);
+        }
+    }
+
+    private void performVerify(String email, String code, Runnable onComplete) {
+        RegistrationApiService apiService = RetrofitClient.getRetrofit(this).create(RegistrationApiService.class);
+
+        apiService.verifyRegister(email, code).enqueue(new Callback<ResponseDTO>() {
+            @Override
+            public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+                if (response.isSuccessful()) {
+                    Log.d("Verify", "Successful: " + response.body().getMessage());
+                    onComplete.run();
+                } else {
+                    Log.d("Verify", "Error: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDTO> call, Throwable t) {
+                Log.d("Verify", "Network error: " + t.getMessage());
+            }
+        });
+    }
+
+    private void sendUpdateCodeRequest(String email) {
+        RegistrationApiService apiService = RetrofitClient.getRetrofit(this).create(RegistrationApiService.class);
+
+        apiService.updateVerificationCode(email).enqueue(new Callback<ResponseDTO>() {
+            @Override
+            public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+                if (response.isSuccessful()) {
+                    Log.d("UpdateCode", "Successful: " + response.body().getMessage());
+                } else {
+                    Log.d("UpdateCode", "Error: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDTO> call, Throwable t) {
+                Log.d("UpdateCode", "Network error: " + t.getMessage());
+            }
+        });
+    }
+
+    private void performLogin(String username, String password, Runnable onComplete) {
+        LoginApiService apiService = RetrofitClient.getRetrofit(this).create(LoginApiService.class);
+
+        apiService.login(username, password).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.code() == 200) {
+                    Log.d("Login", "Successful: " + username + " " + password);
+                    onComplete.run();
+                } else {
+                    Log.d("Login", "Error: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Login", "Network error: " + t.getMessage());
+            }
+        });
+    }
+
+    private void performCityUpdate(int cityID) {
+        AccountApiService userApiService = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
+
+        userApiService.setCity((long) cityID).enqueue(new Callback<ResponseDTO>() {
+            @Override
+            public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+                if (response.isSuccessful()) {
+                    Log.d("SetCity", "Successful: " + response.body().getMessage());
+                } else {
+                    Log.d("SetCity", "Error: " + cityID + " " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDTO> call, Throwable t) {
+                Log.d("SetCity", "Network error: " + t.getMessage());
+            }
+        });
     }
 }

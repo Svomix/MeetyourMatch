@@ -6,8 +6,10 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Query;
 
 public interface RegistrationApiService {
     @FormUrlEncoded
@@ -21,17 +23,19 @@ public interface RegistrationApiService {
     @FormUrlEncoded
     @POST("/api/register/verify")
     Call<ResponseDTO> verifyRegister(
-            @Field("token")
-            String code,
-
-            @Field("email")
-            String email
+            @Field("email") String email,
+            @Field("token") String token
     );
 
     @FormUrlEncoded
     @PUT("/api/register/update-code")
-    Call<ResponseDTO> updateCode(
-            @Field("email")
-            String email
+    Call<ResponseDTO> updateVerificationCode(
+            @Field("email") String email
+    );
+
+    @GET("/api/register/check-user")
+    Call<ResponseDTO> checkUserExists(
+            @Query("username") String username,
+            @Query("email") String email
     );
 }

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/gradient_background_rounded"
+    android:padding="25dp">
+
+    <AutoCompleteTextView
+        android:id="@+id/editText"
+        android:layout_width="320dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:background="@drawable/round_border_background"
+        android:inputType="text|textAutoComplete"
+        android:outlineAmbientShadowColor="@color/white"
+        android:outlineSpotShadowColor="@color/white"
+        android:paddingStart="16dp"
+        android:popupBackground="@drawable/round_border_background"
+        android:shadowColor="@color/white"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textColorHighlight="@color/icons"
+        android:textColorHint="@color/icons"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/confirmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/button_background"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:text="Подтвердить"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/editText"
+        app:layout_constraintTop_toBottomOf="@+id/editText" />
+
+    <Button
+        android:id="@+id/cancelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/round_border_background"
+        android:backgroundTintMode="src_over"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="Отмена"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/editText"
+        app:layout_constraintTop_toBottomOf="@+id/editText" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

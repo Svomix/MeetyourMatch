@@ -2,6 +2,7 @@ package com.javanostra.meetyourmatch.persistance.api_service;
 
 import com.javanostra.meetyourmatch.persistance.entity.Attribute;
 import com.javanostra.meetyourmatch.persistance.entity.Event;
+import com.javanostra.meetyourmatch.persistance.entity.Tag;
 
 import java.util.List;
 
@@ -16,8 +17,16 @@ import retrofit2.http.Query;
 
 public interface EventApiService {
 
-    @GET("/api/v1/events")
-    Call<List<Event>> findAllEvents(@Query("offset") Integer offset, @Query("limit") Integer limit);
+    @GET("/api/v1/events/pageout")
+    Call<List<Event>> findAllEventsPageout(
+            @Query("offset") Integer offset,
+            @Query("limit") Integer limit
+    );
+
+    @GET("/api/v1/events/{event_id}/tags")
+    Call<List<Tag>> findEventTags(
+            @Path("event_id") Long eventId
+    );
 
     @GET("/api/v1/events/{event_id}")
     Call<Event> findEventById(@Path("event_id") Long eventId);

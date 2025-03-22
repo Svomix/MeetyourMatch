@@ -92,7 +92,7 @@
         android:inputType="text|textAutoComplete"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
-        android:popupBackground="@drawable/gradient_background"
+        android:popupBackground="@drawable/gradient_background_rounded"
         android:textColor="#FFFFFF"
         android:textColorHighlight="#FFFFFF"
         android:textColorHint="#8A8A8A"

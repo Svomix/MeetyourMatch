@@ -10,7 +10,7 @@ public class Event implements Serializable {
 
     private String description;
 
-    private Double price;
+    private String price;
 
     private Timestamp date;
 
@@ -20,7 +20,7 @@ public class Event implements Serializable {
 
     private String sourceUrl;
 
-    public Event(Long id, String title, String description, Double price, Timestamp date, Location location, String coverImgUrl, String sourceUrl) {
+    public Event(Long id, String title, String description, String price, Timestamp date, Location location, String coverImgUrl, String sourceUrl) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -31,7 +31,7 @@ public class Event implements Serializable {
         this.sourceUrl = sourceUrl;
     }
 
-    public Event(String title, String description, Double price, Timestamp date, Location location, String coverImgUrl, String sourceUrl) {
+    public Event(String title, String description, String price, Timestamp date, Location location, String coverImgUrl, String sourceUrl) {
         this.title = title;
         this.description = description;
         this.price = price;
@@ -41,7 +41,7 @@ public class Event implements Serializable {
         this.sourceUrl = sourceUrl;
     }
 
-    public Event(String title, String description, Double price, Timestamp date, Location location) {
+    public Event(String title, String description, String price, Timestamp date, Location location) {
         this.title = title;
         this.description = description;
         this.price = price;
@@ -73,11 +73,11 @@ public class Event implements Serializable {
         this.description = description;
     }
 
-    public Double getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 

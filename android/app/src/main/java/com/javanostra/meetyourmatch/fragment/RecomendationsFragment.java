@@ -4,7 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,33 +22,44 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.javanostra.meetyourmatch.R;
 import com.javanostra.meetyourmatch.activity.EventDetailsActivity;
+import com.javanostra.meetyourmatch.persistance.RetrofitClient;
+import com.javanostra.meetyourmatch.persistance.api_service.AccountApiService;
+import com.javanostra.meetyourmatch.persistance.api_service.EventApiService;
+import com.javanostra.meetyourmatch.persistance.api_service.UserApiService;
 import com.javanostra.meetyourmatch.persistance.entity.Event;
 import com.javanostra.meetyourmatch.persistance.entity.Location;
+import com.javanostra.meetyourmatch.persistance.entity.UserProfileDTO;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class RecomendationsFragment extends Fragment implements GestureDetector.OnGestureListener {
     private List<Event> events;
     private int currentEventIndex = 0;
+    private UserProfileDTO currentUser;
 
-    private TextView event_title;
-    private TextView event_description;
-    private ImageView event_full_description;
-    private ImageView event_refresh;
-    private ImageButton like_button;
-    private ImageButton dislike_button;
+    private TextView event_title, event_description;
+    private ImageView event_full_description, event_refresh, eventImage, action_image_view;
+    private ImageButton like_button, dislike_button;
     private GestureDetector gestureDetector;
-
-    private ImageView action_image_view;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recomendations, container, false);
+        currentEventIndex = 0;
 
         event_title = view.findViewById(R.id.event_title);
         event_description = view.findViewById(R.id.event_description);
@@ -54,40 +68,10 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
         like_button = view.findViewById(R.id.like_button);
         dislike_button = view.findViewById(R.id.dislike_button);
         action_image_view = view.findViewById(R.id.action_image_view);
+        eventImage = view.findViewById(R.id.eventImage);
 
-        events = new ArrayList<>();
-        events.add(new Event("Event 1", "Tags 1", 200.00,
-                new Timestamp(2024, 7, 8, 0, 0, 0, 0),
-                new Location(10.0, 10.0)));
-        events.add(new Event("Event 2", "Tags 2", 300.00,
-                        new Timestamp(2024, 8, 12, 0, 0, 0, 0),
-                        new Location(10.0, 10.0)));
-        events.add(new Event("Event 3", "Tags 3", 400.00,
-                        new Timestamp(2024, 9, 22, 0, 0, 0, 0),
-                        new Location(10.0, 10.0)));
-        events.add(new Event("Event 4Event 4Event 4Event 4", "Tags 4Tags 4", 500.00,
-                        new Timestamp(2024, 10, 25, 0, 0, 0, 0),
-                        new Location(10.0, 10.0)));
-        events.add(new Event("Event 5Event 5Event 5Event 5", "Tags 5Tags 5", 600.00,
-                        new Timestamp(2024, 10, 25, 0, 0, 0, 0),
-                        new Location(10.0, 10.0)));
-        events.add(new Event("Event 6Event 6Event 6Event 6", "Tags 6Tags 6", 700.00,
-                        new Timestamp(2024, 10, 25, 0, 0, 0, 0),
-                        new Location(10.0, 10.0)));
-        events.add(new Event("Event 7Event 7Event 7Event 7", "Tags 7Tags 7", 800.00,
-                        new Timestamp(2024, 10, 25, 0, 0, 0, 0),
-                        new Location(10.0, 10.0)));
-        events.add(new Event("EventEventEventEvent", "Tags 8Tags 8", 1000.00,
-                        new Timestamp(2024, 11, 30, 0, 0, 0, 0),
-                        new Location(10.0, 10.0)));
-//        events.add(new Event("Name-1", "Desc", 12, 8, 2024));
-//        events.add(new Event("Name0", "DescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDescDesc", 22, 9, 2024));
-//        events.add(new Event("Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1Name1", "Desc", 25, 10, 2024));
-//        events.add(new Event("Name2", "Desc", 25, 10, 2024));
-//        events.add(new Event("Name3", "Desc", 12, 7, 2024));
-//        events.add(new Event("Name4", "Desc", 20, 8, 2024));
-//        events.add(new Event("Name5", "Desc", 5, 11, 2024));
-//        events.add(new Event("Name6", "Desc", 9, 12, 2024));
+        fetchAllEvents();
+        fetchAccountInfo();
 
         displayCurrentEvent();
 
@@ -108,10 +92,33 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
     }
 
     private void displayCurrentEvent() {
-        if (currentEventIndex < events.size()) {
+        if (events != null && currentEventIndex < events.size()) {
             Event currentEvent = events.get(currentEventIndex);
             event_title.setText(currentEvent.getTitle());
             event_description.setText(currentEvent.getDescription());
+            Log.d("GlideLoad", "Loading image from: " + currentEvent.getCoverImgUrl());
+            Glide.with(this)
+                    .load(currentEvent.getCoverImgUrl())
+                    .timeout(30000)
+                    .placeholder(R.drawable.ic_mym_128)
+                    .error(R.drawable.ic_mym_128)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                                                    Target<Drawable> target, boolean isFirstResource) {
+                            Log.e("GlideError", "Load failed", e);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model,
+                                                       Target<Drawable> target, DataSource dataSource,
+                                                       boolean isFirstResource) {
+                            Log.d("GlideSuccess", "Image loaded successfully");
+                            return false;
+                        }
+                    })
+                    .into(eventImage);
         } else {
             event_title.setText("Нет больше мероприятий");
             event_description.setText("");
@@ -146,6 +153,7 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
     }
 
     private void handleLike() {
+        fetchSwitchLike(currentUser.getId(), events.get(currentEventIndex).getId());
         currentEventIndex++;
         showActionImage(R.drawable.ic_baseline_thumb_up_24);
 
@@ -153,6 +161,7 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
     }
 
     private void handleDislike() {
+        fetchSwitchDislike(currentUser.getId(), events.get(currentEventIndex).getId());
         currentEventIndex++;
         showActionImage(R.drawable.ic_baseline_thumb_down_24);
 
@@ -214,6 +223,7 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
     private void showActionImage(int imageResId) {
         action_image_view.setImageResource(imageResId);
         action_image_view.setAlpha(0.7f);
+        action_image_view.setColorFilter(Color.parseColor("#FBB63F"));
         action_image_view.animate()
                 .alpha(0f)
                 .setDuration(1000)
@@ -302,4 +312,84 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
                 })
                 .start();
     }
+
+    public void fetchAllEvents() {
+        EventApiService apiService = RetrofitClient.getRetrofit(getActivity().getApplicationContext()).create(EventApiService.class);
+
+        apiService.findAllEventsPageout(0, 15).enqueue(new Callback<List<Event>>() {
+            @Override
+            public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
+                if (response.isSuccessful()) {
+                    events = response.body();
+                    displayCurrentEvent();
+                    // Handle the list of events
+                } else {
+                    // Handle request errors
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Event>> call, Throwable t) {
+                // Handle failure
+            }
+        });
+    }
+
+    private void fetchAccountInfo() {
+        AccountApiService apiServiceAcc = RetrofitClient.getRetrofit(getActivity().getApplicationContext()).create(AccountApiService.class);
+
+        apiServiceAcc.getAccountInfo().enqueue(new Callback<UserProfileDTO>() {
+            @Override
+            public void onResponse(Call<UserProfileDTO> call, Response<UserProfileDTO> response) {
+                if (response.isSuccessful()) {
+                    Log.d("GetAccountInfo", "Successful: " + response.message());
+                    currentUser = response.body();
+                } else {
+                    Log.e("GetAccountInfo", "Error: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserProfileDTO> call, Throwable t) {
+                Log.e("GetAccountInfo", "Network error: " + t.getMessage());
+            }
+        });
+    }
+
+    public void fetchSwitchLike(Long userId, Long eventId) {
+        UserApiService apiService = RetrofitClient.getRetrofit(getActivity().getApplicationContext()).create(UserApiService.class);
+
+        apiService.setLiked(userId, eventId).enqueue(new retrofit2.Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, retrofit2.Response<Void> response) {
+                if (response.isSuccessful()) {
+                    //System.out.println("Event liked successfully.");
+                } else {
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+            }
+        });
+    }
+
+    public void fetchSwitchDislike(Long userId, Long eventId) {
+        UserApiService apiService = RetrofitClient.getRetrofit(getActivity().getApplicationContext()).create(UserApiService.class);
+
+        apiService.setDisliked(userId, eventId).enqueue(new retrofit2.Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, retrofit2.Response<Void> response) {
+                if (response.isSuccessful()) {
+                    //System.out.println("Event added to calendar successfully.");
+                } else {
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+            }
+        });
+    }
+
 }
