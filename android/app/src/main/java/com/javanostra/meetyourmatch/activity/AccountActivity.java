@@ -108,7 +108,8 @@ public class  AccountActivity extends AppCompatActivity {
         email.setOnClickListener(v -> showInputDialog("emailShow"));
         //usernameShow.setOnClickListener(v -> showInputDialog("usernameShow"));
         tag.setOnClickListener(v -> {
-            Intent intent = new Intent(AccountActivity.this, InterestREselectionActivity.class);
+            Intent intent = new Intent(AccountActivity.this, InterestSelectionActivity.class);
+            intent.putExtra("previousActivity", "Account");
             tagSelectionLauncher.launch(intent);
         });
 

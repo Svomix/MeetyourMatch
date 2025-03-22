@@ -4,6 +4,7 @@ import android.service.autofill.UserData;
 
 import com.javanostra.meetyourmatch.persistance.entity.Attribute;
 import com.javanostra.meetyourmatch.persistance.entity.Event;
+import com.javanostra.meetyourmatch.persistance.entity.Interest;
 import com.javanostra.meetyourmatch.persistance.entity.ResponseDTO;
 import com.javanostra.meetyourmatch.persistance.entity.Tag;
 import com.javanostra.meetyourmatch.persistance.entity.User;
@@ -116,4 +117,7 @@ public interface UserApiService {
             @Path("user_id") Long userId,
             @Path("attr_id") Long attrId
     );
+
+    @GET("/api/interests")
+    Call<List<Interest>> getAllInterests();
 }

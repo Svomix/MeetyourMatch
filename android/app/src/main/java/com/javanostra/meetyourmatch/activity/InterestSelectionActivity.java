@@ -1,14 +1,18 @@
 package com.javanostra.meetyourmatch.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +23,9 @@ import com.javanostra.meetyourmatch.persistance.RetrofitClient;
 import com.javanostra.meetyourmatch.persistance.api_service.AccountApiService;
 import com.javanostra.meetyourmatch.persistance.api_service.TagApiService;
 import com.javanostra.meetyourmatch.persistance.api_service.UserApiService;
+import com.javanostra.meetyourmatch.persistance.cookie.CookieManager;
 import com.javanostra.meetyourmatch.persistance.entity.Element;
+import com.javanostra.meetyourmatch.persistance.entity.Interest;
 import com.javanostra.meetyourmatch.persistance.entity.Tag;
 import com.javanostra.meetyourmatch.persistance.entity.UserProfileDTO;
 
@@ -36,23 +42,17 @@ public class InterestSelectionActivity extends AppCompatActivity {
     private ElementAdapter adapter;
     private List<Element> elementList;
     private EditText searchEditText;
-
     private Button buttonContinue;
 
-    private List<Tag> tags;
-    private Long currentUserId;
+    private List<Interest> interests = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_interest_selec);
 
-        tags = new ArrayList<>();
-        elementList = new ArrayList<>();
-        loadTags();
-
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        String previousActivity = getIntent().getExtras().get("previousActivity").toString();
+        performGetAllInterests();
 
         searchEditText = findViewById(R.id.searchEditText);
         searchEditText.addTextChangedListener(new TextWatcher() {
@@ -69,92 +69,117 @@ public class InterestSelectionActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.buttonClose3).setOnClickListener(v -> {
-            Intent intent = new Intent(InterestSelectionActivity.this, MainScreenActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
             finish();
         });
 
         buttonContinue = findViewById(R.id.buttonCompleteReg2);
         buttonContinue.setOnClickListener(v -> {
-            performGetAccountInfo(this::performSaveUserTags);
+            performSaveUserTags();
+            if (previousActivity.equals("Account")) {
+                finish();
+            } else if (previousActivity.equals("Register")) {
+                Intent intent = new Intent(InterestSelectionActivity.this, MainScreenActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
         });
     }
 
-    private void loadTags() {
-        TagApiService apiService = RetrofitClient.getRetrofit(this).create(TagApiService.class);
+    private void performGetAllInterests() {
+        UserApiService userApiService = RetrofitClient.getRetrofit(this).create(UserApiService.class);
 
-        apiService.getAllTags().enqueue(new Callback<List<Tag>>() {
+        Call<List<Interest>> call = userApiService.getAllInterests();
+        Context context = this;
+        call.enqueue(new Callback<List<Interest>>() {
             @Override
-            public void onResponse(Call<List<Tag>> call, Response<List<Tag>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    Log.d("TagsLoader", "Success: " + response.body());
-                    tags.addAll(response.body());
-                    elementList.clear();
-                    for (int i = 0; i < tags.size(); i++) {
-                        elementList.add(new Element(i + 1, "#" + tags.get(i).getName(), false));
+            public void onResponse(Call<List<Interest>> call, Response<List<Interest>> response) {
+                if (response.isSuccessful()) {
+                    interests = response.body();
+                    Toast.makeText(InterestSelectionActivity.this, R.string.successfulInterest, Toast.LENGTH_SHORT).show();
+
+                    elementList = new ArrayList<>();
+                    for (int i = 0; i < interests.size(); i++) {
+                        elementList.add(new Element(i+1, interests.get(i).getName(), false));
                     }
+
+                    recyclerView = findViewById(R.id.recyclerView);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(context));
                     adapter = new ElementAdapter(elementList);
                     recyclerView.setAdapter(adapter);
+
+                    performGetUserInterests();
                 } else {
-                    Log.d("TagsLoader", "Load error: " + response.message());
+                    Toast.makeText(InterestSelectionActivity.this, R.string.invalidInterest, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Tag>> call, Throwable t) {
-                Log.d("TagsLoader", "Network error: " + t.getMessage());
+            public void onFailure(Call<List<Interest>> call, Throwable t) {
+                Toast.makeText(InterestSelectionActivity.this, R.string.connectionError + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void performGetAccountInfo(Runnable onComplete) {
+    private void performGetUserInterests() {
         AccountApiService apiServiceAcc = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
-
-        apiServiceAcc.getAccountInfo().enqueue(new Callback<UserProfileDTO>() {
+        Call<List<Interest>> firstCall = apiServiceAcc.getMyInterests();
+        firstCall.enqueue(new Callback<List<Interest>>() {
             @Override
-            public void onResponse(Call<UserProfileDTO> call, Response<UserProfileDTO> response) {
+            public void onResponse(Call<List<Interest>> call, Response<List<Interest>> response) {
                 if (response.isSuccessful()) {
-                    Log.d("GetAccountInfo", "Successful: " + response.body().getUsername());
-                    currentUserId = response.body().getId();
-                    onComplete.run();
+                    response.body().forEach(System.out::println);
+                    Toast.makeText(InterestSelectionActivity.this, R.string.successfulInterest, Toast.LENGTH_SHORT).show();
+                    setAllUserInterests(response.body());
+
                 } else {
-                    Log.d("GetAccountInfo", "Error: " + response.message());
+                    Toast.makeText(InterestSelectionActivity.this, R.string.invalidInterest, Toast.LENGTH_SHORT).show();
                 }
             }
-
             @Override
-            public void onFailure(Call<UserProfileDTO> call, Throwable t) {
-                Log.d("GetAccountInfo", "Network error: " + t.getMessage());
+            public void onFailure(Call<List<Interest>> call, Throwable t) {
+                Toast.makeText(InterestSelectionActivity.this, R.string.connectionError + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void setAllUserInterests(List<Interest> userInterests) {
+        int size = adapter.getItemCount();
+        for (int i = 0; i < size; ++i) {
+            boolean hasInterest = false;
+            for (int j = 0; j < userInterests.size(); ++j) {
+                if (userInterests.get(j).getName().equals(adapter.getElement(i).getName())) {
+                    hasInterest = true;
+                    break;
+                }
+            }
+            if (hasInterest) adapter.setElementSelected(i);
+        }
+        adapter.sortElementsForDisplay();
+        adapter.notifyDataSetChanged();
     }
 
     private void performSaveUserTags() {
-        UserApiService apiServiceUser = RetrofitClient.getRetrofit(this).create(UserApiService.class);
-
-        for (Element element : elementList) {
+        //TODO: change to more effective method
+        AccountApiService apiServiceAcc = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
+        int size = adapter.getItemCount();
+        Call<String> firstCall;
+        for (int i = 0; i < size; ++i) {
+            Element element = adapter.getElement(i);
             if (element.isSelected()) {
-                apiServiceUser.createUserAttribute(currentUserId, 1L, element.getId()).enqueue(new Callback<Void>() {
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        if (response.isSuccessful()) {
-                            Log.d("SaveUserTags", "Successful: " + currentUserId + " " + 1 + " " + element.getId());
-                        } else {
-                            Log.d("SaveUserTags", "Error: " + response.message());
-                        }
-                    }
-                    @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        Log.d("SaveUserTags", "Network error: " + t.getMessage());
-                    }
-                });
+                firstCall = apiServiceAcc.addInterest((int)element.getId());
+            } else {
+                firstCall = apiServiceAcc.deleteInterest((int)element.getId());
             }
-        }
 
-        Intent intent = new Intent(InterestSelectionActivity.this, MainScreenActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
+            firstCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                }
+            });
+        }
     }
 }
