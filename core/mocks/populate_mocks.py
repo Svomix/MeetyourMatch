@@ -1,11 +1,12 @@
 import psycopg2
 import csv
 import glob
+from os import environ
 
 def location(lat, lon):
     return "latitude=%f;longitude=%f" % (lat, lon)
 
-conn = psycopg2.connect(dbname="data", user="postgres", password="25812581", host="localhost", port="5432")
+conn = psycopg2.connect(dbname=environ.get("POSTGRES_DB", "data"), user=environ.get("POSTGRES_USER", "postgres"), password=environ.get("POSTGRES_PASSWORD", "25812581"), host=environ.get("POSTGRES_HOST", "localhost"), port=environ.get("POSTGRES_PORT", "5432"))
 with conn:
     with conn.cursor() as cursor:
         
@@ -24,9 +25,10 @@ with conn:
         cursor.execute("TRUNCATE TABLE Events RESTART IDENTITY CASCADE")
         cursor.execute("TRUNCATE TABLE Events_attribute_value RESTART IDENTITY CASCADE")
         
-        for file in glob.glob("*.sql"):
-                with open(file, "r", encoding="utf-8") as f:
-                   cursor.execute(f.read())
+        for file in sorted(glob.glob("*.sql")):
+            print(file)
+            with open(file, "r", encoding="utf-8") as f:
+                cursor.execute(f.read())
         
         #1257
         #$2a$10$PaiePy.c9ynQumHOH/QFeOP/9j1WbWyIBZ7ggCoG9V.gaYHRrbkvO

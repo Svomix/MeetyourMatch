@@ -1,0 +1,50 @@
+services:
+  postgres:
+    image: postgres:14.2
+    restart: always
+    environment:
+      POSTGRES_DB: "${DB_NAME}"
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - pgdata:/var/lib/postgresql/data 
+    ports:
+      - "${DB_PORT}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "${DB_NAME}"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+  backend:
+    image: core:0.0.1-SNAPSHOT
+    ports:
+        - "${APP_PORT}:8080"
+    environment:
+      SPRING_CONFIG_NAME: "docker"
+      POSTGRES_DB: "${DB_NAME}"
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_URL: "postgres:${DB_PORT}"
+    restart: on-failure
+    depends_on:
+      - postgres
+    links: 
+        - postgres
+  db-init:
+    build:
+      context: core/mocks/.
+      dockerfile: Dockerfile
+    command: python3 populate_mocks.py
+    depends_on:
+      - postgres
+    profiles:
+      - init-tools
+    environment:
+      POSTGRES_DB: "${DB_NAME}"
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_HOST: "postgres"
+      POSTGRES_PORT: "${DB_PORT}"
+volumes:
+  pgdata:
