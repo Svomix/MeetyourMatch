@@ -47,6 +47,11 @@
 
 .title {
   align-self: center;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+  text-overflow: ellipsis;
+  overflow: hidden;
   line-clamp: 3;
   -webkit-line-clamp: 3;
   line-height: 1.1;

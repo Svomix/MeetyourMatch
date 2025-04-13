@@ -25,7 +25,7 @@ export default ({ event, refLink, width, height }) => {
       </div>
 
       <div className={styles.description}>
-        <h3 className={styles.event_title}>{event.title}</h3>
+        <div className={styles.event_title}>{event.title}</div>
         <p className={styles.event_date}>{new Date(event.date || 0).toLocaleString('ru-RU')}</p>
         <p className={styles.event_tags}>#отдых #искусство</p>
         <Heart width={40} height={40} className={styles.heart} />
