@@ -7,19 +7,19 @@ import SDropdown from '@components/SDropdown';
 import Search from '@components/Search';
 import Cookies from 'js-cookie';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import styles from './page.module.css';
 
-export default () => {
+const SearchSection = () => {
   let [events, setEvents] = useState([]);
   let [totalPages, setTotalPages] = useState(1);
-
+  
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
-
+  
   const page = parseInt(searchParams.get('page')) || 1;
-
+  
   const setPage = (page) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
     current.set('page', page);
@@ -27,7 +27,7 @@ export default () => {
     const query = search ? `?${search}` : '';
     router.push(`${pathname}${query}`);
   };
-
+  
   useEffect(() => {
     const instance = Cookies.get(tokenType.ACCESS_TOKEN) ? authed : unauthed;
     instance.get(`/v1/events?limit=16&page=${page}`).then((response) => {
@@ -36,39 +36,47 @@ export default () => {
     });
   }, [page]);
 
+  return <>
+    <section className={styles.controls}>
+      <Search placeholder="Поиск" />
+      <SDropdown
+        placeholder={'Платно?'}
+        data={[
+          { key: 'pay', text: 'Платно' },
+          { key: 'free', text: 'Бесплатно' }
+        ]}
+        className={styles.dbar}
+      />
+      <SDropdown placeholder={'Город'} data={stub_cities} className={styles.dbar} />
+      <SDropdown
+        placeholder={'Теги'}
+        data={[
+          { key: 'tag1', text: 'Тег1' },
+          { key: 'tag2', text: 'Тег2' },
+          { key: 'tag3', text: 'Тег3' }
+        ]}
+        className={styles.dbar}
+      />
+    </section>
+    <div className={styles.events}>
+      {events?.map((el, index) => (
+        <Card key={el.id} event={el} />
+      ))}
+    </div>
+    <div className={styles.pages}>
+      <CardNavigation current={page} setCurrent={setPage} total={totalPages} />
+    </div>
+  </>
+}
+
+export default () => {
   return (
     <>
-      <div className={styles.wrapper}>
-        <section className={styles.controls}>
-          <Search placeholder="Поиск" />
-          <SDropdown
-            placeholder={'Платно?'}
-            data={[
-              { key: 'pay', text: 'Платно' },
-              { key: 'free', text: 'Бесплатно' }
-            ]}
-            className={styles.dbar}
-          />
-          <SDropdown placeholder={'Город'} data={stub_cities} className={styles.dbar} />
-          <SDropdown
-            placeholder={'Теги'}
-            data={[
-              { key: 'tag1', text: 'Тег1' },
-              { key: 'tag2', text: 'Тег2' },
-              { key: 'tag3', text: 'Тег3' }
-            ]}
-            className={styles.dbar}
-          />
-        </section>
-        <div className={styles.events}>
-          {events?.map((el, index) => (
-            <Card key={el.id} event={el} />
-          ))}
-        </div>
-        <div className={styles.pages}>
-          <CardNavigation current={page} setCurrent={setPage} total={totalPages} />
-        </div>
-      </div>
+    <div className={styles.wrapper}>
+      <Suspense>
+        <SearchSection/>
+      </Suspense>
+    </div>
     </>
   );
 };
