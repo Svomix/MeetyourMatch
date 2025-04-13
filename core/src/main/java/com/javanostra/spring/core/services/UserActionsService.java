@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.javanostra.spring.core.dao.UsersEventDAO;
 import com.javanostra.spring.core.dto.EventDTO;
+import com.javanostra.spring.core.dto.UserActionCountersDTO;
 import com.javanostra.spring.core.dto.UserActionDTO;
 import com.javanostra.spring.core.dto.UserActionEDTO;
 import com.javanostra.spring.core.entities.Event;
@@ -131,15 +132,25 @@ public class UserActionsService {
     }
 
     @Transactional
+    public UserActionCountersDTO getEventCounters(Event event) {
+        return new UserActionCountersDTO(
+                usersEventDAO.countUserEventsByEventAndIsLikedTrue(event),
+                usersEventDAO.countUserEventsByEventAndIsDislikedTrue(event),
+                usersEventDAO.countUserEventsByEventAndInCalendarTrue(event)
+        );
+    }
+
+    @Transactional
     public Page<EventDTO> populateUserActions(Page<Event> events, User user) {
         List<UserActions> userActions = usersEventDAO.findUserEventsByUserAndEventIn(user, events.toList());
-        return events.map(a -> {
-            EventDTO dto = mapper.convertValue(a, EventDTO.class);
+        return events.map(event -> {
+            EventDTO dto = mapper.convertValue(event, EventDTO.class);
             dto.setUserAction(userActions.stream()
-                    .filter((e) -> e.getEvent().getId().equals(a.getId()))
+                    .filter((e) -> e.getEvent().getId().equals(event.getId()))
                     .findFirst()
                     .map((e) -> mapper.convertValue(e, UserActionEDTO.class))
                     .orElseGet(UserActionEDTO::new));
+            dto.setUserActionCounters(getEventCounters(event));
             return dto;
         });
     }

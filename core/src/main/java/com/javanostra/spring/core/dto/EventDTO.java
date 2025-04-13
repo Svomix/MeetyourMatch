@@ -25,4 +25,5 @@ public class EventDTO {
     private String coverImgUrl;
     private String sourceUrl;
     private UserActionEDTO userAction;
+    private UserActionCountersDTO userActionCounters;
 }

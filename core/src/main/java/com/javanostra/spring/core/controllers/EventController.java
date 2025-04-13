@@ -65,9 +65,11 @@ public class EventController {
     public FullEventDTO findEventById(@PathVariable("event_id") Long eventId) throws BaseCoreException {
         User user = userService.getCurrentUser();
         FullEventDTO fullEventDTO = eventService.findEventDtoById(eventId);
+        Event event = eventService.findEventById(eventId);
         if(Objects.nonNull(user)) {
-            fullEventDTO.setUserAction(userActionsService.getUserEventActionsE(eventService.findEventById(eventId), user));
+            fullEventDTO.setUserAction(userActionsService.getUserEventActionsE(event, user));
         }
+        fullEventDTO.setUserActionCounters(userActionsService.getEventCounters(event));
         return fullEventDTO;
     }
 

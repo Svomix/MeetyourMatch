@@ -20,6 +20,9 @@ public interface UsersEventDAO extends JpaRepository<UserActions, Long>, PagingA
     UserActions findUserEventByUserIdAndEventId(Long userId, Long eventId);
     UserActions findUserEventByUserAndEvent(User user, Event event);
     List<UserActions> findUserEventsByUserAndEventIn(User user, Collection<Event> events);
+    Integer countUserEventsByEventAndIsLikedTrue(Event event);
+    Integer countUserEventsByEventAndIsDislikedTrue(Event event);
+    Integer countUserEventsByEventAndInCalendarTrue(Event event);
 
     List<UserActions> findUserEventByEvent(Event event);
 
