@@ -60,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         inputUserName = findViewById(R.id.inputUserName);
         inputPassword = findViewById(R.id.inputPassword);
         loginButton = findViewById(R.id.buttonLogin);
+        Button forgotPasswordButton = findViewById(R.id.buttonForgotPass);
         Button registerButton = findViewById(R.id.buttonToRegistration);
         Button loginButtonVK = findViewById(R.id.buttonLoginVK);
 
@@ -67,6 +68,11 @@ public class LoginActivity extends AppCompatActivity {
 
         inputUserName.addTextChangedListener(textWatcher);
         inputPassword.addTextChangedListener(textWatcher);
+
+        forgotPasswordButton.setOnClickListener(view -> {
+            Intent intent = new Intent(LoginActivity.this, ForgottenPasswordActivity.class);
+            startActivity(intent);
+        });
 
         loginButton.setOnClickListener(view -> {
             String username = inputUserName.getText().toString().trim();

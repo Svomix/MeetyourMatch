@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
+
 android {
     namespace = "com.javanostra.meetyourmatch"
     compileSdk = 34
@@ -14,6 +15,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
     }
 
     buildTypes {
@@ -46,4 +48,5 @@ dependencies {
     implementation(libs.github.glide)
     annotationProcessor(libs.compiler)
     implementation(libs.picasso)
+    implementation(libs.osmdroid)
 }

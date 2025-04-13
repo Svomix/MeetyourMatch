@@ -12,6 +12,7 @@ constraintlayout = "2.1.4"
 picasso = "2.8"
 retrofit = "2.11.0"
 ucrop = "2.2.8"
+osmdroid = "6.1.16"
 
 [libraries]
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "githubGlide" }
@@ -28,6 +29,7 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 ucrop = { module = "com.github.yalantis:ucrop", version.ref = "ucrop" }
+osmdroid = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
