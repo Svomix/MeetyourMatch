@@ -2,13 +2,21 @@
 import classNames from '@/utils/classnames';
 import { useState } from 'react';
 import styles from './index.module.css';
+import { getIsLoggedIn } from '@/services/authService';
+import { useDispatch } from 'react-redux';
+import { ModalPage, setModal } from '@store/modalSlice/index';
 
-export default ({ width, height, className }) => {
+export default ({ width, height, className, onClick }) => {
+  const dispatch = useDispatch();
+  let is_logged = getIsLoggedIn();
   const [fill, setFill] = useState(false);
 
   const calendar_click = (e) => {
-    setFill((fill) => !fill);
     e.preventDefault();
+    if (is_logged) {
+      onClick ? onClick() : null;
+      setFill((fill) => !fill);
+    } else dispatch(setModal(ModalPage.Login));
   };
 
   return (
