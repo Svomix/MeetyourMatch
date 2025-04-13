@@ -9,7 +9,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Repository
 public interface UsersEventDAO extends JpaRepository<UserActions, Long>, PagingAndSortingRepository<UserActions, Long> {
@@ -17,6 +19,7 @@ public interface UsersEventDAO extends JpaRepository<UserActions, Long>, PagingA
 
     UserActions findUserEventByUserIdAndEventId(Long userId, Long eventId);
     UserActions findUserEventByUserAndEvent(User user, Event event);
+    List<UserActions> findUserEventsByUserAndEventIn(User user, Collection<Event> events);
 
     List<UserActions> findUserEventByEvent(Event event);
 

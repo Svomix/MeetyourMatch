@@ -2,14 +2,12 @@ package com.javanostra.spring.core.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
-import com.javanostra.spring.core.dto.CommentDTO;
-import com.javanostra.spring.core.dto.CommentRequestDTO;
-import com.javanostra.spring.core.dto.EventDTO;
-import com.javanostra.spring.core.dto.FullEventDTO;
+import com.javanostra.spring.core.dto.*;
 import com.javanostra.spring.core.entities.Event;
 import com.javanostra.spring.core.entities.EventComment;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.exceptions.BaseCoreException;
+import com.javanostra.spring.core.services.UserActionsService;
 import com.javanostra.spring.core.services.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -23,6 +21,7 @@ import com.javanostra.spring.core.services.EventService;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 
 import static org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO;
 
@@ -33,6 +32,7 @@ import static org.springframework.data.web.config.EnableSpringDataWebSupport.Pag
 public class EventController {
     private final EventService eventService;
     private final UserService userService;
+    private final UserActionsService userActionsService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     {
@@ -44,7 +44,13 @@ public class EventController {
             @RequestParam(value = "page", defaultValue = "1") @Min(1) Integer page,
             @RequestParam(value = "limit", defaultValue = "30") @Min(1) Integer limit
     ) {
-        return eventService.findAllEvents(PageRequest.of(page-1, limit));
+        User user = userService.getCurrentUser();
+        if(Objects.isNull(user)) {
+            return eventService.findAllEvents(PageRequest.of(page - 1, limit));
+        }else{
+            Page<Event> events = eventService.findAllEventsRaw(PageRequest.of(page - 1, limit));
+            return userActionsService.populateUserActions(events, user);
+        }
     }
 
     @GetMapping("/pageout")
@@ -57,7 +63,12 @@ public class EventController {
 
     @GetMapping("/{event_id}")
     public FullEventDTO findEventById(@PathVariable("event_id") Long eventId) throws BaseCoreException {
-        return eventService.findEventDtoById(eventId);
+        User user = userService.getCurrentUser();
+        FullEventDTO fullEventDTO = eventService.findEventDtoById(eventId);
+        if(Objects.nonNull(user)) {
+            fullEventDTO.setUserAction(userActionsService.getUserEventActionsE(eventService.findEventById(eventId), user));
+        }
+        return fullEventDTO;
     }
 
     @PostMapping("/{event_id}/comments")

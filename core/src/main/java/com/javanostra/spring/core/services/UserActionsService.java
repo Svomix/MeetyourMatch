@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.javanostra.spring.core.dao.UsersEventDAO;
 import com.javanostra.spring.core.dto.EventDTO;
 import com.javanostra.spring.core.dto.UserActionDTO;
+import com.javanostra.spring.core.dto.UserActionEDTO;
 import com.javanostra.spring.core.entities.Event;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.entities.UserActions;
@@ -116,7 +117,30 @@ public class UserActionsService {
         return mapper.convertValue(userEvent, UserActionDTO.class);
     }
 
+    @Transactional
+    public UserActionEDTO getUserEventActionsE(Event event, User user) {
+        UserActions userEvent = usersEventDAO.findUserEventByUserAndEvent(user, event);
+        if (Objects.isNull(userEvent)) {
+            return new UserActionEDTO();
+        }
+        return mapper.convertValue(userEvent, UserActionEDTO.class);
+    }
+
     public UserActions findUserEventById(Long userId, Long eventId) {
         return usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
+    }
+
+    @Transactional
+    public Page<EventDTO> populateUserActions(Page<Event> events, User user) {
+        List<UserActions> userActions = usersEventDAO.findUserEventsByUserAndEventIn(user, events.toList());
+        return events.map(a -> {
+            EventDTO dto = mapper.convertValue(a, EventDTO.class);
+            dto.setUserAction(userActions.stream()
+                    .filter((e) -> e.getEvent().getId().equals(a.getId()))
+                    .findFirst()
+                    .map((e) -> mapper.convertValue(e, UserActionEDTO.class))
+                    .orElseGet(UserActionEDTO::new));
+            return dto;
+        });
     }
 }

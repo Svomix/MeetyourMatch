@@ -48,6 +48,10 @@ public class EventService {
         return eventDAO.findAll(pageable).map(a -> mapper.convertValue(a, EventDTO.class));
     }
 
+    public Page<Event> findAllEventsRaw(Pageable pageable) {
+        return eventDAO.findAll(pageable);
+    }
+
     public Event findEventById(Long eventId) throws BaseCoreException {
         return eventDAO.findById(eventId).orElseThrow(NoSuchEventException::new);
     }

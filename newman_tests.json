@@ -417,6 +417,38 @@
 					"response": []
 				},
 				{
+					"name": "Calendar event",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/account/events/2/calendar",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"account",
+								"events",
+								"2",
+								"calendar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get calendar",
 					"request": {
 						"auth": {
@@ -480,36 +512,75 @@
 					"response": []
 				},
 				{
-					"name": "Calendar event",
+					"name": "All events Authed",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
+						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/api/account/events/1/calendar",
+							"raw": "{{base_path}}/api/v1/events",
 							"host": [
-								"localhost"
+								"{{base_path}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
-								"account",
-								"events",
-								"1",
-								"calendar"
+								"v1",
+								"events"
 							]
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "One event Authed",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_path}}/api/v1/events/1",
+							"host": [
+								"{{base_path}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"events",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{access_token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
 				}
 			]
 		},
