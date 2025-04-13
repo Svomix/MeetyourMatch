@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class UserActionCountersDTO {
-    private Integer likedCounter;
-    private Integer dislikedCounter;
-    private Integer calendarCounter;
+    private Long likedCounter;
+    private Long dislikedCounter;
+    private Long calendarCounter;
 }

@@ -65,30 +65,7 @@ public class UserController {
         if(Objects.isNull(user)){ return ResponseEntity.notFound().build(); }
         return ResponseEntity.ok(mapper.convertValue(user, UserProfileDTO.class));
     }
-
-//    @GetMapping("/{user_id}/events")
-//    public Page<UserActions> findAllUserEvents(@PathVariable("user_id") Long userId,
-//                                               @RequestParam(value = "offset", defaultValue = "0") Integer offset,
-//                                               @RequestParam(value = "limit", defaultValue = "5") Integer limit) {
-//        return userService.findAllUserEvents(userId, PageRequest.of(offset, limit));
-//    }
-//
-//    @GetMapping("/{user_id}/events/calendar")
-//    public List<UserActionDTO> findUserEventsInCalendar(@PathVariable("user_id") Long userId) {
-//        return userService.findUserEventsInCalendar(userId);
-//    }
-//
-//    @GetMapping("/{user_id}/events/{event_id}")
-//    public UserActionDTO findUserEventById(@PathVariable("user_id") Long userId,
-//                                           @PathVariable("event_id") Long eventId) {
-//        return userService.getUserEventActions(userId, eventId);
-//    }
-//
-//    @GetMapping("/events/{event_id}/liked")
-//    public Integer getLikes(@PathVariable("event_id") Long eventId) {
-//        return userService.getLikes(eventId);
-//    }
-
+    
 //    @GetMapping("/{user_id}/tags")
 //    public List<Tag> findUserTags(@PathVariable("user_id") Long userId) {
 //        return userService.findUserTagsByUserId(userId);

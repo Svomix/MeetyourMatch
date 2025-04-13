@@ -133,11 +133,7 @@ public class UserActionsService {
 
     @Transactional
     public UserActionCountersDTO getEventCounters(Event event) {
-        return new UserActionCountersDTO(
-                usersEventDAO.countUserEventsByEventAndIsLikedTrue(event),
-                usersEventDAO.countUserEventsByEventAndIsDislikedTrue(event),
-                usersEventDAO.countUserEventsByEventAndInCalendarTrue(event)
-        );
+        return usersEventDAO.countActionsByEvent(event);
     }
 
     @Transactional
