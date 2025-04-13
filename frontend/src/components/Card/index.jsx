@@ -5,7 +5,6 @@ import Link from 'next/link';
 import styles from './index.module.css';
 
 export default ({ event, refLink, width, height }) => {
-  console.log(event);
   return (
     <Link
       href={`/events/${event.id}`}

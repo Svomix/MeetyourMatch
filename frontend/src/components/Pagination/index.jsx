@@ -7,8 +7,8 @@ export default ({ current, setCurrent, total }) => {
     <div className={styles.wrapper}>
       <LeftArrow
         onClick={() => setCurrent(current - 1)}
-        width={56}
-        height={56}
+        width={50}
+        height={50}
         disabled={current == 1}
       />
 
@@ -40,8 +40,8 @@ export default ({ current, setCurrent, total }) => {
 
       <RightArrow
         onClick={() => setCurrent(current + 1)}
-        width={56}
-        height={56}
+        width={50}
+        height={50}
         disabled={current == total}
       />
     </div>

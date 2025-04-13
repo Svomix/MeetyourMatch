@@ -13,6 +13,7 @@ import styles from './page.module.css';
 export default () => {
   let [events, setEvents] = useState([]);
   let [totalPages, setTotalPages] = useState(1);
+  console.log(totalPages);
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -32,7 +33,7 @@ export default () => {
     const instance = Cookies.get(tokenType.ACCESS_TOKEN) ? authed : unauthed;
     instance.get(`/v1/events?limit=16&page=${page}`).then((response) => {
       setEvents(response.data.content);
-      setTotalPages(response.data.totalPages);
+      setTotalPages(response.data.page.totalPages);
     });
   }, [page]);
 
