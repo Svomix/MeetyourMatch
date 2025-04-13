@@ -7,12 +7,16 @@ import { getIsLoggedIn } from '@/services/authService';
 import { useDispatch } from 'react-redux';
 import { ModalPage, setModal } from '@store/modalSlice/index';
 import { authed } from '@/services/axiosInstance';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default ({ event, refLink, width, height }) => {
   const dispatch = useDispatch();
   let is_logged = getIsLoggedIn();
   let [liked, setLiked] = useState(false); // TODO: false -> event.isLiked
+
+  useEffect(() => {
+    event.userAction && setLiked(event.userAction?.isLiked)
+  }, [event])
 
   const heart_click = (e) => {
     e.preventDefault();
@@ -49,7 +53,7 @@ export default ({ event, refLink, width, height }) => {
           width={40}
           height={40}
           className={styles.heart}
-          liked={liked}
+          active={liked}
           onClick={heart_click}
         />
       </div>

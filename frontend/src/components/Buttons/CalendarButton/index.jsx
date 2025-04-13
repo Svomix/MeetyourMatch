@@ -2,11 +2,11 @@
 import classNames from '@/utils/classnames';
 import styles from './index.module.css';
 
-export default ({ width, height, className, calendarded, onClick }) => {
+export default ({ width, height, className, active, onClick }) => {
   return (
     <svg
       onClick={onClick}
-      className={classNames(styles.icon, className, calendarded && styles.active)}
+      className={classNames(styles.icon, className, active && styles.active)}
       width={width || 20}
       height={height || 20}
       viewBox="0 0 24 24"

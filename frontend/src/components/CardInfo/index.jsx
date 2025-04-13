@@ -11,13 +11,18 @@ import { useDispatch } from 'react-redux';
 import { fetchEventInfo } from '@store/eventStore';
 import { getIsLoggedIn } from '@/services/authService';
 import { ModalPage, setModal } from '@store/modalSlice/index';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default ({ path, event }) => {
   const dispatch = useDispatch();
   let is_logged = getIsLoggedIn();
-  let [liked, setLiked] = useState(false); // TODO: false -> event.isLiked
-  let [calendarded, setCalendarded] = useState(false); // TODO: false -> event.inCalendar
+  let [liked, setLiked] = useState(false);
+  let [calendar, setCalendar] = useState(false);
+
+  useEffect(() => {
+    event.userAction && setLiked(event.userAction?.isLiked)
+    event.userAction && setCalendar(event.userAction?.inCalendar)
+  }, [event])
 
   const heart_click = (e) => {
     e.preventDefault();
@@ -32,7 +37,7 @@ export default ({ path, event }) => {
     e.preventDefault();
     if (is_logged) {
       authed.post(`/account/events/${event.id}/calendar`).then((resp) => {
-        setCalendarded(resp.data.inCalendar);
+        setCalendar(resp.data.inCalendar);
       });
     } else dispatch(setModal(ModalPage.Login));
   };
@@ -81,13 +86,8 @@ export default ({ path, event }) => {
               <h4 className={styles.meta}>Цена: {event.price}</h4>
               <div className={styles.actions}>
                 <div className={styles.icons}>
-                  <Heart width={50} height={50} liked={liked} onClick={heart_click} />
-                  <Calendar
-                    width={50}
-                    height={50}
-                    calendarded={calendarded}
-                    onClick={calendar_click}
-                  />
+                  <Heart width={50} height={50} active={liked} onClick={heart_click} />
+                  <Calendar width={50} height={50} active={calendar} onClick={calendar_click}/>
                 </div>
                 <Link className={styles.link} href={event.sourceUrl} target="_blank">
                   К источнику
