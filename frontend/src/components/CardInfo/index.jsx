@@ -9,9 +9,33 @@ import CommentBox from '@components/CommentBox';
 import { authed } from '@/services/axiosInstance';
 import { useDispatch } from 'react-redux';
 import { fetchEventInfo } from '@store/eventStore';
+import { getIsLoggedIn } from '@/services/authService';
+import { ModalPage, setModal } from '@store/modalSlice/index';
+import { useState } from 'react';
 
 export default ({ path, event }) => {
   const dispatch = useDispatch();
+  let is_logged = getIsLoggedIn();
+  let [liked, setLiked] = useState(false); // TODO: false -> event.isLiked
+  let [calendarded, setCalendarded] = useState(false); // TODO: false -> event.inCalendar
+
+  const heart_click = (e) => {
+    e.preventDefault();
+    if (is_logged) {
+      authed.post(`/account/events/${event.id}/like`).then((resp) => {
+        setLiked(resp.data.isLiked);
+      });
+    } else dispatch(setModal(ModalPage.Login));
+  };
+
+  const calendar_click = (e) => {
+    e.preventDefault();
+    if (is_logged) {
+      authed.post(`/account/events/${event.id}/calendar`).then((resp) => {
+        setCalendarded(resp.data.inCalendar);
+      });
+    } else dispatch(setModal(ModalPage.Login));
+  };
 
   async function onSubmitComment(e) {
     try {
@@ -57,8 +81,13 @@ export default ({ path, event }) => {
               <h4 className={styles.meta}>Цена: {event.price}</h4>
               <div className={styles.actions}>
                 <div className={styles.icons}>
-                  <Heart width={50} height={50} />
-                  <Calendar width={50} height={50} />
+                  <Heart width={50} height={50} liked={liked} onClick={heart_click} />
+                  <Calendar
+                    width={50}
+                    height={50}
+                    calendarded={calendarded}
+                    onClick={calendar_click}
+                  />
                 </div>
                 <Link className={styles.link} href={event.sourceUrl} target="_blank">
                   К источнику

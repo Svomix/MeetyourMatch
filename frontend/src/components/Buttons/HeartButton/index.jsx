@@ -1,28 +1,12 @@
 'use client';
 import classNames from '@/utils/classnames';
-import { useState } from 'react';
 import styles from './index.module.css';
-import { getIsLoggedIn } from '@/services/authService';
-import { useDispatch } from 'react-redux';
-import { ModalPage, setModal } from '@store/modalSlice/index';
 
-export default ({ width, height, className, onClick }) => {
-  const dispatch = useDispatch();
-  let is_logged = getIsLoggedIn();
-  const [fill, setFill] = useState(false);
-
-  const heart_click = (e) => {
-    e.preventDefault();
-    if (is_logged) {
-      onClick ? onClick() : null;
-      setFill((fill) => !fill);
-    } else dispatch(setModal(ModalPage.Login));
-  };
-
+export default ({ width, height, className, liked, onClick }) => {
   return (
     <svg
-      onClick={heart_click}
-      className={classNames(className, styles.icon, fill && styles.active)}
+      onClick={onClick}
+      className={classNames(className, styles.icon, liked && styles.active)}
       width={width || 20}
       height={height || 20}
       viewBox="0 0 24 24"

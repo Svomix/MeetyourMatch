@@ -13,7 +13,6 @@ import styles from './page.module.css';
 export default () => {
   let [events, setEvents] = useState([]);
   let [totalPages, setTotalPages] = useState(1);
-  console.log(totalPages);
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
