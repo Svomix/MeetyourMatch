@@ -1,6 +1,7 @@
 package com.javanostra.spring.core.dao;
 
 import com.javanostra.spring.core.entities.Event;
+import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.entities.UserActions;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,10 +16,12 @@ public interface UsersEventDAO extends JpaRepository<UserActions, Long>, PagingA
     Page<UserActions> findAllUserEventsByUserId(Long userId, Pageable pageable);
 
     UserActions findUserEventByUserIdAndEventId(Long userId, Long eventId);
+    UserActions findUserEventByUserAndEvent(User user, Event event);
 
     List<UserActions> findUserEventByEvent(Event event);
 
     List<UserActions> findUserEventByUserIdAndInCalendarIsTrue(Long userId);
+    List<UserActions> findUserEventByUserAndInCalendarIsTrue(User user);
 
     void deleteUserEventByEventId(Long eventId);
 

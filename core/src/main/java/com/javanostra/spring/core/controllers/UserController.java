@@ -2,9 +2,10 @@ package com.javanostra.spring.core.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
-import com.javanostra.spring.core.dto.UserEventDTO;
+import com.javanostra.spring.core.dto.UserActionDTO;
 import com.javanostra.spring.core.dto.UserProfileDTO;
 import com.javanostra.spring.core.entities.*;
+import com.javanostra.spring.core.services.UserActionsService;
 import com.javanostra.spring.core.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -23,6 +25,7 @@ import java.util.Objects;
 public class UserController {
 
     private final UserService userService;
+    private final UserActionsService userActionsService;
 
     ObjectMapper mapper = new ObjectMapper();
     {
@@ -51,46 +54,28 @@ public class UserController {
         return ResponseEntity.ok(mapper.convertValue(user, UserProfileDTO.class));
     }
 
-    @GetMapping("/{user_id}/events")
-    public Page<UserActions> findAllUserEvents(@PathVariable("user_id") Long userId,
-                                               @RequestParam(value = "offset", defaultValue = "0") Integer offset,
-                                               @RequestParam(value = "limit", defaultValue = "5") Integer limit) {
-        return userService.findAllUserEvents(userId, PageRequest.of(offset, limit));
-    }
-
-    @GetMapping("/{user_id}/events/calendar")
-    public List<UserEventDTO> findUserEventsInCalendar(@PathVariable("user_id") Long userId) {
-        return userService.findUserEventsInCalendar(userId);
-    }
-
-    @GetMapping("/{user_id}/events/{event_id}")
-    public UserEventDTO findUserEventById(@PathVariable("user_id") Long userId,
-                                       @PathVariable("event_id") Long eventId) {
-        return userService.getUserEventByIds(userId, eventId);
-    }
-
-    @GetMapping("/events/{event_id}/liked")
-    public Integer getLikes(@PathVariable("event_id") Long eventId) {
-        return userService.getLikes(eventId);
-    }
-
-    @PutMapping("/{user_id}/events/{event_id}/liked")
-    public void setLiked(@PathVariable("user_id") Long userId,
-                         @PathVariable("event_id") Long eventId) {
-        userService.switchLiked(userId, eventId);
-    }
-
-    @PutMapping("/{user_id}/events/{event_id}/disliked")
-    public void setDisliked(@PathVariable("user_id") Long userId,
-                            @PathVariable("event_id") Long eventId) {
-        userService.switchDisliked(userId, eventId);
-    }
-
-    @PutMapping("/{user_id}/events/{event_id}/calendar")
-    public void setCalendar(@PathVariable("user_id") Long userId,
-                            @PathVariable("event_id") Long eventId) {
-        userService.switchCalendar(userId, eventId);
-    }
+//    @GetMapping("/{user_id}/events")
+//    public Page<UserActions> findAllUserEvents(@PathVariable("user_id") Long userId,
+//                                               @RequestParam(value = "offset", defaultValue = "0") Integer offset,
+//                                               @RequestParam(value = "limit", defaultValue = "5") Integer limit) {
+//        return userService.findAllUserEvents(userId, PageRequest.of(offset, limit));
+//    }
+//
+//    @GetMapping("/{user_id}/events/calendar")
+//    public List<UserActionDTO> findUserEventsInCalendar(@PathVariable("user_id") Long userId) {
+//        return userService.findUserEventsInCalendar(userId);
+//    }
+//
+//    @GetMapping("/{user_id}/events/{event_id}")
+//    public UserActionDTO findUserEventById(@PathVariable("user_id") Long userId,
+//                                           @PathVariable("event_id") Long eventId) {
+//        return userService.getUserEventActions(userId, eventId);
+//    }
+//
+//    @GetMapping("/events/{event_id}/liked")
+//    public Integer getLikes(@PathVariable("event_id") Long eventId) {
+//        return userService.getLikes(eventId);
+//    }
 
 //    @GetMapping("/{user_id}/tags")
 //    public List<Tag> findUserTags(@PathVariable("user_id") Long userId) {

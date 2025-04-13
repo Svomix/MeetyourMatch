@@ -56,7 +56,7 @@ public class EventController {
     }
 
     @GetMapping("/{event_id}")
-    public FullEventDTO findEventById(@PathVariable("event_id") Long eventId) {
+    public FullEventDTO findEventById(@PathVariable("event_id") Long eventId) throws BaseCoreException {
         return eventService.findEventDtoById(eventId);
     }
 

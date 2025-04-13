@@ -48,11 +48,11 @@ public class EventService {
         return eventDAO.findAll(pageable).map(a -> mapper.convertValue(a, EventDTO.class));
     }
 
-    public Event findEventById(Long eventId) {
-        return eventDAO.findById(eventId).orElseThrow(NoSuchElementException::new);
+    public Event findEventById(Long eventId) throws BaseCoreException {
+        return eventDAO.findById(eventId).orElseThrow(NoSuchEventException::new);
     }
 
-    public FullEventDTO findEventDtoById(Long eventId) {
+    public FullEventDTO findEventDtoById(Long eventId) throws BaseCoreException {
         Event event = findEventById(eventId);
         FullEventDTO result = mapper.convertValue(event, FullEventDTO.class);
         result.setComments(event.getComments().stream().map(a -> mapper.convertValue(a, CommentDTO.class)).toList());

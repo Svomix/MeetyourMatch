@@ -5,7 +5,6 @@ import com.javanostra.spring.core.dao.UserDAO;
 import com.javanostra.spring.core.dto.FullUserProfileDTO;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.dao.*;
-import com.javanostra.spring.core.dto.UserEventDTO;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -123,94 +122,6 @@ public class UserService implements UserDetailsManager {
 
     public User findUserById(Long userId) {
         return userDAO.findUserById(userId);
-    }
-
-    public Page<UserActions> findAllUserEvents(Long userId, Pageable pageable) {
-        return usersEventDAO.findAllUserEventsByUserId(userId, pageable);
-    }
-
-    public List<UserEventDTO> findUserEventsInCalendar(Long userId) {
-        List<UserActions> userEvents = usersEventDAO.findUserEventByUserIdAndInCalendarIsTrue(userId);
-        return userEvents.stream()
-                .map(event -> new UserEventDTO(
-                        event.getUser().getId(),
-                        event.getEvent().getId(),
-                        event.getIsLiked(),
-                        event.getIsDisliked(),
-                        event.getInCalendar()
-                ))
-                .toList();
-    }
-
-    public Integer getLikes(Long eventId) {
-        List<UserActions> userEvents = usersEventDAO.findUserEventByEvent(eventDAO.findEventById(eventId));
-        int counter = 0;
-        for (UserActions userEvent : userEvents) {
-            if (userEvent.getIsLiked()) counter++;
-        }
-        return counter;
-    }
-
-    @Transactional
-    public void switchLiked(Long userId, Long eventId) {
-        UserActions userEvent = usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
-        if (userEvent == null) {
-            userEvent = new UserActions();
-            userEvent.setUser(userDAO.findUserById(userId));
-            userEvent.setEvent(eventDAO.findEventById(eventId));
-            userEvent.setIsDisliked(false);
-            userEvent.setInCalendar(false);
-        }
-        userEvent.setIsLiked(!userEvent.getIsLiked());
-        usersEventDAO.save(userEvent);
-    }
-
-    @Transactional
-    public void switchDisliked(Long userId, Long eventId) {
-        UserActions userEvent = usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
-        if (userEvent == null) {
-            userEvent = new UserActions();
-            userEvent.setUser(userDAO.findUserById(userId));
-            userEvent.setEvent(eventDAO.findEventById(eventId));
-            userEvent.setIsLiked(false);
-            userEvent.setInCalendar(false);
-        }
-        userEvent.setIsDisliked(!userEvent.getIsDisliked());
-        usersEventDAO.save(userEvent);
-    }
-
-    @Transactional
-    public void switchCalendar(Long userId, Long eventId) {
-        UserActions userEvent = usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
-        if (userEvent == null) {
-            userEvent = new UserActions();
-            userEvent.setUser(userDAO.findUserById(userId));
-            userEvent.setEvent(eventDAO.findEventById(eventId));
-            userEvent.setIsLiked(false);
-            userEvent.setIsDisliked(false);
-        }
-        userEvent.setInCalendar(!userEvent.getInCalendar());
-        usersEventDAO.save(userEvent);
-    }
-
-    public UserEventDTO getUserEventByIds(Long userId, Long eventId) {
-        UserActions userEvent = usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
-        if (userEvent == null) {
-            userEvent = new UserActions();
-            userEvent.setUser(userDAO.findUserById(userId));
-            userEvent.setEvent(eventDAO.findEventById(eventId));
-            userEvent.setIsLiked(false);
-            userEvent.setIsDisliked(false);
-            userEvent.setInCalendar(false);
-        } else {
-            return new UserEventDTO(userEvent.getUser().getId(), userEvent.getEvent().getId(), userEvent.getIsLiked(), userEvent.getIsDisliked(), userEvent.getInCalendar());
-        }
-        usersEventDAO.save(userEvent);
-        return new UserEventDTO(userEvent.getUser().getId(), userEvent.getEvent().getId(), userEvent.getIsLiked(), userEvent.getIsDisliked(), userEvent.getInCalendar());
-    }
-
-    public UserActions findUserEventById(Long userId, Long eventId) {
-        return usersEventDAO.findUserEventByUserIdAndEventId(userId, eventId);
     }
 
     public User findByEmail(String email) {

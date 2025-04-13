@@ -4,15 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.javanostra.spring.core.dto.ResponseDTO;
 import com.javanostra.spring.core.dto.FullUserProfileDTO;
+import com.javanostra.spring.core.dto.UserActionDTO;
+import com.javanostra.spring.core.entities.Event;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.entities.UserInterest;
 import com.javanostra.spring.core.exceptions.BaseCoreException;
 import com.javanostra.spring.core.exceptions.UserAlreadyExistsException;
 import com.javanostra.spring.core.security.ContextRepository;
-import com.javanostra.spring.core.services.AuthenticationService;
-import com.javanostra.spring.core.services.CityService;
-import com.javanostra.spring.core.services.InterestService;
-import com.javanostra.spring.core.services.UserService;
+import com.javanostra.spring.core.services.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
@@ -22,9 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/account")
@@ -43,6 +40,9 @@ public class AccountController {
     private final InterestService interestService;
     @NonNull
     private final AuthenticationService authenticationService;
+    @NonNull
+    private final UserActionsService userActionsService;
+    private final EventService eventService;
 
     ObjectMapper mapper = new ObjectMapper();
     {
@@ -90,6 +90,65 @@ public class AccountController {
             UserInterest interest = interestService.getUserInterestById(id);
             interestService.removeUserInterest(currentUser, interest);
             return ResponseEntity.ok("success");
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    }
+
+    @PostMapping("/events/{event_id}/like")
+    public ResponseEntity<UserActionDTO> setLiked(@PathVariable("event_id") Long eventId, @RequestParam("value") Optional<Boolean> value) throws BaseCoreException {
+        User currentUser = userService.getCurrentUser();
+        Event event = eventService.findEventById(eventId);
+
+        if(Objects.nonNull(currentUser)) {
+            return ResponseEntity.ok(userActionsService.setLiked(currentUser, event, value.orElseGet(() -> !userActionsService.getUserEventActions(currentUser, event).getIsLiked())));
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    }
+
+    @PostMapping("/events/{event_id}/dislike")
+    public ResponseEntity<UserActionDTO> setDisliked(@PathVariable("event_id") Long eventId, @RequestParam("value") Optional<Boolean> value) throws BaseCoreException {
+        User currentUser = userService.getCurrentUser();
+        Event event = eventService.findEventById(eventId);
+
+        if(Objects.nonNull(currentUser)) {
+            return ResponseEntity.ok(userActionsService.setDisliked(currentUser, event, value.orElseGet(() -> !userActionsService.getUserEventActions(currentUser, event).getIsDisliked())));
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    }
+
+    @PostMapping("/events/{event_id}/calendar")
+    public ResponseEntity<UserActionDTO> setCalendar(@PathVariable("event_id") Long eventId, @RequestParam("value") Optional<Boolean> value) throws BaseCoreException {
+        User currentUser = userService.getCurrentUser();
+        Event event = eventService.findEventById(eventId);
+
+        if(Objects.nonNull(currentUser)) {
+            return ResponseEntity.ok(userActionsService.setCalendar(currentUser, event, value.orElseGet(() -> !userActionsService.getUserEventActions(currentUser, event).getInCalendar())));
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    }
+
+    @GetMapping("/events/{event_id}/actions")
+    public ResponseEntity<UserActionDTO> getEventAction(@PathVariable("event_id") Long eventId) throws BaseCoreException {
+        User currentUser = userService.getCurrentUser();
+        Event event = eventService.findEventById(eventId);
+
+        if(Objects.nonNull(currentUser)) {
+            return ResponseEntity.ok(userActionsService.getUserEventActions(currentUser, event));
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    }
+
+    @GetMapping("/events/calendar")
+    public ResponseEntity<List<UserActionDTO>> getCalendar() throws BaseCoreException {
+        User currentUser = userService.getCurrentUser();
+
+        if(Objects.nonNull(currentUser)) {
+            return ResponseEntity.ok(userActionsService.findUserEventsInCalendar(currentUser));
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
