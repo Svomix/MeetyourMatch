@@ -138,16 +138,24 @@ public class UserActionsService {
 
     @Transactional
     public Page<EventDTO> populateUserActions(Page<Event> events, User user) {
-        List<UserActions> userActions = usersEventDAO.findUserEventsByUserAndEventIn(user, events.toList());
-        return events.map(event -> {
-            EventDTO dto = mapper.convertValue(event, EventDTO.class);
-            dto.setUserAction(userActions.stream()
-                    .filter((e) -> e.getEvent().getId().equals(event.getId()))
-                    .findFirst()
-                    .map((e) -> mapper.convertValue(e, UserActionEDTO.class))
-                    .orElseGet(UserActionEDTO::new));
-            dto.setUserActionCounters(getEventCounters(event));
-            return dto;
-        });
+        if(Objects.nonNull(user)) {
+            List<UserActions> userActions = usersEventDAO.findUserEventsByUserAndEventIn(user, events.toList());
+            return events.map(event -> {
+                EventDTO dto = mapper.convertValue(event, EventDTO.class);
+                dto.setUserAction(userActions.stream()
+                        .filter((e) -> e.getEvent().getId().equals(event.getId()))
+                        .findFirst()
+                        .map((e) -> mapper.convertValue(e, UserActionEDTO.class))
+                        .orElseGet(UserActionEDTO::new));
+                dto.setUserActionCounters(getEventCounters(event));
+                return dto;
+            });
+        }else{
+            return events.map(event -> {
+                EventDTO dto = mapper.convertValue(event, EventDTO.class);
+                dto.setUserActionCounters(getEventCounters(event));
+                return dto;
+            });
+        }
     }
 }

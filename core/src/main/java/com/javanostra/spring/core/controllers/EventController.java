@@ -45,12 +45,9 @@ public class EventController {
             @RequestParam(value = "limit", defaultValue = "30") @Min(1) Integer limit
     ) {
         User user = userService.getCurrentUser();
-        if(Objects.isNull(user)) {
-            return eventService.findAllEvents(PageRequest.of(page - 1, limit));
-        }else{
-            Page<Event> events = eventService.findAllEventsRaw(PageRequest.of(page - 1, limit));
-            return userActionsService.populateUserActions(events, user);
-        }
+        Page<Event> events = eventService.findAllEventsRaw(PageRequest.of(page - 1, limit));
+        return userActionsService.populateUserActions(events, user);
+
     }
 
     @GetMapping("/pageout")
