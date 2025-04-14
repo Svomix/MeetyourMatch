@@ -79,7 +79,20 @@
 
 .icons {
   display: flex;
-  gap: 1vw;
+  gap: 1.5vw;
+}
+
+.count_wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5vw;
+}
+
+.counter {
+  color: var(--black);
+  font-size: 26px;
+  font-weight: 900;
 }
 
 .link {

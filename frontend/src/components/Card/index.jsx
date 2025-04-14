@@ -12,11 +12,11 @@ import { useEffect, useState } from 'react';
 export default ({ event, refLink, width, height }) => {
   const dispatch = useDispatch();
   let is_logged = getIsLoggedIn();
-  let [liked, setLiked] = useState(false); // TODO: false -> event.isLiked
+  let [liked, setLiked] = useState(false);
 
   useEffect(() => {
-    event.userAction && setLiked(event.userAction?.isLiked)
-  }, [event])
+    event.userAction && setLiked(event.userAction?.isLiked);
+  }, [event]);
 
   const heart_click = (e) => {
     e.preventDefault();
@@ -26,7 +26,6 @@ export default ({ event, refLink, width, height }) => {
       });
     } else dispatch(setModal(ModalPage.Login));
   };
-
   return (
     <Link
       href={`/events/${event.id}`}
@@ -49,13 +48,16 @@ export default ({ event, refLink, width, height }) => {
         <div className={styles.event_title}>{event.title}</div>
         <p className={styles.event_date}>{new Date(event.date || 0).toLocaleString('ru-RU')}</p>
         <p className={styles.event_tags}>#отдых #искусство</p>
-        <Heart
-          width={40}
-          height={40}
-          className={styles.heart}
-          active={liked}
-          onClick={heart_click}
-        />
+        <div className={styles.heart_wrapper}>
+          <span className={styles.heart_counter}>{event.userActionCounters.likedCounter}</span>
+          <Heart
+            width={40}
+            height={40}
+            className={styles.heart}
+            active={liked}
+            onClick={heart_click}
+          />
+        </div>
       </div>
     </Link>
   );

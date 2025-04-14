@@ -20,9 +20,9 @@ export default ({ path, event }) => {
   let [calendar, setCalendar] = useState(false);
 
   useEffect(() => {
-    event.userAction && setLiked(event.userAction?.isLiked)
-    event.userAction && setCalendar(event.userAction?.inCalendar)
-  }, [event])
+    event.userAction && setLiked(event.userAction?.isLiked);
+    event.userAction && setCalendar(event.userAction?.inCalendar);
+  }, [event]);
 
   const heart_click = (e) => {
     e.preventDefault();
@@ -74,6 +74,8 @@ export default ({ path, event }) => {
     };
   });
 
+  console.log(event);
+
   return (
     <>
       {event && (
@@ -86,8 +88,16 @@ export default ({ path, event }) => {
               <h4 className={styles.meta}>Цена: {event.price}</h4>
               <div className={styles.actions}>
                 <div className={styles.icons}>
-                  <Heart width={50} height={50} active={liked} onClick={heart_click} />
-                  <Calendar width={50} height={50} active={calendar} onClick={calendar_click}/>
+                  <div className={styles.count_wrapper}>
+                    <Heart width={50} height={50} active={liked} onClick={heart_click} />
+                    <span className={styles.counter}>{event?.userActionCounters.likedCounter}</span>
+                  </div>
+                  <div className={styles.count_wrapper}>
+                    <Calendar width={50} height={50} active={calendar} onClick={calendar_click} />
+                    <span className={styles.counter}>
+                      {event?.userActionCounters.calendarCounter}
+                    </span>
+                  </div>
                 </div>
                 <Link className={styles.link} href={event.sourceUrl} target="_blank">
                   К источнику
