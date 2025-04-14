@@ -5,6 +5,7 @@
     transform 100ms ease-out,
     filter 100ms ease-in-out;
   will-change: transform;
+  user-select: none;
 }
 
 .icon {

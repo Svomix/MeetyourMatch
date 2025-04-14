@@ -1,50 +1,11 @@
+'use client';
 import Cell from './Cell';
 import Navigation from './Navigation';
 import styles from './index.module.css';
+import { useEffect, useState } from 'react';
+import { authed } from '@/services/axiosInstance';
 
-export default () => {
-  return (
-    <section className={styles.wrapper}>
-      <Navigation />
-      <div className={styles.days}>
-        {week_days.map((day) => (
-          <p key={day.slice(0, 2)} className={styles.week_days}>
-            {day}
-          </p>
-        ))}
-
-        {[...Array(month_length)].map((_, i) => (
-          <Cell
-            key={i + 'd'}
-            index={i}
-            event_list={mock}
-            style={i++ == 1 ? { gridColumnStart: month_start } : {}}
-          />
-        ))}
-      </div>
-    </section>
-  );
-};
-
-const mock = [
-  'событие',
-  'праздник',
-  'день рождения',
-  'корпоратив',
-  'отдых',
-  'выходной',
-  'сессия',
-  'Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate, consectetur! Eum omnis, neque facilis veniam sit nam ex tenetur eligendi.',
-  'событие',
-  'праздник',
-  'день рождения',
-  'корпоратив',
-  'отдых',
-  'выходной',
-  'сессия'
-];
-
-const week_days = [
+const daysOfWeek = [
   'Понедельник',
   'Вторник',
   'Среда',
@@ -54,5 +15,51 @@ const week_days = [
   'Воскресенье'
 ];
 
-const month_start = 2;
-const month_length = 30;
+function getDaysInMonth(month, year) {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+function getFirstDayOfMonth(month, year) {
+  const day = new Date(year, month, 1).getDay();
+  return day === 0 ? 6 : day - 1; // 0 - пн, 6 - вс
+}
+
+export default () => {
+  const today = new Date();
+  const [events, setEvents] = useState();
+  const [year, setYear] = useState(today.getFullYear()); // Текущий год
+  const [month, setMonth] = useState(today.getMonth()); // Текущий месяц (0 - январь, 11 - декабрь)
+
+  useEffect(() => {
+    authed.get(`/account/events/calendar`).then((resp) => {
+      setEvents(resp.data);
+    });
+  }, []);
+
+  return (
+    <section className={styles.wrapper}>
+      <Navigation setYear={setYear} setMonth={setMonth} year={year} month={month} />
+      <div className={styles.days}>
+        {daysOfWeek.map((day) => (
+          <p key={day.slice(0, 2)} className={styles.week_days}>
+            {day}
+          </p>
+        ))}
+
+        {[...Array(getDaysInMonth(month, year))].map((_, i) => (
+          <Cell
+            key={i + 'd'}
+            index={i + 1}
+            event_list={events?.filter((event) => {
+              const date = new Date(event.event.date);
+              return (
+                date.getFullYear() === year && date.getMonth() === month && date.getDate() === i
+              );
+            })}
+            style={i++ == 0 ? { gridColumnStart: getFirstDayOfMonth(month, year) + 1 } : {}}
+          />
+        ))}
+      </div>
+    </section>
+  );
+};

@@ -8,6 +8,7 @@
     transform 100ms ease-out,
     filter 100ms ease-in-out;
   will-change: transform;
+  user-select: none;
 }
 
 .arrow_btn path {
@@ -20,6 +21,12 @@
   transform: scale(1.1);
   border-color: var(--gold);
   stroke: var(--gold);
+}
+
+.arrow_btn:active {
+  transform: scale(0.95);
+  border-color: var(--gold);
+  stroke: var(--black);
 }
 
 .arrow_btn_dis {
