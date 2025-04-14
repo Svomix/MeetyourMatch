@@ -13,32 +13,53 @@ import styles from './page.module.css';
 const SearchSection = () => {
   let [events, setEvents] = useState([]);
   let [totalPages, setTotalPages] = useState(1);
+  let [squery, setSQuery] = useState('');
   
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
   
-  const page = parseInt(searchParams.get('page')) || 1;
-  
-  const setPage = (page) => {
+  const page = parseInt(searchParams.get('page')) || 1
+  const query = searchParams.get('q') || ''
+
+  const setParam = (key, value) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
-    current.set('page', page);
+    current.set(key, value);
     const search = current.toString();
     const query = search ? `?${search}` : '';
     router.push(`${pathname}${query}`);
   };
   
+  const setQuery = (query) => setParam('q', query)
+  const setPage = (page) => setParam('page', page)
+
+  const onSearchChange = (e) => {
+    e.preventDefault()
+    setSQuery(e.target.value)
+  }
+
+  const onSearch = (e) => {
+    e.preventDefault()
+    setQuery(squery)
+  }
+  
   useEffect(() => {
     const instance = Cookies.get(tokenType.ACCESS_TOKEN) ? authed : unauthed;
-    instance.get(`/v1/events?limit=16&page=${page}`).then((response) => {
+    instance.get(`/v1/events?limit=16&page=${page}`, {
+      params: {
+        limit: 16,
+        page: page,
+        s: query
+      }
+    }).then((response) => {
       setEvents(response.data.content);
       setTotalPages(response.data.page.totalPages);
     });
-  }, [page]);
+  }, [page, query]);
 
   return <>
     <section className={styles.controls}>
-      <Search placeholder="Поиск" />
+      <Search placeholder="Поиск" value={squery} onChange={onSearchChange} onSearch={onSearch}/>
       <SDropdown
         placeholder={'Платно?'}
         data={[
