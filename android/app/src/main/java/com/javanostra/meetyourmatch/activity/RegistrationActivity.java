@@ -211,7 +211,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private void performCityUpdate(UserRegistrationData userData) {
         AccountApiService userApiService = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
-        System.out.println(userData.getCityId());
+        System.out.println(cityID);
         Call<ResponseDTO> call = userApiService.setCity((long) userData.getCityId());
         call.enqueue(new Callback<ResponseDTO>() {
             @Override
@@ -278,9 +278,9 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private boolean cityCheck(String passedCity) {
         if (passedCity.isEmpty()) return false;
-        for (int i = 0; i < cityNamesList.size(); i++) {
-            if (cityNamesList.get(i).equalsIgnoreCase(passedCity)) {
-                cityID = i;
+        for (int i = 0; i < cityList.size(); i++) {
+            if (cityList.get(i).getName().equalsIgnoreCase(passedCity)) {
+                cityID = Math.toIntExact(cityList.get(i).getId());
                 return true;
             }
         }
