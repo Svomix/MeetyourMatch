@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
-
 android {
     namespace = "com.javanostra.meetyourmatch"
     compileSdk = 34
@@ -15,10 +14,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
+        buildFeatures {
+            viewBinding = true
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -48,5 +49,14 @@ dependencies {
     implementation(libs.github.glide)
     annotationProcessor(libs.compiler)
     implementation(libs.picasso)
-    implementation(libs.osmdroid)
+    implementation("com.github.MKergall:osmbonuspack:6.9.0") // DON'T TOUCH
+    implementation(libs.material)
+    implementation("androidx.recyclerview:recyclerview:1.3.2") // DON'T TOUCH
+    implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.wasabeef.glide.transformations)
+    implementation(libs.osmdroid.osmdroid.android)
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel)
+    implementation(libs.androidx.lifecycle.runtime)
+    implementation(libs.gson.v2101)
 }

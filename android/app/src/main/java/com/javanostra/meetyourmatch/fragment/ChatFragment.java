@@ -33,7 +33,6 @@ public class ChatFragment extends Fragment implements ChatRecyclerViewInterface 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
-
         RecyclerView recyclerView = view.findViewById(R.id.chatRecyclerView);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));

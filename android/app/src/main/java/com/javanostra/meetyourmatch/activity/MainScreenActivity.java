@@ -130,8 +130,7 @@ public class MainScreenActivity extends AppCompatActivity implements Recomendati
     }
 
     public void openAccount(View view) {
-        Intent intent = new Intent(this, AccountActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, AccountActivity.class));
     }
 
     public void openNotifications(View view) {

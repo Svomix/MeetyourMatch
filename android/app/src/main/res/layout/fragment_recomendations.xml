@@ -8,227 +8,229 @@
     android:background="@drawable/gradient_background"
     tools:context=".fragment.RecomendationsFragment">
 
+    <!-- Container for swipeable content -->
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/root_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="28dp">
+        android:id="@+id/content_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="64dp"
+        app:layout_constraintBottom_toTopOf="@+id/arrowUp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/event_description"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_below="@id/event_title"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/sansation_regular"
-            android:text="TextView"
-            android:textAlignment="center"
-            android:textColor="#CCCCCC"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/arrowUp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/event_title" />
-
-        <ImageButton
-            android:id="@+id/dislike_button"
-            android:layout_width="54dp"
-            android:layout_height="54dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="12dp"
-            android:background="@drawable/border_element_background"
-            android:backgroundTint="#00FFFFFF"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_baseline_thumb_down_24"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:tint="@color/buttonColorDefault" />
-
-        <ImageButton
-            android:id="@+id/like_button"
-            android:layout_width="54dp"
-            android:layout_height="54dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/everyday_border"
-            android:backgroundTint="#00FFFFFF"
-            android:backgroundTintMode="multiply"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_baseline_thumb_up_24"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:tint="@color/buttonColorDefault" />
-
+        <!-- Event Image -->
         <ImageView
             android:id="@+id/eventImage"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="320dp"
-            android:outlineProvider="background"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="null"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_mym_128"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/event_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:srcCompat="@drawable/ic_mym_128"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
-        <TextView
-            android:id="@+id/event_title"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_below="@+id/eventImage"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="16dp"
-            android:ellipsize="marquee"
-            android:fontFamily="@font/sansation_bold"
-            android:maxLines="1"
-            android:shadowColor="#000000"
-            android:shadowDx="10"
-            android:shadowDy="10"
-            android:shadowRadius="9"
-            android:text="TextView"
-            android:textAlignment="center"
-            android:textColor="#FFFFFF"
-            android:textSize="30dp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/eventImage" />
-
-        <ImageView
-            android:id="@+id/action_image_view"
-            android:layout_width="228dp"
-            android:layout_height="239dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="80dp"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="150dp"
-            android:alpha="0"
-            android:scaleType="fitCenter"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.493"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
-
+        <!-- Gradient Overlay at the bottom of the image -->
         <ImageView
             android:id="@+id/gradient"
             android:layout_width="0dp"
             android:layout_height="70dp"
             android:background="@drawable/gradient_background_on_photo"
+            android:contentDescription="@null"
             app:layout_constraintBottom_toBottomOf="@+id/eventImage"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/description"
-            android:layout_width="wrap_content"
+        <!-- Event Title -->
+        <TextView
+            android:id="@+id/event_title"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="@android:color/transparent"
-            app:cardElevation="38dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/like_button"
-            app:layout_constraintHorizontal_bias="0.85"
-            app:layout_constraintStart_toEndOf="@+id/dislike_button">
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="4dp"
+            android:ellipsize="marquee"
+            android:fontFamily="@font/sansation_bold"
+            android:gravity="center"
+            android:maxLines="1"
+            android:shadowColor="#000000"
+            android:shadowDx="10"
+            android:shadowDy="10"
+            android:shadowRadius="9"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/event_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Awesome Event Title Here" />
 
-            <ImageView
-                android:id="@+id/event_full_description"
-                android:layout_width="90dp"
-                android:layout_height="72dp"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/border_element_background"
-                android:padding="11dp"
-                android:src="@drawable/sharp_table_rows_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:tint="#FFFFFF" />
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/search"
-            android:layout_width="wrap_content"
+        <!-- Event Description Snippet -->
+        <TextView
+            android:id="@+id/event_description"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="@android:color/transparent"
-            app:cardElevation="38dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="8dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/sansation_regular"
+            android:gravity="center"
+            android:maxLines="3"
+            android:textAlignment="center"
+            android:textColor="#CCCCCC"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/like_button"
-            app:layout_constraintHorizontal_bias="0.15"
-            app:layout_constraintStart_toEndOf="@+id/dislike_button">
-
-            <ImageView
-                android:id="@+id/event_refresh"
-                android:layout_width="90dp"
-                android:layout_height="72dp"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/border_element_background"
-                android:padding="10dp"
-                android:src="@drawable/ic_baseline_refresh_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-        </androidx.cardview.widget.CardView>
-
-        <ImageView
-            android:id="@+id/arrowUp"
-            android:layout_width="58dp"
-            android:layout_height="49dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_baseline_keyboard_arrow_up_24"
-            app:tint="#303038"
-            app:layout_constraintBottom_toTopOf="@+id/search"
-            app:layout_constraintEnd_toEndOf="@+id/search"
-            app:layout_constraintStart_toStartOf="@+id/search" />
-
-        <ImageView
-            android:id="@+id/arrowDown"
-            android:layout_width="58dp"
-            android:layout_height="49dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_baseline_keyboard_arrow_down_24"
-            app:tint="#303038"
-            app:layout_constraintBottom_toTopOf="@+id/description"
-            app:layout_constraintEnd_toEndOf="@+id/description"
-            app:layout_constraintStart_toStartOf="@+id/description" />
-
-        <ImageView
-            android:id="@+id/arrowRight"
-            android:layout_width="54dp"
-            android:layout_height="49dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_baseline_keyboard_arrow_right_24"
-            app:tint="#303038"
-            app:layout_constraintBottom_toTopOf="@+id/description"
-            app:layout_constraintEnd_toEndOf="@+id/like_button"
-            app:layout_constraintStart_toStartOf="@+id/like_button" />
-
-        <ImageView
-            android:id="@+id/arrowLeft"
-            android:layout_width="54dp"
-            android:layout_height="49dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_baseline_keyboard_arrow_left_24"
-            app:layout_constraintBottom_toTopOf="@+id/search"
-            app:layout_constraintEnd_toEndOf="@+id/dislike_button"
-            app:layout_constraintStart_toStartOf="@+id/dislike_button"
-            app:tint="#303038" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Short description of the event goes here, maybe just a few lines." />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Like/Dislike Action Overlay Image (Initially Hidden) -->
+    <!-- Note: This is outside the content_container if you don't want it to swipe with the content -->
+    <!-- If you DO want it to swipe, move it inside content_container and adjust constraints -->
+    <ImageView
+        android:id="@+id/action_image_view"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:alpha="0"
+        android:scaleType="fitCenter"
+        android:contentDescription="null"
+        app:layout_constraintBottom_toBottomOf="@+id/content_container"
+        app:layout_constraintEnd_toEndOf="@+id/content_container"
+        app:layout_constraintStart_toStartOf="@+id/content_container"
+        app:layout_constraintTop_toTopOf="@+id/content_container"
+        app:layout_constraintVertical_bias="0.3"
+        tools:srcCompat="@drawable/ic_baseline_thumb_up_24"
+        tools:alpha="0.8"/>
+
+    <!-- Bottom Action Buttons -->
+    <!-- Using a chain (spread_inside) for distribution -->
+
+    <ImageButton
+        android:id="@+id/dislike_button"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/ripple"
+        android:contentDescription="null"
+        android:padding="10dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/event_refresh_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_baseline_thumb_down_24"
+        app:tint="@color/buttonColorDefault" />
+
+    <ImageButton
+        android:id="@+id/event_refresh_button"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/border_element_background"
+        android:contentDescription="null"
+        android:padding="10dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/event_full_description_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/dislike_button"
+        app:srcCompat="@drawable/ic_baseline_refresh_24"
+        app:tint="@color/button_ripple_mask" />
+
+    <ImageButton
+        android:id="@+id/event_full_description_button"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/border_element_background"
+        android:contentDescription="null"
+        android:padding="11dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/like_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/event_refresh_button"
+        app:srcCompat="@drawable/sharp_table_rows_24"
+        app:tint="@color/button_ripple_mask" />
+
+    <ImageButton
+        android:id="@+id/like_button"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/ripple"
+        android:contentDescription="null"
+        android:padding="10dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/event_full_description_button"
+        app:srcCompat="@drawable/ic_baseline_thumb_up_24"
+        app:tint="@color/buttonColorDefault" />
+
+    <!-- Arrow Indicators - Constrained to center above buttons -->
+    <ImageView
+        android:id="@+id/arrowLeft"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="4dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_baseline_keyboard_arrow_left_24"
+        android:contentDescription="@null"
+        app:tint="#303038"
+        app:layout_constraintBottom_toTopOf="@+id/dislike_button"
+        app:layout_constraintEnd_toEndOf="@+id/dislike_button"
+        app:layout_constraintStart_toStartOf="@+id/dislike_button"/>
+
+    <ImageView
+        android:id="@+id/arrowUp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="4dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_baseline_keyboard_arrow_up_24"
+        android:contentDescription="@null"
+        app:tint="#303038"
+        app:layout_constraintBottom_toTopOf="@+id/event_refresh_button"
+        app:layout_constraintEnd_toEndOf="@+id/event_refresh_button"
+        app:layout_constraintStart_toStartOf="@+id/event_refresh_button"/>
+
+    <ImageView
+        android:id="@+id/arrowDown"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="4dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_baseline_keyboard_arrow_down_24"
+        android:contentDescription="@null"
+        app:tint="#303038"
+        app:layout_constraintBottom_toTopOf="@+id/event_full_description_button"
+        app:layout_constraintEnd_toEndOf="@+id/event_full_description_button"
+        app:layout_constraintStart_toStartOf="@+id/event_full_description_button"/>
+
+    <ImageView
+        android:id="@+id/arrowRight"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="4dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_baseline_keyboard_arrow_right_24"
+        android:contentDescription="@null"
+        app:tint="#303038"
+        app:layout_constraintBottom_toTopOf="@+id/like_button"
+        app:layout_constraintEnd_toEndOf="@+id/like_button"
+        app:layout_constraintStart_toStartOf="@+id/like_button"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

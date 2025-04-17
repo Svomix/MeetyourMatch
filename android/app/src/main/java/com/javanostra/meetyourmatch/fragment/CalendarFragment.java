@@ -36,6 +36,7 @@ import com.javanostra.meetyourmatch.persistance.api_service.EventApiService;
 import com.javanostra.meetyourmatch.persistance.api_service.UserApiService;
 import com.javanostra.meetyourmatch.persistance.entity.Day;
 import com.javanostra.meetyourmatch.persistance.entity.Event;
+import com.javanostra.meetyourmatch.persistance.entity.UserActionDTO;
 import com.javanostra.meetyourmatch.persistance.entity.UserEventDTO;
 import com.javanostra.meetyourmatch.persistance.entity.UserProfileDTO;
 
@@ -60,7 +61,7 @@ public class CalendarFragment extends Fragment implements GestureDetector.OnGest
 
     UserProfileDTO currentUser;
     private List<Event> userEventsItem;
-    private List<UserEventDTO> userEvents;
+    private List<UserActionDTO> userEvents;
 
     private ActivityResultLauncher<Intent> eventDetailsLauncher;
 
@@ -194,7 +195,7 @@ public class CalendarFragment extends Fragment implements GestureDetector.OnGest
 
                 dayItemView.setOnClickListener(v -> {
                     if (currentDay.hasEvents())
-                        showEventsDialog(currentDay);
+                        showEventDetailsSheet(currentDay.getEvents());
                 });
             }
 
@@ -213,6 +214,16 @@ public class CalendarFragment extends Fragment implements GestureDetector.OnGest
         return today.get(Calendar.YEAR) == year &&
                 today.get(Calendar.MONTH) == month &&
                 today.get(Calendar.DAY_OF_MONTH) == day;
+    }
+
+    private void showEventDetailsSheet(ArrayList<Event> events) {
+        if (events == null || events.isEmpty()) {
+            Log.w("CalendarFragment", "\n" +
+                    "An attempt to show details for an empty list of events.");
+            return;
+        }
+        EventBottomSheetDialogFragment bottomSheet = EventBottomSheetDialogFragment.newInstance(events);
+        bottomSheet.show(getParentFragmentManager(), "EventDetailsBottomSheetTag");
     }
 
     private void showEventsDialog(Day currentDay) {
@@ -361,28 +372,25 @@ public class CalendarFragment extends Fragment implements GestureDetector.OnGest
     }
 
     public void fetchAllUserEvents(Long userId) {
-        UserApiService apiService = RetrofitClient.getRetrofit(requireActivity().getApplicationContext()).create(UserApiService.class);
+        AccountApiService apiService = RetrofitClient.getRetrofit(requireActivity().getApplicationContext()).create(AccountApiService.class);
 
-        apiService.getUserEventsInCalendar(userId).enqueue(new Callback<List<UserEventDTO>>() {
+        apiService.getCalendar().enqueue(new Callback<List<UserActionDTO>>() {
             @Override
-            public void onResponse(Call<List<UserEventDTO>> call, Response<List<UserEventDTO>> response) {
+            public void onResponse(Call<List<UserActionDTO>> call, Response<List<UserActionDTO>> response) {
                 if (response.isSuccessful()) {
                     userEvents = response.body();
 
-                    for (UserEventDTO userEvent : userEvents) {
-                        fetchEventById(userEvent.getEvent());
+                    for (UserActionDTO userAction : userEvents) {
+                        fetchEventById(userAction.getEvent().getId());
                     }
 
                     updateCalendar();
-                    // Handle the list of events
                 } else {
-                    // Handle request errors
                 }
             }
 
             @Override
-            public void onFailure(Call<List<UserEventDTO>> call, Throwable t) {
-                // Handle failure
+            public void onFailure(Call<List<UserActionDTO>> call, Throwable t) {
             }
         });
     }
@@ -395,16 +403,13 @@ public class CalendarFragment extends Fragment implements GestureDetector.OnGest
             public void onResponse(Call<Event> call, Response<Event> response) {
                 if (response.isSuccessful()) {
                     userEventsItem.add(response.body());
-                    // Handle the list of events
                 } else {
-                    // Handle request errors
                 }
             }
 
             @Override
             public void onFailure(Call<Event> call, Throwable t) {
                 t.printStackTrace();
-                // Handle failure
             }
         });
     }

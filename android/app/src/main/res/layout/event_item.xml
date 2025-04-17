@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/ic_mym_128"
-            android:scaleType="centerCrop" /> <!-- Укажите здесь ваше изображение по умолчанию -->
+            android:scaleType="centerCrop" />
     </androidx.cardview.widget.CardView>
 
     <TextView

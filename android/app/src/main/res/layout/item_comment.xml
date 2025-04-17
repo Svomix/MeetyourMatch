@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="4dp"
+        android:gravity="center_vertical">
+
+        <!-- Optional: User Avatar -->
+        <!-- <ImageView
+            android:id="@+id/imageViewUserAvatar" ... /> -->
+
+        <TextView
+            android:id="@+id/textViewUserName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/textColorPrimaryModern"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="User Name" />
+
+        <TextView
+            android:id="@+id/textViewCommentDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/textColorTertiaryModern"
+            android:textSize="12sp"
+            tools:text="2 hours ago" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewCommentContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/textColorSecondaryModern"
+        android:textSize="14sp"
+        android:lineSpacingMultiplier="1.1"
+        tools:text="This is the actual comment content written by the user. It might be a bit longer." />
+
+</LinearLayout>

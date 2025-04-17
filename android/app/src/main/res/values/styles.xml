@@ -121,4 +121,68 @@
         <item name="android:textColor">@color/buttonColorDefault</item>
     </style>
 
+    <style name="DialogCheckboxStyle" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:textColor">@color/textColorPrimaryModern</item>
+        <item name="buttonTint">@color/actionIconColor</item> <!-- Акцентный цвет -->
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingEnd">4dp</item>
+    </style>
+
+    <style name="DialogRadioButtonStyle" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:textColor">@color/textColorPrimaryModern</item>
+        <item name="buttonTint">@color/actionIconColor</item> <!-- Акцентный цвет -->
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingEnd">4dp</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- ... другие атрибуты ... -->
+        <!-- Применяем стиль для диалогов -->
+        <item name="alertDialogTheme">@style/AppAlertDialogStyle</item>
+    </style>
+
+    <!-- Стиль для AlertDialog -->
+    <style name="AppAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- Цвет фона диалога -->
+        <item name="android:background">@color/backgroundColorModern</item> <!-- Ваш темный фон -->
+        <!-- Цвет текста заголовка -->
+        <item name="android:textColorPrimary">@color/textColorPrimaryModern</item> <!-- Ваш основной цвет текста -->
+        <!-- Цвет текста сообщения/элементов -->
+        <item name="android:textColorSecondary">@color/textColorSecondaryModern</item> <!-- Ваш вторичный цвет текста -->
+        <!-- Цвет кнопок (позитивной, негативной, нейтральной) -->
+        <item name="colorAccent">@color/actionIconColor</item> <!-- Ваш акцентный цвет (желто-оранжевый) -->
+        <item name="android:textColorAlertDialogListItem">@color/textColorPrimaryModern</item> <!-- Цвет текста в списках (для MultiChoice) -->
+
+        <!-- Стиль для кнопок -->
+        <item name="buttonBarPositiveButtonStyle">@style/AlertDialogButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/AlertDialogButtonStyle</item>
+        <item name="buttonBarNeutralButtonStyle">@style/AlertDialogButtonStyle</item>
+
+        <!-- Стиль для CheckBox и RadioButton (применяем акцентный цвет) -->
+        <item name="android:checkboxStyle">@style/AlertDialogCheckboxStyle</item>
+        <item name="android:radioButtonStyle">@style/AlertDialogRadioButtonStyle</item>
+
+    </style>
+
+    <!-- Стиль для кнопок диалога -->
+    <style name="AlertDialogButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/actionIconColor</item> <!-- Акцентный цвет текста кнопок -->
+    </style>
+
+    <!-- Стиль для CheckBox -->
+    <style name="AlertDialogCheckboxStyle" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:textColor">@color/textColorPrimaryModern</item>
+        <item name="buttonTint">@color/actionIconColor</item> <!-- Цвет "галочки" -->
+    </style>
+
+    <!-- Стиль для RadioButton -->
+    <style name="AlertDialogRadioButtonStyle" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:textColor">@color/textColorPrimaryModern</item>
+        <item name="buttonTint">@color/actionIconColor</item> <!-- Цвет "точки" -->
+    </style>
+
 </resources>

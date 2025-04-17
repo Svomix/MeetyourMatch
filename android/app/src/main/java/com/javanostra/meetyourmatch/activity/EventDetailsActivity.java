@@ -1,24 +1,33 @@
 package com.javanostra.meetyourmatch.activity;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.javanostra.meetyourmatch.R;
+import com.javanostra.meetyourmatch.fragment.CommentsBottomSheetFragment;
 import com.javanostra.meetyourmatch.persistance.RetrofitClient;
 import com.javanostra.meetyourmatch.persistance.api_service.AccountApiService;
 import com.javanostra.meetyourmatch.persistance.api_service.EventApiService;
 import com.javanostra.meetyourmatch.persistance.api_service.UserApiService;
 import com.javanostra.meetyourmatch.persistance.entity.Event;
+import com.javanostra.meetyourmatch.persistance.entity.FullEventDTO;
 import com.javanostra.meetyourmatch.persistance.entity.Tag;
 import com.javanostra.meetyourmatch.persistance.entity.User;
+import com.javanostra.meetyourmatch.persistance.entity.UserActionDTO;
 import com.javanostra.meetyourmatch.persistance.entity.UserEvent;
 import com.javanostra.meetyourmatch.persistance.entity.UserEventDTO;
 import com.javanostra.meetyourmatch.persistance.entity.UserProfileDTO;
@@ -34,12 +43,14 @@ public class EventDetailsActivity extends AppCompatActivity {
     UserProfileDTO currentUser;
     Event currentEvent;
     UserEvent currentUserEvent;
-    TextView eventTitle, eventDescription, eventDate, eventTags, likeCount;
+    TextView eventTitle, eventDescription, eventDate, eventPlace, eventTags, likeCount;
     ImageView coverImage;
-    ImageButton likeButton, calendarButton;
+    ImageButton likeButton, calendarButton, commentsButton;
+    FrameLayout shareButton;
 
     private boolean isLiked;
     private boolean isAddedToCalendar;
+    private boolean calendarStatusChanged = false;
 
     private List<Tag> eventTagsList;
 
@@ -49,11 +60,28 @@ public class EventDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_details);
 
         Intent intent = getIntent();
-        currentEvent = (Event) intent.getSerializableExtra("event");
+        if (intent != null && intent.hasExtra("event")) {
+            currentEvent = intent.getParcelableExtra("event");
+        } else {
+            Log.e("EventDetailsActivity", "No 'event' extra found in Intent!");
+            Toast.makeText(this, "Ошибка: Не удалось загрузить данные события.", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
+        if (currentEvent == null) {
+            Log.e("EventDetailsActivity", "Ошибка: Объект Event получен как null после getParcelableExtra.");
+            Toast.makeText(this, "Ошибка: Не удалось получить данные события.", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+        Log.d("EventDetailsActivity", "Successfully loaded event: " + currentEvent.getTitle());
 
         likeButton = findViewById(R.id.likeButton);
         likeButton.setColorFilter(Color.parseColor("#FCAD2F"));
         calendarButton = findViewById(R.id.calendarButton);
+        commentsButton = findViewById(R.id.commentsButton);
+        shareButton = findViewById(R.id.shareButtonContainer);
 
         fetchAccountInfo();
 
@@ -63,11 +91,12 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventTitle = findViewById(R.id.event_title);
         eventDescription = findViewById(R.id.event_description);
         eventDate = findViewById(R.id.event_date);
+        eventPlace = findViewById(R.id.event_place);
 
         likeCount = findViewById(R.id.likeCount);
         fetchEventLikes(currentEvent.getId());
 
-        coverImage = findViewById(R.id.eventLogo);
+        coverImage = findViewById(R.id.eventImage);
         Glide.with(this)
                 .load(currentEvent.getCoverImgUrl())
                 .placeholder(R.drawable.ic_mym_128)
@@ -76,7 +105,10 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         eventTitle.setText(currentEvent.getTitle());
         eventDescription.setText(currentEvent.getDescription());
-        eventDate.setText(dateCorrectImplementation(currentEvent));
+        if (currentEvent.getDate() != null) eventDate.setText(dateCorrectImplementation(currentEvent));
+        //eventPlace.setText(currentEvent.getLocation().getAddress() + ", " +
+        //        currentEvent.getLocation().getTitle());
+        if (currentEvent.getLocation() != null) eventPlace.setText(currentEvent.getLocation().getAddress());
 
         likeButton.setOnClickListener(v -> {
             if (isLiked) {
@@ -98,7 +130,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                                     .start();
                         }).start();
             }
-            fetchSwitchLike(currentUser.getId(), currentEvent.getId());
+            fetchSwitchLike(currentEvent.getId(), isLiked);
         });
 
         calendarButton.setOnClickListener(v -> {
@@ -122,10 +154,19 @@ public class EventDetailsActivity extends AppCompatActivity {
                                     .start();
                         }).start();
             }
-            fetchSwitchCalendar(currentUser.getId(), currentEvent.getId());
+            calendarStatusChanged = true;
+            fetchSwitchCalendar(currentEvent.getId(), isAddedToCalendar);
         });
 
+        commentsButton.setOnClickListener(v -> {
+            setResult(RESULT_OK, new Intent());
+            showCommentsBottomSheet();
+        });
 
+        shareButton.setOnClickListener(v -> {
+            String url = currentEvent.getSourceUrl();
+            openWebPage(url);
+        });
     }
 
     @Override
@@ -135,7 +176,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     private String dateCorrectImplementation(Event event) {
-        StringBuilder builder = new StringBuilder("Дата: ");
+        StringBuilder builder = new StringBuilder();
 
         int buffer = event.getDate().getDate();
         if (buffer < 10) builder.append("0");
@@ -146,8 +187,26 @@ public class EventDetailsActivity extends AppCompatActivity {
         builder.append(buffer).append('.');
 
         builder.append(event.getDate().getYear()+1900);
+        builder.append(" - ");
+
+        buffer = event.getDate().getHours();
+        if (buffer < 10) builder.append("0");
+        builder.append(buffer).append(':');
+
+        buffer = event.getDate().getMinutes();
+        if (buffer < 10) builder.append("0");
+        builder.append(buffer);
 
         return builder.toString();
+    }
+
+    private void showCommentsBottomSheet() {
+        if (currentEvent.getId() != null && currentEvent.getId() != -1) {
+            CommentsBottomSheetFragment commentsSheet = CommentsBottomSheetFragment.newInstance(currentEvent.getId());
+            commentsSheet.show(getSupportFragmentManager(), commentsSheet.getTag());
+        } else {
+            Toast.makeText(this, "Cannot load comments: Event ID missing.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void fetchAccountInfo() {
@@ -160,7 +219,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                     Log.d("GetAccountInfo", "Successful: " + response.message());
                     currentUser = response.body();
 
-                    fetchUserEvent(currentUser.getId(), currentEvent.getId());
+                    fetchEventAction(currentEvent.getId());
                 } else {
                     Log.e("GetAccountInfo", "Error: " + response.message());
                 }
@@ -173,18 +232,18 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
     }
 
-    public void fetchUserEvent(Long userId, Long eventId) {
-        UserApiService apiService = RetrofitClient.getRetrofit(this).create(UserApiService.class);
+    public void fetchEventAction(Long eventId) {
+        AccountApiService apiService = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
 
-        apiService.getUserEventById(userId, eventId).enqueue(new retrofit2.Callback<UserEventDTO>() {
+        apiService.getEventAction(eventId).enqueue(new retrofit2.Callback<UserActionDTO>() {
             @Override
-            public void onResponse(Call<UserEventDTO> call, retrofit2.Response<UserEventDTO> response) {
+            public void onResponse(Call<UserActionDTO> call, retrofit2.Response<UserActionDTO> response) {
                 if (response.isSuccessful()) {
-                    UserEventDTO dto = response.body();
-                    currentUserEvent = new UserEvent(dto.getUser(), dto.getEvent(), dto.getLiked(), dto.getDisliked(), dto.getInCalendar());
+                    UserActionDTO dto = response.body();
 
-                    isLiked = currentUserEvent.getLiked();
-                    isAddedToCalendar = currentUserEvent.getInCalendar();
+                    assert dto != null;
+                    isLiked = dto.getLiked();
+                    isAddedToCalendar = dto.getInCalendar();
 
                     if (isLiked) likeButton.setImageResource(R.drawable.ic_baseline_thumb_up_24);
                     else likeButton.setImageResource(R.drawable.ic_outline_thumb_up_24);
@@ -196,26 +255,26 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<UserEventDTO> call, Throwable t) {
+            public void onFailure(Call<UserActionDTO> call, Throwable t) {
             }
         });
 
     }
 
     public void fetchEventLikes(Long eventId) {
-        UserApiService apiService = RetrofitClient.getRetrofit(this).create(UserApiService.class);
+        EventApiService apiService = RetrofitClient.getRetrofit(this).create(EventApiService.class);
 
-        apiService.getLikes(eventId).enqueue(new retrofit2.Callback<Integer>() {
+        apiService.getFullEventDTO(eventId).enqueue(new retrofit2.Callback<FullEventDTO>() {
             @Override
-            public void onResponse(Call<Integer> call, Response<Integer> response) {
+            public void onResponse(Call<FullEventDTO> call, Response<FullEventDTO> response) {
                 if (response.isSuccessful()) {
-                    likeCount.setText(response.body().toString());
+                    likeCount.setText(response.body().getUserActionCounters().getLikedCounter().toString());
                 } else {
                 }
             }
 
             @Override
-            public void onFailure(Call<Integer> call, Throwable t) {
+            public void onFailure(Call<FullEventDTO> call, Throwable t) {
             }
         });
 
@@ -245,40 +304,77 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
     }
 
-    public void fetchSwitchLike(Long userId, Long eventId) {
-        UserApiService apiService = RetrofitClient.getRetrofit(this).create(UserApiService.class);
+    public void fetchSwitchLike(Long eventId, Boolean isLiked) {
+        AccountApiService apiService = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
 
-        apiService.setLiked(userId, eventId).enqueue(new retrofit2.Callback<Void>() {
+        apiService.setLiked(eventId, isLiked).enqueue(new retrofit2.Callback<UserActionDTO>() {
             @Override
-            public void onResponse(Call<Void> call, retrofit2.Response<Void> response) {
+            public void onResponse(Call<UserActionDTO> call, retrofit2.Response<UserActionDTO> response) {
                 if (response.isSuccessful()) {
                     fetchEventLikes(eventId);
-                    //System.out.println("Event liked successfully.");
                 } else {
                 }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<UserActionDTO> call, Throwable t) {
             }
         });
     }
 
-    public void fetchSwitchCalendar(Long userId, Long eventId) {
-        UserApiService apiService = RetrofitClient.getRetrofit(this).create(UserApiService.class);
+    public void fetchSwitchCalendar(Long eventId, Boolean isAdded) {
+        AccountApiService apiService = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
 
-        apiService.setCalendar(userId, eventId).enqueue(new retrofit2.Callback<Void>() {
+        apiService.setCalendar(eventId, isAdded).enqueue(new retrofit2.Callback<UserActionDTO>() {
             @Override
-            public void onResponse(Call<Void> call, retrofit2.Response<Void> response) {
+            public void onResponse(Call<UserActionDTO> call, retrofit2.Response<UserActionDTO> response) {
                 if (response.isSuccessful()) {
-                    //System.out.println("Event added to calendar successfully.");
                 } else {
                 }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<UserActionDTO> call, Throwable t) {
             }
         });
+    }
+
+    private void openWebPage(String url) {
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "http://" + url;
+        }
+
+        try {
+            Uri webpage = Uri.parse(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+            startActivity(intent);
+
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, "Не найдено приложение для открытия ссылки", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        } catch (Exception e) {
+            Toast.makeText(this, "Не удалось открыть ссылку", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void finish() {
+        Intent returnIntent = new Intent();
+        if (calendarStatusChanged) {
+            Log.d("EventDetails", "Finishing with RESULT_OK because status changed.");
+            setResult(Activity.RESULT_OK, returnIntent);
+        } else {
+            Log.d("EventDetails", "Finishing with RESULT_CANCELED.");
+            setResult(Activity.RESULT_CANCELED, returnIntent);
+        }
+        super.finish();
+    }
+
+    private void finishWithError(String message) {
+        Log.e("EventDetails", "Error: " + message);
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        setResult(Activity.RESULT_CANCELED);
+        finish();
     }
 }

@@ -65,6 +65,7 @@ public class ChatMessagesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_chat_messages);
+        getWindow().setNavigationBarColor(ContextCompat.getColor(this, R.color.bars));
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.bars));
         String username = getIntent().getStringExtra("Username");
         int IdSender = getIntent().getIntExtra("IDSender", -1);

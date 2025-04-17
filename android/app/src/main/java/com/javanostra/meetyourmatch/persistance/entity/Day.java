@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Day {
     private int date;
-    private List<Event> events;
+    private ArrayList<Event> events;
 
     public Day(int date) {
         this(date, new ArrayList<>());
@@ -32,7 +32,7 @@ public class Day {
         return events.size();
     }
 
-    public List<Event> getEvents() {
+    public ArrayList<Event> getEvents() {
         return events;
     }
 }

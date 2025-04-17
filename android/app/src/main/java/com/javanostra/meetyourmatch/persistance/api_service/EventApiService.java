@@ -1,7 +1,10 @@
 package com.javanostra.meetyourmatch.persistance.api_service;
 
 import com.javanostra.meetyourmatch.persistance.entity.Attribute;
+import com.javanostra.meetyourmatch.persistance.entity.CommentDTO;
+import com.javanostra.meetyourmatch.persistance.entity.CommentRequestDTO;
 import com.javanostra.meetyourmatch.persistance.entity.Event;
+import com.javanostra.meetyourmatch.persistance.entity.FullEventDTO;
 import com.javanostra.meetyourmatch.persistance.entity.Tag;
 
 import java.util.List;
@@ -17,10 +20,27 @@ import retrofit2.http.Query;
 
 public interface EventApiService {
 
+    @GET("/api/v1/events")
+    Call<PagedResponse<Event>> findAllEvents(
+            @Query("offset") Integer offset,
+            @Query("limit") Integer limit
+    );
+
     @GET("/api/v1/events/pageout")
     Call<List<Event>> findAllEventsPageout(
             @Query("offset") Integer offset,
             @Query("limit") Integer limit
+    );
+
+    @GET("/api/v1/events/{event_id}")
+    Call<FullEventDTO> getFullEventDTO(
+            @Path("event_id") Long eventId
+    );
+
+    @POST("/api/v1/events/{event_id}/comments")
+    Call<CommentDTO> addComment(
+            @Path("event_id") Long eventId,
+            @Body CommentRequestDTO body
     );
 
     @GET("/api/v1/events/{event_id}/tags")

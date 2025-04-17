@@ -40,16 +40,6 @@ public interface UserApiService {
     @GET("/api/v1/users/{user_id}")
     Call<User> getUserById(@Path("user_id") Long userId);
 
-//    @GET("/api/v1/users/{user_id}/events")
-//    Call<List<UserEvent>> getUserEvents(
-//            @Path("user_id") Long userId,
-//            @Query("offset") int offset,
-//            @Query("limit") int limit
-//    );
-
-    @GET("/api/v1/users/{user_id}/events/calendar")
-    Call<List<UserEventDTO>> getUserEventsInCalendar(@Path("user_id") Long userId);
-
     @GET("/api/v1/users/{user_id}/events/{event_id}")
     Call<UserEventDTO> getUserEventById(
             @Path("user_id") Long userId,

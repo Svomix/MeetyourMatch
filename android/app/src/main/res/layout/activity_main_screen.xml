@@ -15,9 +15,10 @@
         app:layout_constraintRight_toRightOf="parent">
 
         <ImageButton
+            android:id="@+id/notificationsButton"
             style="@style/HeaderButton"
-            android:src="@drawable/bell"
-            android:onClick="openNotifications"/>
+            android:onClick="openNotifications"
+            android:src="@drawable/bell" />
 
 
         <TextView
@@ -35,9 +36,10 @@
 
 
         <ImageButton
+            android:id="@+id/accountButton"
             style="@style/HeaderButton"
-            android:src="@drawable/avatar"
-            android:onClick="openAccount"/>
+            android:onClick="openAccount"
+            android:src="@drawable/avatar" />
     </LinearLayout>
 
 

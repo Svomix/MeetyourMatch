@@ -13,4 +13,13 @@
     <color name="buttonColorDisabled">#41FBB63F</color>
     <color name="buttonColorFocused">#00FBB63F</color>
     <color name="button_ripple_mask">#FFFFFF</color>
+
+    <color name="backgroundColorModern">#1F1F29</color> <!-- Dark background -->
+    <color name="textColorPrimaryModern">#FFFFFF</color> <!-- White text -->
+    <color name="textColorSecondaryModern">#AEAEB6</color> <!-- Lighter Gray for date/place -->
+    <color name="textColorTertiaryModern">#8A8A91</color> <!-- Even Lighter Gray for tags -->
+    <color name="dividerColorModern">#3A3A4A</color> <!-- Subtle divider -->
+    <color name="actionIconColor">#FFBA19</color> <!-- Your Yellow-Orange -->
+    <color name="buttonTextColorPrimary">#1F1F29</color> <!-- Text color for primary button -->
+    <color name="colorPrimaryAction">#FFBA19</color> <!-- Your Yellow-Orange for button background -->
 </resources>

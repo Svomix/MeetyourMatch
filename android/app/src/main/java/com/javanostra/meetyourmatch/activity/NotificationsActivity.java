@@ -28,6 +28,7 @@ public class NotificationsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
+        getWindow().setNavigationBarColor(ContextCompat.getColor(this, R.color.bars));
         setContentView(R.layout.activity_notifications);
         getWindow().setStatusBarColor(ContextCompat.getColor(this,R.color.bars));
 

@@ -24,4 +24,17 @@
     <string name="policy">Я прочитал и согласен с Условиями пользования и Политикой приватности</string>
     <!--  TODO: Remove or change this placeholder text  -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_events_at_location">no_events_at_location</string>
+    <string name="unknown_location">unknown_location</string>
+    <string name="location_data_missing">location_data_missing</string>
+
+    <string name="content_desc_event_image_large">Картинка </string>
+    <string name="content_desc_like">Добавить в понравившееся</string>
+    <string name="content_desc_add_calendar">Добавить в календарь</string>
+    <string name="action_share">Поделиться</string>
+
+    <string name="comments_title">Комментарии</string>
+    <string name="no_comments_yet">Комментариев ещё нет.</string>
+
+    <string name="page_info_format">Страница %1$d из %2$d</string>
 </resources>
