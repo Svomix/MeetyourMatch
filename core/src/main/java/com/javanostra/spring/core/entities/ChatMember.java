@@ -15,7 +15,7 @@ public class ChatMember {
     @Id
     @ManyToOne
     @JoinColumn(name = "chat_id")
-    private Chat chat;
+    private ChatMessage chat;
 
     @Id
     @ManyToOne

@@ -176,4 +176,9 @@ public class UserController {
         authenticationService.ChangePassword(user, password);
         return new ResponseDTO(HttpStatus.OK.value(), "Пароль обновлен");
     }
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> findConnectedUsers()
+    {
+        return ResponseEntity.ok(userService.findConnectedUsers());
+    }
 }

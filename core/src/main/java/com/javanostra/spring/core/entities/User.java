@@ -1,6 +1,7 @@
 package com.javanostra.spring.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.javanostra.spring.core.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -64,5 +65,8 @@ public class User implements UserDetails {
 
     @Column(name = "created_at")
     private Timestamp createdAt;
+
+    @Column(name = "status")
+    private Status status;
 }
 

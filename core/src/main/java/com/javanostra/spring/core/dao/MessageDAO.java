@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MessageDAO extends JpaRepository<Message, Long>, PagingAndSortingRepository<Message, Long> {
-    Page<Message> findAllMessagesByChatId(Long chatId, Pageable pageable);
-    void deleteAllMessagesByChatId(Long chatId);
+    //Page<Message> findAllMessagesByChatId(Long chatId, Pageable pageable);
+    //void deleteAllMessagesByChatId(Long chatId);
 }

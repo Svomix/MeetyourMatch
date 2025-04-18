@@ -5,6 +5,7 @@ import com.javanostra.spring.core.dao.UserDAO;
 import com.javanostra.spring.core.dto.FullUserProfileDTO;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.dao.*;
+import com.javanostra.spring.core.enums.Status;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -201,5 +202,8 @@ public class UserService implements UserDetailsManager {
         for (User user : unconfirmedUsers) {
             delete(user);
         }
+    }
+    public List<User> findConnectedUsers() {
+        return userDAO.findALLByStatus(Status.ONLINE);
     }
 }

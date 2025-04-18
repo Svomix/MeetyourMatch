@@ -19,7 +19,7 @@ public class Message {
 
     @ManyToOne
     @JoinColumn(name = "chat_id")
-    private Chat chat;
+    private ChatMessage chat;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

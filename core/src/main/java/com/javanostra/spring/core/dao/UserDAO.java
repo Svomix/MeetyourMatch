@@ -1,6 +1,7 @@
 package com.javanostra.spring.core.dao;
 
 import com.javanostra.spring.core.entities.User;
+import com.javanostra.spring.core.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +17,5 @@ public interface UserDAO extends JpaRepository<User, Integer> {
     User findUserById(Long id);
     void deleteUserById(Long id);
     List<User> findAllByIsEnabledFalseAndCreatedAtBefore(LocalDateTime time);
+    List<User> findALLByStatus(Status status);
 }
