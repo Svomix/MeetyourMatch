@@ -1,7 +1,7 @@
 package com.javanostra.spring.core.controllers;
 
 import com.javanostra.spring.core.entities.ChatMessage;
-import com.javanostra.spring.core.dto.ChatNotification;
+import com.javanostra.spring.core.dto.ChatNotificationDTO;
 import com.javanostra.spring.core.services.ChatMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +31,7 @@ public class ChatController {
         ChatMessage savedMsg = chatMessageService.save(chatMessage);
         messagingTemplate.convertAndSendToUser(
                 chatMessage.getRecipientId(), "/queue/messages",
-                ChatNotification.builder()
+                ChatNotificationDTO.builder()
                         .id(savedMsg.getId())
                         .senderId(savedMsg.getSenderId())
                         .recipientId(savedMsg.getRecipientId())

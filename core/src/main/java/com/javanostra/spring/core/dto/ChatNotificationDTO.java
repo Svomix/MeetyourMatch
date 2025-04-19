@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ChatNotification {
+public class ChatNotificationDTO {
     private String id;
     private String senderId;
     private String recipientId;
