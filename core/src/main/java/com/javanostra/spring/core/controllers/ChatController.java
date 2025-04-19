@@ -1,7 +1,7 @@
 package com.javanostra.spring.core.controllers;
 
-import com.javanostra.spring.core.entities.ChatMessage;
 import com.javanostra.spring.core.dto.ChatNotificationDTO;
+import com.javanostra.spring.core.entities.ChatMessage;
 import com.javanostra.spring.core.services.ChatMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
