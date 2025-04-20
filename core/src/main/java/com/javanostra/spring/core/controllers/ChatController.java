@@ -11,11 +11,16 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/api/chats")
 public class ChatController {
     private final ChatMessageService chatMessageService;
     private final SimpMessagingTemplate messagingTemplate;
@@ -27,7 +32,8 @@ public class ChatController {
     }
 
     @MessageMapping("/chat")
-    public void processMessages(@Payload ChatMessage chatMessage) {
+    public ChatMessage processMessages(@Payload ChatMessage chatMessage) {
+        chatMessage.setTimestamp(new Timestamp(new Date().getTime()));
         ChatMessage savedMsg = chatMessageService.save(chatMessage);
         messagingTemplate.convertAndSendToUser(
                 chatMessage.getRecipientId(), "/queue/messages",
@@ -38,5 +44,6 @@ public class ChatController {
                         .content(savedMsg.getContent())
                         .build()
         );
+        return savedMsg;
     }
 }
