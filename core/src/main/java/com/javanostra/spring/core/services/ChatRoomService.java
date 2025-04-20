@@ -14,7 +14,7 @@ import java.util.Optional;
 @Getter
 @Setter
 public class ChatRoomService {
-    ChatRoomDAO chatRoomDao;
+    final ChatRoomDAO chatRoomDao;
 
     private String createChatId(String senderId, String recipientId) {
         var chatId = String.format("%s_%s", senderId, recipientId);
@@ -44,5 +44,4 @@ public class ChatRoomService {
                     return Optional.empty();
                 });
     }
-
 }

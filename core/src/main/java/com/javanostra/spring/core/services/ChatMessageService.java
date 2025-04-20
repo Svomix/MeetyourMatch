@@ -30,5 +30,6 @@ public class ChatMessageService {
     public List<ChatMessage> findChatMessages(String senderId, String recipientId) {
         var chatId = chatRoomService.getChatRoomId(senderId, recipientId, false);
         return chatId.map(messageDAO::findByChatId).orElse(new ArrayList<>());
+
     }
 }
