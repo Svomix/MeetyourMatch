@@ -21,6 +21,15 @@ public interface RegistrationApiService {
     );
 
     @FormUrlEncoded
+    @POST("/api/vkid/register")
+    Call<ResponseDTO> vkRegister(
+            @Field("accessToken") String accessToken,
+            @Field("username") String username,
+            @Field("password") String password,
+            @Field("email") String email
+    );
+
+    @FormUrlEncoded
     @POST("/api/register/verify")
     Call<ResponseDTO> verifyRegister(
             @Field("token") String token,

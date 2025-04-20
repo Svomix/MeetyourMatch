@@ -17,9 +17,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.javanostra.meetyourmatch.R;
+import com.javanostra.meetyourmatch.kotlin.VKAuth;
 import com.javanostra.meetyourmatch.persistance.RetrofitClient;
 import com.javanostra.meetyourmatch.persistance.api_service.LoginApiService;
+import com.javanostra.meetyourmatch.persistance.api_service.UserApiService;
 import com.javanostra.meetyourmatch.persistance.entity.ResponseDTO;
+import com.vk.id.onetap.xml.OneTap;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -57,12 +60,15 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
+        VKAuth vkAuth = VKAuth.Companion.getInstance();
+        vkAuth.vkInit(this);
+        vkAuth.vkAuth(this, findViewById(R.id.buttonLoginVK));
+
         inputUserName = findViewById(R.id.inputUserName);
         inputPassword = findViewById(R.id.inputPassword);
         loginButton = findViewById(R.id.buttonLogin);
         Button forgotPasswordButton = findViewById(R.id.buttonForgotPass);
         Button registerButton = findViewById(R.id.buttonToRegistration);
-        Button loginButtonVK = findViewById(R.id.buttonLoginVK);
 
         loginButton.setEnabled(false);
 
@@ -82,13 +88,8 @@ public class LoginActivity extends AppCompatActivity {
 
         registerButton.setOnClickListener(view -> {
             Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
+            intent.putExtra("auth", "commonAuth");
             startActivity(intent);
-        });
-
-        loginButtonVK.setOnClickListener(view -> {
-            Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class);
-            startActivity(intent);
-            finish();
         });
     }
 
@@ -96,6 +97,70 @@ public class LoginActivity extends AppCompatActivity {
         String username = inputUserName.getText().toString().trim();
         String password = inputPassword.getText().toString().trim();
         loginButton.setEnabled(!username.isEmpty() && !password.isEmpty());
+    }
+
+    public void vkAuth(String username, String email, String accessToken) {
+        UserApiService apiService = RetrofitClient.getRetrofit(this).create(UserApiService.class);
+
+        Call<Boolean> call = apiService.checkUserIfExistsByEmail(email);
+
+        call.enqueue(new Callback<Boolean>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Boolean> call, @NonNull Response<Boolean> response) {
+                        if (response.isSuccessful()) {
+
+                            if (Boolean.TRUE.equals(response.body())) {
+                                performVkLogin(accessToken, email);
+                            } else {
+                                Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
+                                intent.putExtra("auth", "vkAuth");
+                                intent.putExtra("email", email);
+                                intent.putExtra("name", username);
+                                intent.putExtra("token", accessToken);
+                                startActivity(intent);
+                            }
+
+
+                        } else {
+
+                            Toast.makeText(LoginActivity.this, R.string.invalidLogin, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<Boolean> call, @NonNull Throwable t) {
+
+                        Toast.makeText(LoginActivity.this, R.string.connectionError + t.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    private void performVkLogin(String token, String email) {
+        LoginApiService apiService = RetrofitClient.getRetrofit(this).create(LoginApiService.class);
+
+        Call<ResponseDTO> call = apiService.vkLogin(token, email);
+
+        call.enqueue(new Callback<ResponseDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseDTO> call, @NonNull Response<ResponseDTO> response) {
+                if (response.isSuccessful() && response.code() == 200) {
+
+                    Toast.makeText(LoginActivity.this, R.string.successfulLogin, Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(LoginActivity.this, R.string.invalidLogin, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseDTO> call, @NonNull Throwable t) {
+
+                Toast.makeText(LoginActivity.this, R.string.connectionError + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void performLogin(String username, String password) {

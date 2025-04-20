@@ -46,6 +46,9 @@ public interface UserApiService {
             @Path("event_id") Long eventId
     );
 
+    @GET("/api/v1/users/exists/{email}")
+    Call<Boolean> checkUserIfExistsByEmail(@Path("email") String email);
+
     @GET("/api/v1/users/events/{event_id}/liked")
     Call<Integer> getLikes(@Path("event_id") Long eventId);
 

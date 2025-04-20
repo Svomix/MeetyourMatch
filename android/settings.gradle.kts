@@ -8,6 +8,8 @@ pluginManagement {
                 includeGroupByRegex("androidx.*")
             }
         }
+        maven(url = "https://artifactory-external.vkpartner.ru/artifactory/vkid-sdk-android/")
+        maven(url = "https://artifactory-external.vkpartner.ru/artifactory/maven/")
         mavenCentral()
         gradlePluginPortal()
     }
@@ -17,7 +19,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://jitpack.io") }
+        maven("https://jitpack.io")
+        maven("https://artifactory-external.vkpartner.ru/artifactory/vkid-sdk-android/")
+        maven("https://artifactory-external.vkpartner.ru/artifactory/maven/")
     }
 }
 

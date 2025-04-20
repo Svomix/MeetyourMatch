@@ -61,6 +61,8 @@ public class RegistrationActivity extends AppCompatActivity {
     private List<City> cityList;
     private List<String> cityNamesList = new ArrayList<>();
 
+    private String auth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,12 +75,20 @@ public class RegistrationActivity extends AppCompatActivity {
             return insets;
         });
 
+        auth = getIntent().getExtras().getString("auth");
+
         inputUsername = findViewById(R.id.inputUserNameReg);
         inputEmail = findViewById(R.id.inputEmailReg);
         inputPassword = findViewById(R.id.inputPasswordReg);
         inputPasswordConfirm = findViewById(R.id.inputPasswordRegApprove);
         termsCheckBox = findViewById(R.id.checkBoxIL);
         buttonContinue = findViewById(R.id.buttonContinue);
+
+        if (auth.equals("vkAuth")) {
+            inputEmail.setEnabled(false);
+            inputEmail.setText(getIntent().getExtras().getString("email"));
+            inputUsername.setText(getIntent().getExtras().getString("name"));
+        }
 
         autoCompleteCity = findViewById(R.id.inputCityAutoComplete);
 
@@ -158,7 +168,33 @@ public class RegistrationActivity extends AppCompatActivity {
                     cityID
             );
 
-            performRegister(userData);
+            if (auth.equals("vkAuth")) {
+                performVkRegister(userData, getIntent().getExtras().getString("token"));
+            } else if (auth.equals("commonAuth")) {
+                performRegister(userData);
+            }
+        });
+    }
+
+    private void performVkRegister(UserRegistrationData userData, String token) {
+        RegistrationApiService apiService = RetrofitClient.getRetrofit(this).create(RegistrationApiService.class);
+        Call<ResponseDTO> call = apiService.vkRegister(token, userData.getUsername(), userData.getPassword(), userData.getEmail());
+
+        call.enqueue(new Callback<ResponseDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseDTO> call, @NonNull Response<ResponseDTO> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(RegistrationActivity.this, "Пользователь зарегистрирован", Toast.LENGTH_SHORT).show();
+                    performLogin(userData);
+                } else {
+                    Toast.makeText(RegistrationActivity.this, "Ошибка регистрации: " + response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseDTO> call, @NonNull Throwable t) {
+                Toast.makeText(RegistrationActivity.this, "Ошибка сети REG: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -174,7 +210,7 @@ public class RegistrationActivity extends AppCompatActivity {
                     Toast.makeText(RegistrationActivity.this, "Пользователь зарегистрирован", Toast.LENGTH_SHORT).show();
                     performLogin(userData);
                 } else {
-                    Toast.makeText(RegistrationActivity.this, "Ошибка регистрации: " + response.message(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegistrationActivity.this, "Ошибка регистрации: " + response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -194,11 +230,17 @@ public class RegistrationActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call<ResponseDTO> call, @NonNull Response<ResponseDTO> response) {
                 if (response.isSuccessful() && response.code() == 200) {
                     performCityUpdate(userData);
-                    Intent intent = new Intent(RegistrationActivity.this, RegistrationActivity2.class);
-                    intent.putExtra("user_registration_data", userData);
-                    startActivity(intent);
+                    if (auth.equals("vkAuth")) {
+                        Intent intent = new Intent(RegistrationActivity.this, MainScreenActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(RegistrationActivity.this, RegistrationActivity2.class);
+                        intent.putExtra("user_registration_data", userData);
+                        startActivity(intent);
+                    }
                 } else {
-                    Toast.makeText(RegistrationActivity.this, "Ошибка входа: " + response.message(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegistrationActivity.this, "Ошибка входа: " + response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
 

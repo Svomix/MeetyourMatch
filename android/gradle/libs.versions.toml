@@ -1,5 +1,6 @@
 [versions]
 agp = "8.6.1"
+desugar_jdk_libs = "2.1.5"
 githubGlide = "4.16.0"
 glideTransformations = "4.3.0"
 gsonVersion = "2.10.1"
@@ -20,6 +21,9 @@ recyclerview = "1.4.0"
 retrofit = "2.11.0"
 swiperefreshlayout = "1.1.0"
 ucrop = "2.2.8"
+vkid = "2.3.1"
+kotlin = "1.9.24"
+coreKtx = "1.16.0"
 
 [libraries]
 androidx-lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "lifecycleRuntime" }
@@ -30,8 +34,10 @@ androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.r
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "githubGlide" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
+desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 github-glide = { module = "com.github.bumptech.glide:glide", version.ref = "githubGlide" }
 gson-v2101 = { module = "com.google.code.gson:gson", version.ref = "gsonVersion" }
+id-onetap-xml = { module = "com.vk.id:onetap-xml", version.ref = "vkid" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -48,8 +54,11 @@ picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 ucrop = { module = "com.github.yalantis:ucrop", version.ref = "ucrop" }
+vkid = { module = "com.vk.id:vkid", version.ref = "vkid" }
 wasabeef-glide-transformations = { module = "jp.wasabeef:glide-transformations", version.ref = "glideTransformations" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
