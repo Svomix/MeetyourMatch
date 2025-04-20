@@ -65,6 +65,11 @@ public class UserController {
         if(Objects.isNull(user)){ return ResponseEntity.notFound().build(); }
         return ResponseEntity.ok(mapper.convertValue(user, UserProfileDTO.class));
     }
+
+    @GetMapping("/exists/{email}")
+    public Boolean checkUserIfExistsByEmail(@PathVariable("email") String email) {
+        return userService.userExistsByEmail(email);
+    }
     
 //    @GetMapping("/{user_id}/tags")
 //    public List<Tag> findUserTags(@PathVariable("user_id") Long userId) {
