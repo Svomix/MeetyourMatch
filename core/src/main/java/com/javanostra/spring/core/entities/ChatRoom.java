@@ -15,7 +15,6 @@ import lombok.*;
 @Setter
 public class ChatRoom {
     @Id
-    private String id;
     private String chatId;
     private String senderId;
     private String recipientId;
