@@ -1,8 +1,6 @@
 package com.javanostra.spring.core.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -15,6 +13,8 @@ import lombok.*;
 @Setter
 public class ChatRoom {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private String chatId;
     private String senderId;
     private String recipientId;

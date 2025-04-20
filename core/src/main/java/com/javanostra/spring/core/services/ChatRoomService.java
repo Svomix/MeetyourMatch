@@ -17,31 +17,27 @@ public class ChatRoomService {
     final ChatRoomDAO chatRoomDao;
 
     private String createChatId(String senderId, String recipientId) {
-        var chatId = String.format("%s_%s", senderId, recipientId);
+        var chatId1 = String.format("%s_%s", senderId, recipientId);
+        var chatId2 = String.format("%s_%s", recipientId, senderId);
         ChatRoom senderRecipient = ChatRoom.builder()
-                .chatId(chatId)
+                .chatId(chatId1)
                 .senderId(senderId)
                 .recipientId(recipientId)
                 .build();
         ChatRoom recipientSender = ChatRoom.builder()
-                .chatId(chatId)
+                .chatId(chatId2)
                 .senderId(recipientId)
                 .recipientId(senderId)
                 .build();
         chatRoomDao.save(senderRecipient);
         chatRoomDao.save(recipientSender);
-        return chatId;
+        return chatId1;
     }
 
     public Optional<String> getChatRoomId(String senderId, String recipientId, boolean createNewRoomIfNotExists) {
-        return chatRoomDao.findBySenderIdAndRecipientId(senderId, recipientId)
-                .map(ChatRoom::getChatId)
-                .or(() -> {
-                    if (createNewRoomIfNotExists) {
-                        var chatId = createChatId(senderId, recipientId);
-                        return Optional.of(chatId);
-                    }
-                    return Optional.empty();
-                });
+        String id = chatRoomDao.findBySenderIdAndRecipientId(senderId, recipientId).map(ChatRoom::getChatId).orElse(null);
+        if (id == null)
+            return createChatId(senderId, recipientId).describeConstable();
+        return Optional.of(id);
     }
 }

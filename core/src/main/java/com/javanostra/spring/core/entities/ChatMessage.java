@@ -1,8 +1,6 @@
 package com.javanostra.spring.core.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -12,7 +10,8 @@ import java.sql.Timestamp;
 @Data
 public class ChatMessage {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private String chatId;
     private String senderId;
     private String recipientId;
