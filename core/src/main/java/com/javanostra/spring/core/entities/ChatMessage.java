@@ -1,11 +1,11 @@
 package com.javanostra.spring.core.entities;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "chat_messages")
@@ -17,6 +17,6 @@ public class ChatMessage {
     private String senderId;
     private String recipientId;
     private String content;
-    private Date timestamp;
+    private Timestamp timestamp;
 }
 
