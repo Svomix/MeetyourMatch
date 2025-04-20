@@ -49,9 +49,8 @@ dependencies {
     implementation(libs.github.glide)
     annotationProcessor(libs.compiler)
     implementation(libs.picasso)
-    implementation("com.github.MKergall:osmbonuspack:6.9.0") // DON'T TOUCH
-    implementation(libs.material)
-    implementation("androidx.recyclerview:recyclerview:1.3.2") // DON'T TOUCH
+    implementation("com.github.MKergall:osmbonuspack:6.9.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.wasabeef.glide.transformations)
     implementation(libs.osmdroid.osmdroid.android)
@@ -59,4 +58,13 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.gson.v2101)
+
+    implementation("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")
+    implementation("io.reactivex.rxjava2:rxjava:2.2.21")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
+    implementation("androidx.lifecycle:lifecycle-livedata:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.7.0")
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.12.0"))
+    implementation("com.squareup.okhttp3:okhttp")
+    implementation("com.squareup.okhttp3:logging-interceptor")
 }

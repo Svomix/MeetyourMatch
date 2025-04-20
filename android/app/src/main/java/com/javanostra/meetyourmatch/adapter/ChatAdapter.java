@@ -10,20 +10,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.javanostra.meetyourmatch.R;
-import com.javanostra.meetyourmatch.activity.ChatMessagesActivity;
-import com.javanostra.meetyourmatch.fragment.ChatRecyclerViewInterface;
-import com.javanostra.meetyourmatch.persistance.entity.Message;
+import com.javanostra.meetyourmatch.adapter.ChatRecyclerViewInterface;
 import com.javanostra.meetyourmatch.persistance.entity.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder> {
 
     private final ChatRecyclerViewInterface recyclerViewInterface;
-    Context context;
-    List<User> users;
+    private Context context;
+    private List<User> users;
 
     public ChatAdapter(Context context, List<User> users, ChatRecyclerViewInterface recyclerViewInterface) {
         this.context = context;
@@ -34,53 +32,58 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     @NonNull
     @Override
     public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ChatViewHolder(LayoutInflater.from(context).inflate(R.layout.fragment_chat_box, parent, false), recyclerViewInterface);
+        View view = LayoutInflater.from(context).inflate(R.layout.chat_list_item, parent, false);
+        return new ChatViewHolder(view, recyclerViewInterface);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
-        holder.nameView.setText(users.get(position).getUsername());
+        User user = users.get(position);
+        holder.nameView.setText(user.getUsername());
 
-        List<Message> messages = ChatMessagesActivity.historyChat.getOrDefault(position, new ArrayList<>());
-        Message lastMessage = (messages.size() == 0? new Message("NULL", position, -1, "NULL") : messages.get(messages.size() - 1));
-        String time = lastMessage.getTimestamp();
-        String text = lastMessage.getContent();
-        holder.lastMessageView.setText(text);
-        holder.timeView.setText(time);
+        holder.lastMessageView.setText("Tap to chat...");
+        holder.timeView.setText(""); // Placeholder
+
+        Glide.with(context)
+                .load(user.getAvatarPath())
+                .placeholder(R.drawable.avatar)
+                .error(R.drawable.avatar)
+                .circleCrop()
+                .into(holder.avatarImageView);
+
     }
 
     @Override
     public int getItemCount() {
-        return users.size();
+        return users != null ? users.size() : 0;
+    }
+
+    public void updateUserList(List<User> newUsers) {
+        this.users = newUsers;
+        notifyDataSetChanged();
     }
 
 
     public static class ChatViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView imageView;
+        ImageView avatarImageView;
         TextView nameView, lastMessageView, timeView;
 
         public ChatViewHolder(@NonNull View itemView, ChatRecyclerViewInterface recyclerViewInterface) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.Avatar);
-            nameView = itemView.findViewById(R.id.Username);
-            lastMessageView = itemView.findViewById(R.id.LastMessage);
-            timeView = itemView.findViewById(R.id.Time);
+            avatarImageView = itemView.findViewById(R.id.chat_list_avatar);
+            nameView = itemView.findViewById(R.id.chat_list_username);
+            lastMessageView = itemView.findViewById(R.id.chat_list_last_message);
+            timeView = itemView.findViewById(R.id.chat_list_time);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (recyclerViewInterface != null) {
-                        int position = getAdapterPosition();
-
-                        if (position != RecyclerView.NO_POSITION) {
-                            recyclerViewInterface.onItemClick(position);
-                        }
+            itemView.setOnClickListener(v -> {
+                if (recyclerViewInterface != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        recyclerViewInterface.onItemClick(position);
                     }
                 }
             });
         }
-
-
     }
 }
