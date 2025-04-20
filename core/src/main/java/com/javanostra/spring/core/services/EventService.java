@@ -14,11 +14,13 @@ import com.javanostra.spring.core.entities.*;
 import com.javanostra.spring.core.exceptions.BaseCoreException;
 import com.javanostra.spring.core.exceptions.NoSuchCommentException;
 import com.javanostra.spring.core.exceptions.NoSuchEventException;
+import com.javanostra.spring.core.specifications.EventSpecification;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.stereotype.Service;
 
@@ -44,12 +46,12 @@ public class EventService {
 
     public List<Event> findAllEvents() {return eventDAO.findAll();}
 
-    public Page<EventDTO> findAllEvents(Pageable pageable) {
-        return eventDAO.findAll(pageable).map(a -> mapper.convertValue(a, EventDTO.class));
+    public Page<EventDTO> findAllEvents(Pageable pageable, Specification<Event> specification) {
+        return eventDAO.findAll(specification, pageable).map(a -> mapper.convertValue(a, EventDTO.class));
     }
 
-    public Page<Event> findAllEventsRaw(Pageable pageable) {
-        return eventDAO.findAll(pageable);
+    public Page<Event> findAllEventsRaw(Pageable pageable, Specification<Event> specification) {
+        return eventDAO.findAll(specification, pageable);
     }
 
     public Event findEventById(Long eventId) throws BaseCoreException {

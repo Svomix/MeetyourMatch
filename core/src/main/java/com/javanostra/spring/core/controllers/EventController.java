@@ -9,6 +9,8 @@ import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.exceptions.BaseCoreException;
 import com.javanostra.spring.core.services.UserActionsService;
 import com.javanostra.spring.core.services.UserService;
+import com.javanostra.spring.core.specifications.EventSearchCriteria;
+import com.javanostra.spring.core.specifications.EventSpecification;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
@@ -42,12 +44,13 @@ public class EventController {
     @GetMapping
     public Page<EventDTO> findAllEvents(
             @RequestParam(value = "page", defaultValue = "1") @Min(1) Integer page,
-            @RequestParam(value = "limit", defaultValue = "30") @Min(1) Integer limit
+            @RequestParam(value = "limit", defaultValue = "30") @Min(1) Integer limit,
+            @RequestParam(value = "s", required = false) String search
     ) {
         User user = userService.getCurrentUser();
-        Page<Event> events = eventService.findAllEventsRaw(PageRequest.of(page - 1, limit));
+        EventSpecification specification = new EventSpecification(new EventSearchCriteria(search));
+        Page<Event> events = eventService.findAllEventsRaw(PageRequest.of(page - 1, limit), specification);
         return userActionsService.populateUserActions(events, user);
-
     }
 
     @GetMapping("/pageout")
@@ -55,7 +58,7 @@ public class EventController {
             @RequestParam(value = "offset", defaultValue = "0") Integer offset,
             @RequestParam(value = "limit", defaultValue = "5") Integer limit
     ) {
-        return eventService.findAllEvents(PageRequest.of(offset, limit)).getContent();
+        return eventService.findAllEvents(PageRequest.of(offset, limit), null).getContent();
     }
 
     @GetMapping("/{event_id}")
