@@ -15,4 +15,11 @@ public interface LoginApiService {
             @Field("username") String username,
             @Field("password") String password
     );
+
+    @FormUrlEncoded
+    @POST("/api/vkid/login")
+    Call<ResponseDTO> vkLogin(
+            @Field("accessToken") String accessToken,
+            @Field("email") String email
+    );
 }
