@@ -18,7 +18,7 @@ public class ChatRoomService {
 
     private String createChatId(String senderId, String recipientId) {
         Optional<ChatRoom> chatRoom = chatRoomDao.findBySenderIdAndRecipientId(recipientId, senderId);
-        if(chatRoom.isEmpty())
+        if(chatRoom.isPresent())
             return chatRoom.get().getChatId();
         var chatId = String.format("%s_%s", senderId, recipientId);
         ChatRoom senderRecipient = ChatRoom.builder()
