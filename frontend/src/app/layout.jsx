@@ -1,4 +1,4 @@
-import Providers from '@/store/Provider';
+import Providers from '@/store/provider';
 import Layout from '@components/Layout';
 import localFont from 'next/font/local';
 import './globals.css';

@@ -3,7 +3,7 @@
 const nextConfig = {
   async rewrites() {
     return [
-      {
+      (!process.env.BACKEND_URL) && {
         source: '/api/:path*',
         destination: 'http://localhost:8080/api/:path*'
       }
@@ -25,7 +25,8 @@ const nextConfig = {
       }
     ]
   },
-  skipTrailingSlashRedirect: true
+  skipTrailingSlashRedirect: true,
+  output: "standalone"
 };
 
 export default nextConfig;
