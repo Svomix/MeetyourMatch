@@ -17,21 +17,14 @@ public class ChatRoomService {
     final ChatRoomDAO chatRoomDao;
 
     private String createChatId(String senderId, String recipientId) {
-        var chatId1 = String.format("%s_%s", senderId, recipientId);
-        var chatId2 = String.format("%s_%s", recipientId, senderId);
+        var chatId = String.format("%s_%s", senderId, recipientId);
         ChatRoom senderRecipient = ChatRoom.builder()
-                .chatId(chatId1)
+                .chatId(chatId)
                 .senderId(senderId)
                 .recipientId(recipientId)
                 .build();
-        ChatRoom recipientSender = ChatRoom.builder()
-                .chatId(chatId2)
-                .senderId(recipientId)
-                .recipientId(senderId)
-                .build();
         chatRoomDao.save(senderRecipient);
-        chatRoomDao.save(recipientSender);
-        return chatId1;
+        return chatId;
     }
 
     public Optional<String> getChatRoomId(String senderId, String recipientId, boolean createNewRoomIfNotExists) {
