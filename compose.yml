@@ -76,9 +76,10 @@ services:
       - postgres
       - minio
     labels:
-      - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
       - "traefik.http.routers.backend.entrypoints=web"
+      - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
       - "traefik.tcp.routers.backend.entryPoints=tcp"
+      - "traefik.tcp.routers.backend.rule=HostSNI(`*`)"
   frontend:
     image: mym-frontend:latest
     ports:
