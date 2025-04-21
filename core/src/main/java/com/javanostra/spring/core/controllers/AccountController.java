@@ -9,20 +9,15 @@ import com.javanostra.spring.core.dto.UserProfileDTO;
 import com.javanostra.spring.core.entities.Event;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.entities.UserInterest;
-import com.javanostra.spring.core.exceptions.BaseCoreException;
-import com.javanostra.spring.core.exceptions.UserAlreadyExistsException;
+import com.javanostra.spring.core.exceptions.*;
 import com.javanostra.spring.core.security.ContextRepository;
 import com.javanostra.spring.core.services.*;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Min;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -254,9 +249,10 @@ public class AccountController {
     }
 
     @PostMapping("/friends")
-    public ResponseDTO addFriend(@RequestParam("friend_id") Long friendId) {
+    public ResponseDTO addFriend(@RequestParam("friend_id") Long friendId) throws BaseCoreException {
         User currentUser = userService.getCurrentUser();
         User friend = userService.findUserById(friendId);
+
         userService.addFriend(currentUser, friend);
 
         String message = friend.getFriends().contains(currentUser)?
@@ -266,14 +262,45 @@ public class AccountController {
     }
 
     @DeleteMapping("/friends")
-    public ResponseDTO deleteFriend(@RequestParam("friend_id") Long friendId) {
+    public ResponseDTO deleteFriend(@RequestParam("friend_id") Long friendId) throws BaseCoreException {
         User currentUser = userService.getCurrentUser();
         User friend = userService.findUserById(friendId);
+
         userService.deleteFriend(currentUser, friend);
 
         String message = friend.getFriends().contains(currentUser)?
                 "Пользователь был удален из друзей" : "Вы отозвали заявку в друзья";
         //TODO: Send notification to user about friend deleting
         return new ResponseDTO(HttpStatus.OK.value(), message);
+    }
+
+    @GetMapping("/blocked")
+    public Page<UserProfileDTO> getBlocked(
+            @RequestParam(value = "page", defaultValue = "1") @Min(1) Integer page,
+            @RequestParam(value = "limit", defaultValue = "30") @Min(1) Integer limit,
+            @RequestParam(value = "name_pattern", defaultValue = "") String namePattern
+    ) {
+        User user = userService.getCurrentUser();
+        return userService.getBlocked(user, PageRequest.of(page - 1, limit), namePattern);
+    }
+
+    @PostMapping("/blocked")
+    public ResponseDTO addBlocked(@RequestParam("blocked_id") Long blockedId) throws BaseCoreException {
+        User currentUser = userService.getCurrentUser();
+        User blocked = userService.findUserById(blockedId);
+
+        userService.addBlocked(currentUser, blocked);
+
+        return new ResponseDTO(HttpStatus.OK.value(), "Пользователь добавлен в черный список");
+    }
+
+    @DeleteMapping("/blocked")
+    public ResponseDTO deleteBlocked(@RequestParam("blocked_id") Long blockedId) throws BaseCoreException {
+        User currentUser = userService.getCurrentUser();
+        User blocked = userService.findUserById(blockedId);
+
+        userService.deleteBlocked(currentUser, blocked);
+
+        return new ResponseDTO(HttpStatus.OK.value(), "Пользователь убран из черного списка");
     }
 }

@@ -7,6 +7,7 @@ import com.javanostra.spring.core.dto.UserProfileDTO;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.dao.*;
 import com.javanostra.spring.core.enums.Status;
+import com.javanostra.spring.core.exceptions.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -197,16 +198,71 @@ public class UserService implements UserDetailsManager {
     }
 
     @Transactional
-    public void addFriend(User currentUser, User friend) {
+    public void addFriend(User currentUser, User friend) throws BaseCoreException {
         User user = userDAO.findUserById(currentUser.getId());
+
+        if (friend.getBlocked().contains(currentUser)) {
+            throw new UserAreBlockedException("Вы находитесь в черном списке у этого пользователя. Невозможно добавить его в друзья");
+        }
+
+        if (user.getFriends().contains(friend)) {
+            throw new UserAlreadyFriendException();
+        }
+
         user.getFriends().add(friend);
         userDAO.save(user);
     }
 
     @Transactional
-    public void deleteFriend(User currentUser, User friend) {
+    public void deleteFriend(User currentUser, User friend) throws BaseCoreException {
         User user = userDAO.findUserById(currentUser.getId());
+
+        if (!user.getFriends().contains(friend)) {
+            throw new UserNotFriendException("Этот пользователь не является вашим другом");
+        }
+
         user.getFriends().remove(friend);
+        userDAO.save(user);
+    }
+
+    @Transactional
+    public Page<UserProfileDTO> getBlocked(User currentUser, Pageable pageable, String namePattern) {
+        User user = userDAO.findUserById(currentUser.getId());
+        List<User> blocked = user.getBlocked()
+                .stream()
+                .filter(u -> u.getUsername().contains(namePattern))
+                .toList();
+        return new PageImpl<>(
+                blocked,
+                pageable,
+                blocked.size()
+        ).map(a -> mapper.convertValue(a, UserProfileDTO.class));
+    }
+
+    @Transactional
+    public void addBlocked(User currentUser, User blocked) throws BaseCoreException {
+        User user = userDAO.findUserById(currentUser.getId());
+
+        if (user.getBlocked().contains(blocked)) {
+            throw new UserAreBlockedException("Этот пользователь уже заблокирован");
+        }
+
+        user.getBlocked().add(blocked);
+        user.getFriends().remove(blocked);
+        blocked.getFriends().remove(user);
+        userDAO.save(user);
+        userDAO.save(blocked);
+    }
+
+    @Transactional
+    public void deleteBlocked(User currentUser, User blocked) throws BaseCoreException {
+        User user = userDAO.findUserById(currentUser.getId());
+
+        if (!user.getBlocked().contains(blocked)) {
+            throw new UserAreNotBlockedException("Этот пользователь не заблокирован");
+        }
+
+        user.getBlocked().remove(blocked);
         userDAO.save(user);
     }
 
