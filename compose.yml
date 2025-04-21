@@ -16,6 +16,48 @@ services:
       timeout: 60s
       retries: 5
       start_period: 80s
+  minio:
+    image: minio/minio:latest
+    command: server --console-address ":9001" /data/
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: "${MINIO_ROOT_USER}"
+      MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD}"
+    volumes:
+      - minio-storage:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    labels:
+      - "traefik.http.routers.minio.rule=PathPrefix(`/static`)"
+      - "traefik.http.routers.minio.middlewares=unstatic"
+      - "traefik.http.routers.minio.entrypoints=web"
+      - "traefik.http.middlewares.unstatic.stripPrefix.prefixes=/static"
+  reverse-proxy:
+    # The official v3 Traefik docker image
+    image: traefik:v3.3
+    # Enables the web UI and tells Traefik to listen to docker
+    command: 
+      - "--entryPoints.web.address=:8081"
+      - "--entryPoints.tcp.address=:8000"
+      - "--api.dashboard=true"
+      - "--api.basePath=/traefik"
+      - "--providers.docker"
+    ports:
+      # The HTTP port
+      - "8081:8081"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=PathPrefix(`/traefik`)"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.routers.traefik.service=api@internal"
   backend:
     image: core:0.0.1-SNAPSHOT
     ports:
@@ -29,8 +71,26 @@ services:
     restart: on-failure
     depends_on:
       - postgres
+      - minio
     links: 
-        - postgres
+      - postgres
+      - minio
+    labels:
+      - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
+      - "traefik.http.routers.backend.entrypoints=web"
+      - "traefik.tcp.routers.backend.entryPoints=tcp"
+  frontend:
+    image: mym-frontend:latest
+    ports:
+      - "3000:3000"
+    environment:
+      BACKEND_URL: "http://backend:8080/"
+    profiles:
+      - frontend
+    restart: on-failure
+    labels:
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.frontend.entrypoints=web"
   db-init:
     build:
       context: core/mocks/.
@@ -46,5 +106,7 @@ services:
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
       POSTGRES_HOST: "postgres"
       POSTGRES_PORT: "${DB_PORT}"
+  
 volumes:
   pgdata:
+  minio-storage:

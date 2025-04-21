@@ -1,0 +1,33 @@
+http:
+  routers:
+    router0:
+      entryPoints:
+      - web
+      rule: "PathPrefix(`/`)"
+      service: frontend
+    router1:
+      entryPoints:
+      - web
+      middlewares:
+      - unstatic
+      rule: "PathPrefix(`/static`)"
+      service: minio
+    traefik-api:
+      entryPoints:
+      - web
+      rule: "PathPrefix(`/traefik`)"
+      service: api@internal
+  middlewares:
+    unstatic:
+      stripPrefix:
+        prefixes:
+          - "/static"
+  services:
+    frontend:
+      loadBalancer:
+        servers:
+        - url: "http://localhost:3000/"
+    minio:
+      loadBalancer:
+        servers:
+        - url: "http://localhost:9000/"

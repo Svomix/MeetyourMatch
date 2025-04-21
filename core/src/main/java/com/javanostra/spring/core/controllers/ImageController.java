@@ -11,6 +11,7 @@ import java.nio.file.*;
 @RestController
 @RequestMapping("/api/v1/images")
 @AllArgsConstructor
+@Deprecated
 public class ImageController {
     private static final String UPLOAD_DIR = System.getProperty("user.dir") + "/images/";;
 

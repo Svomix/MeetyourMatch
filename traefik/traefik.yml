@@ -1,0 +1,12 @@
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: false
+api:
+  dashboard: true
+  basePath: "/traefik"
+entryPoints:
+  web:
+    address: ":8081"
+providers:
+  file:
+    filename: "./traefik-mym.yml"

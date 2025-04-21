@@ -56,6 +56,8 @@ dependencies {
     implementation "org.springframework:spring-messaging"
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
+    implementation "io.minio:minio:8.5.17"
+
     compileOnly 'org.projectlombok:lombok'
     implementation 'org.postgresql:postgresql'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.4'

@@ -20,7 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -28,6 +30,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class AccountController {
 
+    @NonNull
+    private final FileService fileService;
     @NonNull
     private final UserService userService;
     @NonNull
@@ -187,18 +191,20 @@ public class AccountController {
     }
 
     @PostMapping("/setImage")
-    public ResponseEntity<ResponseDTO> setImage(@RequestParam("avatar_path") String avatar_path){
+    public ResponseEntity<ResponseDTO> setImage(@RequestParam("file") MultipartFile file){
         try {
             User currentUser = userService.getCurrentUser();
 
             if (Objects.nonNull(currentUser)) {
-                currentUser.setAvatarPath(avatar_path);
+                String object_id = currentUser.getId().toString();
+                fileService.uploadFile("avatars", object_id, file.getInputStream(), file.getContentType());
+                currentUser.setAvatarPath(FileService.STATIC_PREFIX + FileService.AVATAR_PREFIX + "/" + object_id);
                 userService.updateUser(currentUser);
                 return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "Image set"));
             }
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        } catch (NoSuchElementException exception){
+        } catch (NoSuchElementException | IOException exception){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(HttpStatus.BAD_REQUEST.value(), "no image"));
         }
     }
