@@ -17,6 +17,9 @@ public class ChatRoomService {
     final ChatRoomDAO chatRoomDao;
 
     private String createChatId(String senderId, String recipientId) {
+        Optional<ChatRoom> chatRoom = chatRoomDao.findBySenderIdAndRecipientId(recipientId, senderId);
+        if(chatRoom.get() != null)
+            return chatRoom.get().getChatId();
         var chatId = String.format("%s_%s", senderId, recipientId);
         ChatRoom senderRecipient = ChatRoom.builder()
                 .chatId(chatId)
@@ -26,7 +29,6 @@ public class ChatRoomService {
         chatRoomDao.save(senderRecipient);
         return chatId;
     }
-
     public Optional<String> getChatRoomId(String senderId, String recipientId, boolean createNewRoomIfNotExists) {
         String id = chatRoomDao.findBySenderIdAndRecipientId(senderId, recipientId).map(ChatRoom::getChatId).orElse(null);
         if (id == null)
