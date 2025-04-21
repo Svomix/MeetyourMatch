@@ -12,8 +12,11 @@ import com.javanostra.spring.core.mail.MailService;
 import com.javanostra.spring.core.services.AuthenticationService;
 import com.javanostra.spring.core.services.ConfirmationTokenService;
 import com.javanostra.spring.core.services.UserService;
+import com.javanostra.spring.core.specifications.UserSearchCriteria;
+import com.javanostra.spring.core.specifications.UserSpecification;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
@@ -52,11 +55,13 @@ public class UserController {
     }
 
     @GetMapping
-    public Page<User> findAllUsers(
-            @RequestParam(value = "offset", defaultValue = "0") Integer offset,
-            @RequestParam(value = "limit", defaultValue = "5") Integer limit
+    public Page<UserProfileDTO> findAllUsers(
+            @RequestParam(value = "offset", defaultValue = "1") @Min(1) Integer offset,
+            @RequestParam(value = "limit", defaultValue = "30") @Min(1) Integer limit,
+            @RequestParam(value = "name_pattern", required = false) String namePattern
     ) {
-        return userService.findAllUsers(PageRequest.of(offset, limit));
+        UserSpecification specification = new UserSpecification(new UserSearchCriteria(namePattern));
+        return userService.findAllUsers(PageRequest.of(offset - 1, limit), specification);
     }
 
     @GetMapping("/{user_id}")

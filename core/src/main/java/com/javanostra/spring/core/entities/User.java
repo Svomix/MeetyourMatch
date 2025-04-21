@@ -15,6 +15,7 @@ import java.util.Set;
 @Table(name = "Users")
 @Getter
 @Setter
+@EqualsAndHashCode(of = {"id", "username", "email"})
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
@@ -59,6 +60,14 @@ public class User implements UserDetails {
             inverseJoinColumns = { @JoinColumn(name = "interest_id", referencedColumnName = "id") }
     )
     private Set<UserInterest> interests;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_friends",
+            joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") },
+            inverseJoinColumns = { @JoinColumn(name = "friend_id", referencedColumnName = "id") }
+    )
+    private Set<User> friends;
 
     @Column(name = "is_enabled")
     private Boolean isEnabled;

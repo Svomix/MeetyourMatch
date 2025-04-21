@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.javanostra.spring.core.dto.ResponseDTO;
 import com.javanostra.spring.core.dto.FullUserProfileDTO;
 import com.javanostra.spring.core.dto.UserActionDTO;
+import com.javanostra.spring.core.dto.UserProfileDTO;
 import com.javanostra.spring.core.entities.Event;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.entities.UserInterest;
@@ -12,10 +13,17 @@ import com.javanostra.spring.core.exceptions.BaseCoreException;
 import com.javanostra.spring.core.exceptions.UserAlreadyExistsException;
 import com.javanostra.spring.core.security.ContextRepository;
 import com.javanostra.spring.core.services.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.Min;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -233,5 +241,39 @@ public class AccountController {
         authenticationService.UpdateToken(user, request, response);
 
         return new ResponseDTO(HttpStatus.OK.value(), "changed password successfully");
+    }
+
+    @GetMapping("/friends")
+    public Page<UserProfileDTO> getFriends(
+            @RequestParam(value = "page", defaultValue = "1") @Min(1) Integer page,
+            @RequestParam(value = "limit", defaultValue = "30") @Min(1) Integer limit,
+            @RequestParam(value = "name_pattern", defaultValue = "") String namePattern
+    ) {
+        User user = userService.getCurrentUser();
+        return userService.getFriends(user, PageRequest.of(page - 1, limit), namePattern);
+    }
+
+    @PostMapping("/friends")
+    public ResponseDTO addFriend(@RequestParam("friend_id") Long friendId) {
+        User currentUser = userService.getCurrentUser();
+        User friend = userService.findUserById(friendId);
+        userService.addFriend(currentUser, friend);
+
+        String message = friend.getFriends().contains(currentUser)?
+                "Пользователь был добавлен в друзья" : "Пользователю была отправлена заявка в друзья";
+        //TODO: Send notification to user about friend request
+        return new ResponseDTO(HttpStatus.OK.value(), message);
+    }
+
+    @DeleteMapping("/friends")
+    public ResponseDTO deleteFriend(@RequestParam("friend_id") Long friendId) {
+        User currentUser = userService.getCurrentUser();
+        User friend = userService.findUserById(friendId);
+        userService.deleteFriend(currentUser, friend);
+
+        String message = friend.getFriends().contains(currentUser)?
+                "Пользователь был удален из друзей" : "Вы отозвали заявку в друзья";
+        //TODO: Send notification to user about friend deleting
+        return new ResponseDTO(HttpStatus.OK.value(), message);
     }
 }

@@ -3,14 +3,20 @@ package com.javanostra.spring.core.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.javanostra.spring.core.dao.UserDAO;
 import com.javanostra.spring.core.dto.FullUserProfileDTO;
+import com.javanostra.spring.core.dto.UserProfileDTO;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.dao.*;
 import com.javanostra.spring.core.enums.Status;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -117,8 +123,8 @@ public class UserService implements UserDetailsManager {
         }
     }
 
-    public Page<User> findAllUsers(Pageable pageable) {
-        return userDAO.findAll(pageable);
+    public Page<UserProfileDTO> findAllUsers(Pageable pageable, Specification<User> specification) {
+        return userDAO.findAll(specification, pageable).map(u -> mapper.convertValue(u, UserProfileDTO.class));
     }
 
     public User findUserById(Long userId) {
@@ -174,6 +180,34 @@ public class UserService implements UserDetailsManager {
         userAttribute.setValue(value);
         userAttribute.setAttribute(attribute);
         usersAttributeValueDAO.save(userAttribute);
+    }
+
+    @Transactional
+    public Page<UserProfileDTO> getFriends(User currentUser, Pageable pageable, String namePattern) {
+        User user = userDAO.findUserById(currentUser.getId());
+        List<User> friends = user.getFriends()
+                .stream()
+                .filter(u -> u.getUsername().contains(namePattern))
+                .toList();
+        return new PageImpl<>(
+                friends,
+                pageable,
+                friends.size()
+        ).map(a -> mapper.convertValue(a, UserProfileDTO.class));
+    }
+
+    @Transactional
+    public void addFriend(User currentUser, User friend) {
+        User user = userDAO.findUserById(currentUser.getId());
+        user.getFriends().add(friend);
+        userDAO.save(user);
+    }
+
+    @Transactional
+    public void deleteFriend(User currentUser, User friend) {
+        User user = userDAO.findUserById(currentUser.getId());
+        user.getFriends().remove(friend);
+        userDAO.save(user);
     }
 
     public FullUserProfileDTO getFullUserInfo(User user){

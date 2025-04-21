@@ -3,13 +3,15 @@ package com.javanostra.spring.core.dao;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface UserDAO extends JpaRepository<User, Integer> {
+public interface UserDAO extends JpaRepository<User, Integer>, PagingAndSortingRepository<User, Integer>, JpaSpecificationExecutor<User> {
     User findByUsername(String username);
     User findByEmail(String email);
     boolean existsByUsernameIgnoreCase(String username);
