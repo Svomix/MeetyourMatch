@@ -1,8 +1,11 @@
 package com.javanostra.spring.core.controllers;
 
 import com.javanostra.spring.core.dto.ChatNotificationDTO;
+import com.javanostra.spring.core.dto.UserProfileDTO;
 import com.javanostra.spring.core.entities.ChatMessage;
+import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.services.ChatMessageService;
+import com.javanostra.spring.core.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -23,12 +26,21 @@ import java.util.List;
 @RequestMapping("/api/chats")
 public class ChatController {
     private final ChatMessageService chatMessageService;
+    private final UserService userService;
     private final SimpMessagingTemplate messagingTemplate;
 
     @GetMapping("/messages/{senderId}/{recipientId}")
     public ResponseEntity<List<ChatMessage>> findChatMessages(@PathVariable("senderId") String senderId,
                                                               @PathVariable("recipientId") String recipientId) {
         return ResponseEntity.ok(chatMessageService.findChatMessages(senderId, recipientId));
+    }
+
+    @GetMapping("/chatRooms/{senderId}")
+    public ResponseEntity<List<UserProfileDTO>> findChatMessages() {
+        User user = userService.getCurrentUser();
+        if(user == null)
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(userService.getUserChats(user.getUsername()));
     }
 
     @MessageMapping("/chat")

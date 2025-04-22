@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.javanostra.spring.core.dao.UserDAO;
 import com.javanostra.spring.core.dto.FullUserProfileDTO;
 import com.javanostra.spring.core.dto.UserProfileDTO;
+import com.javanostra.spring.core.entities.ChatRoom;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.dao.*;
 import com.javanostra.spring.core.enums.Status;
@@ -36,8 +37,10 @@ import com.javanostra.spring.core.entities.UserAttribute;
 import com.javanostra.spring.core.entities.UserActions;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -55,6 +58,8 @@ public class UserService implements UserDetailsManager {
     private final TagDAO tagDAO;
     @NonNull
     private final ConfirmationTokenDAO tokenDAO;
+    @NonNull
+    private final ChatRoomDAO chatRoomDAO;
 
     AuthenticationManager authenticationManager;
 
@@ -237,6 +242,19 @@ public class UserService implements UserDetailsManager {
                 pageable,
                 blocked.size()
         ).map(a -> mapper.convertValue(a, UserProfileDTO.class));
+    }
+
+    @Transactional
+    public List<UserProfileDTO> getUserChats(String username) {
+        List<ChatRoom> chatRooms = chatRoomDAO.findBySenderId(username);
+        List<String> userNames = new ArrayList<>();
+        for (ChatRoom chatRoom : chatRooms)
+            userNames.add(chatRoom.getRecipientId());
+        List<UserProfileDTO> users = new ArrayList<>();
+        for (String userName : userNames) {
+            users.add(mapper.convertValue(userDAO.findByUsername(userName), UserProfileDTO.class));
+        }
+        return users;
     }
 
     @Transactional
