@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -29,16 +28,16 @@ public class ChatController {
     private final UserService userService;
     private final SimpMessagingTemplate messagingTemplate;
 
-    @GetMapping("/messages/{senderId}/{recipientId}")
-    public ResponseEntity<List<ChatMessage>> findChatMessages(@PathVariable("senderId") String senderId,
-                                                              @PathVariable("recipientId") String recipientId) {
-        return ResponseEntity.ok(chatMessageService.findChatMessages(senderId, recipientId));
+    @GetMapping("/messages/{recipientId}")
+    public ResponseEntity<List<ChatMessage>> findChatMessages(@PathVariable("recipientId") String recipientId) {
+        User user = userService.getCurrentUser();
+        return ResponseEntity.ok(chatMessageService.findChatMessages(user.getUsername(), recipientId));
     }
 
-    @GetMapping("/chatRooms/{senderId}")
+    @GetMapping("/chatRooms")
     public ResponseEntity<List<UserProfileDTO>> findChatMessages() {
         User user = userService.getCurrentUser();
-        if(user == null)
+        if (user == null)
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(userService.getUserChats(user.getUsername()));
     }
