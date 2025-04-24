@@ -42,6 +42,8 @@ public class EventController {
     private final TagService tagService;
     private final LocationService locationService;
 
+    ObjectMapper mapper = new ObjectMapper();
+
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -117,7 +119,7 @@ public class EventController {
     }
 
     @PostMapping("/uploadEvent")
-    public ResponseEntity<String> uploadEvent(@Valid @RequestBody EventUploadDTO eventDto) throws BaseCoreException {
+    public ResponseEntity<EventDTO> uploadEvent(@Valid @RequestBody EventUploadDTO eventDto) throws BaseCoreException {
         User currentUser = userService.getCurrentUser();
         if(Objects.nonNull(currentUser)) {
             //if (authorizationService.HasAdminAuthority(currentUser)) {
@@ -150,7 +152,7 @@ public class EventController {
                     event.setCoverImgUrl(fileService.getPath("content", eventDto.getCoverFileId()));
                 }
                 eventService.saveEvent(event);
-                return ResponseEntity.ok("event uploaded " + event.getId());
+                return ResponseEntity.ok(mapper.convertValue(event, EventDTO.class));
             //}
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
