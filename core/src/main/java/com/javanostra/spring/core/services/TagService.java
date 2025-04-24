@@ -3,6 +3,7 @@ package com.javanostra.spring.core.services;
 import com.javanostra.spring.core.dao.EventDAO;
 import com.javanostra.spring.core.dao.TagDAO;
 import com.javanostra.spring.core.entities.Tag;
+import com.javanostra.spring.core.exceptions.NoSuchTagException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,8 @@ import java.util.NoSuchElementException;
 public class TagService {
     private final TagDAO tagDAO;
 
-    public Tag findById(long id) {
-        return tagDAO.findById(id).orElseThrow(NoSuchElementException::new);
+    public Tag findById(long id) throws NoSuchTagException {
+        return tagDAO.findById(id).orElseThrow(NoSuchTagException::new);
     }
 
     public List<Tag> findAll() {

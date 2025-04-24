@@ -15,9 +15,14 @@ with conn:
         with open('city.csv', newline='', encoding="utf-8") as csvfile:
             spamreader = csv.reader(csvfile, delimiter=',')
             next(spamreader, None)
+            last_id = 0
             for id, row in enumerate(spamreader):
                 city, lat, lon = row[9], float(row[20]), float(row[21])
                 cursor.execute("INSERT INTO cities (id, latitude, longitude, name) VALUES (%s, %s, %s, %s);", (id, lat, lon, city))
+                last_id = id
+            
+            cursor.execute("ALTER SEQUENCE cities_id_seq RESTART WITH %d;" % last_id)
+
         
         cursor.execute("TRUNCATE TABLE tags RESTART IDENTITY CASCADE")
         cursor.execute("TRUNCATE TABLE locations RESTART IDENTITY CASCADE")
@@ -37,10 +42,14 @@ with conn:
         cursor.execute("INSERT INTO users (id, email, username, password, is_enabled) VALUES (%s, %s, %s, %s, TRUE);", (1, "test@example.org", "user", "$2a$10$PaiePy.c9ynQumHOH/QFeOP/9j1WbWyIBZ7ggCoG9V.gaYHRrbkvO"))
         cursor.execute("INSERT INTO users (id, email, username, password, is_enabled) VALUES (%s, %s, %s, %s, TRUE);", (2, "admin@example.org", "admin", "$2a$10$PaiePy.c9ynQumHOH/QFeOP/9j1WbWyIBZ7ggCoG9V.gaYHRrbkvO"))
 
+        cursor.execute("ALTER SEQUENCE users_id_seq RESTART WITH 2;")
+
         cursor.execute("TRUNCATE TABLE user_authority RESTART IDENTITY CASCADE")
         
         cursor.execute("INSERT INTO user_authority (id, authority) VALUES (%s, %s);", (1, "ROLE_USER"))
         cursor.execute("INSERT INTO user_authority (id, authority) VALUES (%s, %s);", (2, "ROLE_ADMIN"))
+
+        cursor.execute("ALTER SEQUENCE user_authority_id_seq RESTART WITH 2;")
         
         cursor.execute("TRUNCATE TABLE user_authorities RESTART IDENTITY CASCADE")
         

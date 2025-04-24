@@ -2,12 +2,14 @@ package com.javanostra.spring.core.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.javanostra.spring.core.entities.Location;
+import com.javanostra.spring.core.entities.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @SuperBuilder
@@ -20,7 +22,7 @@ public class EventDTO {
     private String description;
     private String price;
     private Timestamp date;
-    //private List<CommentDTO> comments;
+    private List<TagDTO> tags;
     private Location location;
     private String coverImgUrl;
     private String sourceUrl;

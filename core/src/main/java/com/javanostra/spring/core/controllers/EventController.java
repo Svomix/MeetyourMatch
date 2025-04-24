@@ -3,12 +3,8 @@ package com.javanostra.spring.core.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.javanostra.spring.core.dto.*;
-import com.javanostra.spring.core.entities.Event;
-import com.javanostra.spring.core.entities.EventComment;
-import com.javanostra.spring.core.entities.User;
-import com.javanostra.spring.core.exceptions.BaseCoreException;
-import com.javanostra.spring.core.exceptions.FileServiceException;
-import com.javanostra.spring.core.exceptions.FileUploadFailedException;
+import com.javanostra.spring.core.entities.*;
+import com.javanostra.spring.core.exceptions.*;
 import com.javanostra.spring.core.services.*;
 import com.javanostra.spring.core.specifications.EventSearchCriteria;
 import com.javanostra.spring.core.specifications.EventSpecification;
@@ -27,6 +23,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -42,8 +39,12 @@ public class EventController {
     private final UserActionsService userActionsService;
     private final AuthorizationService authorizationService;
     private final FileService fileService;
+    private final TagService tagService;
+    private final LocationService locationService;
+
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
     {
         objectMapper.registerModule(new Hibernate6Module()); //TODO: move to a bean / class
     }
@@ -124,6 +125,23 @@ public class EventController {
                 event.setTitle(eventDto.getTitle());
                 event.setDescription(eventDto.getDescription());
                 event.setDate(eventDto.getDate());
+                event.setPrice(eventDto.getPrice());
+                if(Objects.nonNull(eventDto.getLocationId())) {
+                    try {
+                        Long id = Long.parseLong(eventDto.getLocationId());
+                        Location loc = locationService.getLocationById(id);
+                        event.setLocation(loc);
+                    } catch (NumberFormatException e) {
+                        throw new FormatErrorException("format id not valid");
+                    }
+                }
+                if(Objects.nonNull(eventDto.getTags())) {
+                    List<Tag> tags = new java.util.ArrayList<>(List.of());
+                    for(Long tag_id : eventDto.getTags()){
+                        tags.add(tagService.findById(tag_id));
+                    }
+                    event.setTags(tags);
+                }
                 if(Objects.nonNull(eventDto.getCoverFileId())){
                     if(!fileService.fileExists("content", eventDto.getCoverFileId())){
                         throw new FileServiceException("no such image");

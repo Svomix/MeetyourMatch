@@ -23,7 +23,7 @@ public class Event {
     @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(length = 1000)
+    @Column(length = 10000)
     private String description;
 
     private String price;
@@ -38,14 +38,22 @@ public class Event {
     )
     private List<EventComment> comments;
 
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "event_tags",
+            joinColumns = { @JoinColumn(name = "event_id", referencedColumnName = "id") },
+            inverseJoinColumns = { @JoinColumn(name = "tag_id", referencedColumnName = "id") }
+    )
+    private List<Tag> tags;
+
     @JoinColumn
     @ManyToOne
     private Location location;
 
-    @Column(name = "cover_img_url")
+    @Column(name = "cover_img_url", length = 512)
     private String coverImgUrl;
 
-    @Column(name = "source_url")
+    @Column(name = "source_url", length = 512)
     private String sourceUrl;
 }
 

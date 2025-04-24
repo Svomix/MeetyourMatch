@@ -1,6 +1,7 @@
 package com.javanostra.spring.core.controllers;
 
 import com.javanostra.spring.core.entities.Tag;
+import com.javanostra.spring.core.exceptions.BaseCoreException;
 import com.javanostra.spring.core.services.TagService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class TagController {
     }
 
     @GetMapping("/{id}")
-    public Tag getTag(@PathVariable long id) {
+    public Tag getTag(@PathVariable long id) throws BaseCoreException {
         return tagService.findById(id);
     }
 
