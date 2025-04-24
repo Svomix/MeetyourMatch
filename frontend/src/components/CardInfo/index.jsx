@@ -118,7 +118,7 @@ export default ({ path, event }) => {
           <div className={styles.extra_info}>
             <h4 className={styles.desc_name}>Описание:</h4>
             <p className={styles.description}>{event.description}</p>
-            <p className={styles.tags}>#отдых #искусство</p>
+            {event.tags && <p className={styles.tags}>{event.tags.map((t) => "#" + t.name).join(" ")}</p>}
           </div>
           <div className={styles.comments}>
             <CommentBox
