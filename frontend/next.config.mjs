@@ -3,13 +3,23 @@
 const nextConfig = {
   async rewrites() {
     return [
-      (!process.env.BACKEND_URL) && {
+      {
         source: '/api/:path*',
-        destination: 'http://localhost:8080/api/:path*'
+        destination: process.env.BACKEND_URL || 'http://localhost:8080/api/:path*'
+      },
+      {
+        source: '/static/:path*',
+        destination: process.env.S3_URL || 'http://localhost:9000/:path*'
       }
     ];
   },
   images: {
+    localPatterns: [
+      {
+        pathname: '/static/**',
+        search: '',
+      },
+    ],
     remotePatterns: [
       {
         protocol: 'https',

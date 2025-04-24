@@ -99,9 +99,9 @@ export default ({ path, event }) => {
                     </span>
                   </div>
                 </div>
-                <Link className={styles.link} href={event.sourceUrl} target="_blank">
+                {event.sourceUrl && <Link className={styles.link} href={event.sourceUrl} target="_blank">
                   К источнику
-                </Link>
+                </Link>}
               </div>
             </div>
             <div className={styles.right_side}>
