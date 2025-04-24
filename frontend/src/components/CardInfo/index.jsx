@@ -18,14 +18,19 @@ export default ({ path, event }) => {
   let is_logged = getIsLoggedIn();
   let [liked, setLiked] = useState(false);
   let [calendar, setCalendar] = useState(false);
+  let [likeCount, setLikeCount] = useState();
+  let [calendarCount, setCalendarCount] = useState();
 
   useEffect(() => {
     event.userAction && setLiked(event.userAction?.isLiked);
     event.userAction && setCalendar(event.userAction?.inCalendar);
+    setLikeCount(event?.userActionCounters.likedCounter);
+    setCalendarCount(event?.userActionCounters.calendarCounter);
   }, [event]);
 
   const heart_click = (e) => {
     e.preventDefault();
+    setLikeCount((prev) => prev + liked * -2 + 1);
     if (is_logged) {
       authed.post(`/account/events/${event.id}/like`).then((resp) => {
         setLiked(resp.data.isLiked);
@@ -35,6 +40,7 @@ export default ({ path, event }) => {
 
   const calendar_click = (e) => {
     e.preventDefault();
+    setCalendarCount((prev) => prev + calendar * -2 + 1);
     if (is_logged) {
       authed.post(`/account/events/${event.id}/calendar`).then((resp) => {
         setCalendar(resp.data.inCalendar);
@@ -90,13 +96,11 @@ export default ({ path, event }) => {
                 <div className={styles.icons}>
                   <div className={styles.count_wrapper}>
                     <Heart width={50} height={50} active={liked} onClick={heart_click} />
-                    <span className={styles.counter}>{event?.userActionCounters.likedCounter}</span>
+                    <span className={styles.counter}>{likeCount}</span>
                   </div>
                   <div className={styles.count_wrapper}>
                     <Calendar width={50} height={50} active={calendar} onClick={calendar_click} />
-                    <span className={styles.counter}>
-                      {event?.userActionCounters.calendarCounter}
-                    </span>
+                    <span className={styles.counter}>{calendarCount}</span>
                   </div>
                 </div>
                 {event.sourceUrl && (

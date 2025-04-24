@@ -13,13 +13,16 @@ export default ({ event, refLink, width, height }) => {
   const dispatch = useDispatch();
   let is_logged = getIsLoggedIn();
   let [liked, setLiked] = useState(false);
+  let [likeCount, setLikeCount] = useState();
 
   useEffect(() => {
     event.userAction && setLiked(event.userAction?.isLiked);
+    setLikeCount(event?.userActionCounters.likedCounter);
   }, [event]);
 
   const heart_click = (e) => {
     e.preventDefault();
+    setLikeCount((prev) => prev + liked * -2 + 1);
     if (is_logged) {
       authed.post(`/account/events/${event.id}/like`).then((resp) => {
         setLiked(resp.data.isLiked);
@@ -53,7 +56,7 @@ export default ({ event, refLink, width, height }) => {
           <p className={styles.event_tags}>{event.tags.map((t) => '#' + t.name).join(' ')}</p>
         )}
         <div className={styles.heart_wrapper}>
-          <span className={styles.heart_counter}>{event.userActionCounters.likedCounter}</span>
+          <span className={styles.heart_counter}>{likeCount}</span>
           <Heart
             width={40}
             height={40}
