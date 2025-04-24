@@ -96,7 +96,6 @@ services:
     build:
       context: core/mocks/.
       dockerfile: Dockerfile
-    command: python3 populate_mocks.py
     depends_on:
       - postgres
     profiles:
@@ -107,7 +106,22 @@ services:
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
       POSTGRES_HOST: "postgres"
       POSTGRES_PORT: "${DB_PORT}"
-  
+    labels:
+      - "traefik.enable=false"
+  minio-init:
+    build:
+      context: minio/.
+      dockerfile: Dockerfile
+    depends_on:
+      - minio
+    profiles:
+      - init-tools-minio
+    environment:
+      MINIO_HOST: "http://minio:9000/"
+      MINIO_ROOT_USER: "${MINIO_ROOT_USER}"
+      MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD}"
+    labels:
+      - "traefik.enable=false"
 volumes:
   pgdata:
   minio-storage:

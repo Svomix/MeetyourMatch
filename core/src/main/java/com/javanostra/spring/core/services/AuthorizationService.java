@@ -1,6 +1,7 @@
 package com.javanostra.spring.core.services;
 
 import com.javanostra.spring.core.dao.UserAuthorityDAO;
+import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.entities.UserAuthority;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,14 @@ public class AuthorizationService {
 
     @Getter
     UserAuthority defaultGroup;
+
+    public boolean HasAuthority(User user, String authority) {
+        return user.getAuthorities().stream().anyMatch((a) -> a.getAuthority().equals(authority));
+    }
+
+    public boolean HasAdminAuthority(User user) {
+        return HasAuthority(user, AUTHORITY_ADMIN_NAME);
+    }
 
     void createAuthorityIfExists(String name){
         if(!groupDAO.existsByAuthority(name)){

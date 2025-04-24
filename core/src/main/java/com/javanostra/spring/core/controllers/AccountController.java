@@ -194,21 +194,21 @@ public class AccountController {
     }
 
     @PostMapping("/setImage")
-    public ResponseEntity<ResponseDTO> setImage(@RequestParam("file") MultipartFile file){
+    public ResponseEntity<ResponseDTO> setImage(@RequestParam("file") MultipartFile file) throws BaseCoreException {
         try {
             User currentUser = userService.getCurrentUser();
 
             if (Objects.nonNull(currentUser)) {
                 String object_id = currentUser.getId().toString();
                 fileService.uploadFile("avatars", object_id, file.getInputStream(), file.getContentType());
-                currentUser.setAvatarPath(FileService.STATIC_PREFIX + FileService.AVATAR_PREFIX + "/" + object_id);
+                currentUser.setAvatarPath(fileService.getPath("avatars", object_id));
                 userService.updateUser(currentUser);
                 return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "Image set"));
             }
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        } catch (NoSuchElementException | IOException exception){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(HttpStatus.BAD_REQUEST.value(), "no image"));
+        } catch (IOException exception){
+            throw new FileUploadFailedException("no image");
         }
     }
 

@@ -7,8 +7,9 @@ import com.javanostra.spring.core.entities.Event;
 import com.javanostra.spring.core.entities.EventComment;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.exceptions.BaseCoreException;
-import com.javanostra.spring.core.services.UserActionsService;
-import com.javanostra.spring.core.services.UserService;
+import com.javanostra.spring.core.exceptions.FileServiceException;
+import com.javanostra.spring.core.exceptions.FileUploadFailedException;
+import com.javanostra.spring.core.services.*;
 import com.javanostra.spring.core.specifications.EventSearchCriteria;
 import com.javanostra.spring.core.specifications.EventSpecification;
 import jakarta.validation.Valid;
@@ -17,13 +18,17 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.javanostra.spring.core.services.EventService;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import static org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO;
 
@@ -35,6 +40,8 @@ public class EventController {
     private final EventService eventService;
     private final UserService userService;
     private final UserActionsService userActionsService;
+    private final AuthorizationService authorizationService;
+    private final FileService fileService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     {
@@ -89,6 +96,45 @@ public class EventController {
         EventComment comment = eventService.getComment(id);
         eventService.removeComment(eventId, comment);
         return comment;
+    }
+
+    @PostMapping("/uploadEventImage")
+    public ResponseEntity<FileUploadedDTO> uploadImage(@RequestParam("file") MultipartFile file) throws BaseCoreException {
+        try {
+            User currentUser = userService.getCurrentUser();
+            if(Objects.nonNull(currentUser)) {
+                if(authorizationService.HasAdminAuthority(currentUser)){
+                    String object_id = UUID.randomUUID().toString();
+                    fileService.uploadFile("content", object_id, file.getInputStream(), file.getContentType());
+                    return ResponseEntity.ok(new FileUploadedDTO(object_id, fileService.getPath("content", object_id)));
+                }
+            }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        } catch (IOException exception){
+            throw new FileUploadFailedException("no image");
+        }
+    }
+
+    @PostMapping("/uploadEvent")
+    public ResponseEntity<String> uploadEvent(@Valid @RequestBody EventUploadDTO eventDto) throws BaseCoreException {
+        User currentUser = userService.getCurrentUser();
+        if(Objects.nonNull(currentUser)) {
+            if (authorizationService.HasAdminAuthority(currentUser)) {
+                Event event = new Event();
+                event.setTitle(eventDto.getTitle());
+                event.setDescription(eventDto.getDescription());
+                event.setDate(eventDto.getDate());
+                if(Objects.nonNull(eventDto.getCoverFileId())){
+                    if(!fileService.fileExists("content", eventDto.getCoverFileId())){
+                        throw new FileServiceException("no such image");
+                    }
+                    event.setCoverImgUrl(fileService.getPath("content", eventDto.getCoverFileId()));
+                }
+                eventService.saveEvent(event);
+                return ResponseEntity.ok("event uploaded " + event.getId());
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
 
 //    @GetMapping("/{event_id}/tags")
