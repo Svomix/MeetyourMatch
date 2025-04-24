@@ -53,7 +53,7 @@ export default () => {
             event_list={events?.filter((event) => {
               const date = new Date(event.event.date);
               return (
-                date.getFullYear() === year && date.getMonth() === month && date.getDate() === i
+                date.getFullYear() === year && date.getMonth() === month && date.getDate() === i + 1
               );
             })}
             style={i++ == 0 ? { gridColumnStart: getFirstDayOfMonth(month, year) + 1 } : {}}

@@ -9,13 +9,38 @@
 
 .controls {
   display: flex;
-  flex-direction: row;
+  align-items: center;
   gap: 32px;
 }
 
 .dbar {
   --border-width: 4px;
   --border-radius: 8px;
+}
+
+.create_event {
+  margin-left: auto;
+  padding: 5px 20px;
+  border-radius: calc(var(--border-radius) * 1.5);
+  background-color: var(--black);
+  border: 2px solid var(--black);
+  color: var(--white);
+  font-size: 28px;
+  font-weight: 900;
+  transition: 200ms ease-in-out;
+}
+
+.create_event:hover {
+  border: 2px solid var(--gold);
+  background-color: var(--gold);
+  color: var(--black);
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(255, 174, 47, 0.5);
+}
+
+.create_event:active {
+  color: var(--white);
+  background-color: var(--black);
 }
 
 .events {

@@ -14,12 +14,6 @@ const nextConfig = {
     ];
   },
   images: {
-    localPatterns: [
-      {
-        pathname: '/static/**',
-        search: '',
-      },
-    ],
     remotePatterns: [
       {
         protocol: 'https',
@@ -36,7 +30,7 @@ const nextConfig = {
     ]
   },
   skipTrailingSlashRedirect: true,
-  output: "standalone"
+  output: 'standalone'
 };
 
 export default nextConfig;

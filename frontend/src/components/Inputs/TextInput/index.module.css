@@ -1,0 +1,13 @@
+.text_input {
+  display: flex;
+  font-size: 20px;
+  font-weight: 500;
+  padding: 0 8px;
+  border: 2px solid var(--black);
+  border-radius: 12px;
+  transition: 200ms ease-in-out;
+}
+
+.warned {
+  border: 1px solid var(--red);
+}

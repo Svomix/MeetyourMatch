@@ -53,3 +53,8 @@
     transform: scale(1);
   }
 }
+
+.disabled {
+  pointer-events: none;
+  stroke: var(--grey);
+}

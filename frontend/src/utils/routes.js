@@ -5,5 +5,6 @@ export default {
   LICENSE: '/license',
   PROFILE: '/profile',
   CALENDAR: '/profile/calendar',
-  NOTIFY: '/profile/notify'
+  NOTIFY: '/profile/notify',
+  CREATE_EVENT: '/create_event'
 };

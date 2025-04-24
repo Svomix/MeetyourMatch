@@ -46,8 +46,12 @@ export default ({ event, refLink, width, height }) => {
 
       <div className={styles.description}>
         <div className={styles.event_title}>{event.title}</div>
-        <p className={styles.event_date}>{new Date(event.date || 0).toLocaleString('ru-RU')}</p>
-        {event.tags && <p className={styles.tags}>{event.tags.map((t) => "#" + t.name).join(" ")}</p>}
+        {event.date && (
+          <p className={styles.event_date}>{new Date(event.date).toLocaleString('ru-RU')}</p>
+        )}
+        {event.tags && (
+          <p className={styles.event_tags}>{event.tags.map((t) => '#' + t.name).join(' ')}</p>
+        )}
         <div className={styles.heart_wrapper}>
           <span className={styles.heart_counter}>{event.userActionCounters.likedCounter}</span>
           <Heart

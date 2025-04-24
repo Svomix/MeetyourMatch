@@ -74,8 +74,6 @@ export default ({ path, event }) => {
     };
   });
 
-  console.log(event);
-
   return (
     <>
       {event && (
@@ -83,9 +81,11 @@ export default ({ path, event }) => {
           <div className={styles.img_section}>
             <div className={styles.left_side}>
               <h1 className={styles.title}>{event.title}</h1>
-              <h2 className={styles.meta}>Дата: {new Date(event.date).toLocaleString('ru-RU')}</h2>
-              <h3 className={styles.meta}>Место: {event?.location?.title}</h3>
-              <h4 className={styles.meta}>Цена: {event.price}</h4>
+              <h2 className={styles.meta}>
+                Дата: {event.date ? new Date(event.date).toLocaleString('ru-RU') : 'Не указана'}
+              </h2>
+              <h3 className={styles.meta}>Место: {event.location?.title || 'Не указано'}</h3>
+              <h4 className={styles.meta}>Цена: {event.price || 'Не указана'}</h4>
               <div className={styles.actions}>
                 <div className={styles.icons}>
                   <div className={styles.count_wrapper}>
@@ -99,9 +99,11 @@ export default ({ path, event }) => {
                     </span>
                   </div>
                 </div>
-                {event.sourceUrl && <Link className={styles.link} href={event.sourceUrl} target="_blank">
-                  К источнику
-                </Link>}
+                {event.sourceUrl && (
+                  <Link className={styles.link} href={event.sourceUrl} target="_blank">
+                    К источнику
+                  </Link>
+                )}
               </div>
             </div>
             <div className={styles.right_side}>
@@ -118,7 +120,9 @@ export default ({ path, event }) => {
           <div className={styles.extra_info}>
             <h4 className={styles.desc_name}>Описание:</h4>
             <p className={styles.description}>{event.description}</p>
-            {event.tags && <p className={styles.tags}>{event.tags.map((t) => "#" + t.name).join(" ")}</p>}
+            {event.tags && (
+              <p className={styles.tags}>{event.tags.map((t) => '#' + t.name).join(' ')}</p>
+            )}
           </div>
           <div className={styles.comments}>
             <CommentBox
