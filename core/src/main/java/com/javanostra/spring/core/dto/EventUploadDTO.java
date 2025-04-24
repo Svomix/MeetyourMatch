@@ -19,6 +19,7 @@ public class EventUploadDTO {
     private Timestamp date;
     private String coverFileId;
     private String price;
+    private String sourceUrl;
     private List<Long> tags;
     private String locationId;
 }

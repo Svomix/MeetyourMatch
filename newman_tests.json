@@ -648,7 +648,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Test\",\r\n    \"description\": \"test test\",\r\n    \"coverFileId\": \"2902965e-46e1-459d-86b0-23e545a7af3e\",\r\n    \"date\" : \"2025-05-01T15:00:00\",\r\n    \"price\": \"1000рублей\",\r\n    \"tags\": [1,2,3,4],\r\n    \"locationId\": \"8795810900023775994\"\r\n}",
+							"raw": "{\r\n    \"title\": \"Test\",\r\n    \"description\": \"test test\",\r\n    \"coverFileId\": \"2902965e-46e1-459d-86b0-23e545a7af3e\",\r\n    \"date\" : \"2025-05-01T15:00:00\",\r\n    \"price\": \"1000рублей\",\r\n    \"tags\": [1,2,3,4],\r\n    \"locationId\": \"8795810900023775994\",\r\n    \"sourceUrl\": \"httttppppp\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

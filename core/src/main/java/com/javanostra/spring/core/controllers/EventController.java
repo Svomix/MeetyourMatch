@@ -104,11 +104,11 @@ public class EventController {
         try {
             User currentUser = userService.getCurrentUser();
             if(Objects.nonNull(currentUser)) {
-                if(authorizationService.HasAdminAuthority(currentUser)){
+                //if(authorizationService.HasAdminAuthority(currentUser)){
                     String object_id = UUID.randomUUID().toString();
                     fileService.uploadFile("content", object_id, file.getInputStream(), file.getContentType());
                     return ResponseEntity.ok(new FileUploadedDTO(object_id, fileService.getPath("content", object_id)));
-                }
+                //}
             }
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         } catch (IOException exception){
@@ -120,12 +120,13 @@ public class EventController {
     public ResponseEntity<String> uploadEvent(@Valid @RequestBody EventUploadDTO eventDto) throws BaseCoreException {
         User currentUser = userService.getCurrentUser();
         if(Objects.nonNull(currentUser)) {
-            if (authorizationService.HasAdminAuthority(currentUser)) {
+            //if (authorizationService.HasAdminAuthority(currentUser)) {
                 Event event = new Event();
                 event.setTitle(eventDto.getTitle());
                 event.setDescription(eventDto.getDescription());
                 event.setDate(eventDto.getDate());
                 event.setPrice(eventDto.getPrice());
+                event.setSourceUrl(eventDto.getSourceUrl());
                 if(Objects.nonNull(eventDto.getLocationId())) {
                     try {
                         Long id = Long.parseLong(eventDto.getLocationId());
@@ -150,7 +151,7 @@ public class EventController {
                 }
                 eventService.saveEvent(event);
                 return ResponseEntity.ok("event uploaded " + event.getId());
-            }
+            //}
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
