@@ -197,7 +197,7 @@ public class AccountController {
             User currentUser = userService.getCurrentUser();
 
             if (Objects.nonNull(currentUser)) {
-                String object_id = currentUser.getId().toString();
+                String object_id = UUID.randomUUID().toString();
                 fileService.uploadFile("avatars", object_id, file.getInputStream(), file.getContentType());
                 currentUser.setAvatarPath(fileService.getPath("avatars", object_id));
                 userService.updateUser(currentUser);
