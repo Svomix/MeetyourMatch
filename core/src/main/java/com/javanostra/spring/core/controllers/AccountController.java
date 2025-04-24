@@ -2,13 +2,11 @@ package com.javanostra.spring.core.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
-import com.javanostra.spring.core.dto.ResponseDTO;
-import com.javanostra.spring.core.dto.FullUserProfileDTO;
-import com.javanostra.spring.core.dto.UserActionDTO;
-import com.javanostra.spring.core.dto.UserProfileDTO;
+import com.javanostra.spring.core.dto.*;
 import com.javanostra.spring.core.entities.Event;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.entities.UserInterest;
+import com.javanostra.spring.core.enums.Relation;
 import com.javanostra.spring.core.exceptions.*;
 import com.javanostra.spring.core.security.ContextRepository;
 import com.javanostra.spring.core.services.*;
@@ -238,6 +236,16 @@ public class AccountController {
         return new ResponseDTO(HttpStatus.OK.value(), "changed password successfully");
     }
 
+    @GetMapping("/getRelation")
+    public RelationUserDTO getUserRelation(@RequestParam("user_id") Long userId) {
+        User currentUser = userService.getCurrentUser();
+        User user = userService.findUserById(userId);
+        UserProfileDTO userDTO = mapper.convertValue(user, UserProfileDTO.class);
+        Relation myRelation = userService.getRelation(currentUser.getId(), userId);
+        Relation userRelation = userService.getRelation(userId, currentUser.getId());
+        return RelationUserDTO.createFromUserProfileDTO(userDTO, myRelation, userRelation);
+    }
+
     @GetMapping("/friends")
     public Page<UserProfileDTO> getFriends(
             @RequestParam(value = "page", defaultValue = "1") @Min(1) Integer page,
@@ -251,7 +259,20 @@ public class AccountController {
     @PostMapping("/friends")
     public ResponseDTO addFriend(@RequestParam("friend_id") Long friendId) throws BaseCoreException {
         User currentUser = userService.getCurrentUser();
+
+        if (currentUser.getId().equals(friendId)) {
+            throw new UserIsSameException();
+        }
+
         User friend = userService.findUserById(friendId);
+
+        if (userService.checkIfInBlocked(friend.getId(), currentUser.getId())) {
+            throw new UserAreBlockedException("Вы находитесь в черном списке у этого пользователя. Невозможно добавить его в друзья");
+        }
+
+        if (userService.checkIfInFriends(currentUser.getId(), friend.getId())) {
+            throw new UserAlreadyFriendException();
+        }
 
         userService.addFriend(currentUser, friend);
 
@@ -264,7 +285,16 @@ public class AccountController {
     @DeleteMapping("/friends")
     public ResponseDTO deleteFriend(@RequestParam("friend_id") Long friendId) throws BaseCoreException {
         User currentUser = userService.getCurrentUser();
+
+        if (currentUser.getId().equals(friendId)) {
+            throw new UserIsSameException();
+        }
+
         User friend = userService.findUserById(friendId);
+
+        if (!userService.checkIfInFriends(currentUser.getId(), friend.getId())) {
+            throw new UserNotFriendException("Этот пользователь не является вашим другом");
+        }
 
         userService.deleteFriend(currentUser, friend);
 
@@ -287,7 +317,16 @@ public class AccountController {
     @PostMapping("/blocked")
     public ResponseDTO addBlocked(@RequestParam("blocked_id") Long blockedId) throws BaseCoreException {
         User currentUser = userService.getCurrentUser();
+
+        if (currentUser.getId().equals(blockedId)) {
+            throw new UserIsSameException();
+        }
+
         User blocked = userService.findUserById(blockedId);
+
+        if (userService.checkIfInBlocked(currentUser.getId(), blocked.getId())) {
+            throw new UserAreBlockedException("Этот пользователь уже заблокирован");
+        }
 
         userService.addBlocked(currentUser, blocked);
 
@@ -297,7 +336,16 @@ public class AccountController {
     @DeleteMapping("/blocked")
     public ResponseDTO deleteBlocked(@RequestParam("blocked_id") Long blockedId) throws BaseCoreException {
         User currentUser = userService.getCurrentUser();
+
+        if (currentUser.getId().equals(blockedId)) {
+            throw new UserIsSameException();
+        }
+
         User blocked = userService.findUserById(blockedId);
+
+        if (!userService.checkIfInBlocked(currentUser.getId(), blocked.getId())) {
+            throw new UserAreNotBlockedException("Этот пользователь не заблокирован");
+        }
 
         userService.deleteBlocked(currentUser, blocked);
 

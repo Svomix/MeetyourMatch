@@ -7,6 +7,7 @@ import com.javanostra.spring.core.dto.UserProfileDTO;
 import com.javanostra.spring.core.entities.ChatRoom;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.dao.*;
+import com.javanostra.spring.core.enums.Relation;
 import com.javanostra.spring.core.enums.Status;
 import com.javanostra.spring.core.exceptions.*;
 import jakarta.persistence.EntityManager;
@@ -189,6 +190,36 @@ public class UserService implements UserDetailsManager {
     }
 
     @Transactional
+    public Relation getRelation(Long currentUserId, Long userId) {
+        User currentUser = userDAO.findUserById(currentUserId);
+        User user = userDAO.findUserById(userId);
+
+        if (currentUser.getFriends().contains(user)) {
+            return Relation.FRIEND;
+        }
+
+        if (currentUser.getBlocked().contains(user)) {
+            return Relation.BLOCKED;
+        }
+
+        return Relation.NONE;
+    }
+
+    @Transactional
+    public boolean checkIfInFriends(Long currentUserId, Long userId) {
+        User currentUser = userDAO.findUserById(currentUserId);
+        User user = userDAO.findUserById(userId);
+        return currentUser.getFriends().contains(user);
+    }
+
+    @Transactional
+    public boolean checkIfInBlocked(Long currentUserId, Long userId) {
+        User currentUser = userDAO.findUserById(currentUserId);
+        User user = userDAO.findUserById(userId);
+        return currentUser.getBlocked().contains(user);
+    }
+
+    @Transactional
     public Page<UserProfileDTO> getFriends(User currentUser, Pageable pageable, String namePattern) {
         User user = userDAO.findUserById(currentUser.getId());
         List<User> friends = user.getFriends()
@@ -203,29 +234,15 @@ public class UserService implements UserDetailsManager {
     }
 
     @Transactional
-    public void addFriend(User currentUser, User friend) throws BaseCoreException {
+    public void addFriend(User currentUser, User friend) {
         User user = userDAO.findUserById(currentUser.getId());
-
-        if (friend.getBlocked().contains(currentUser)) {
-            throw new UserAreBlockedException("Вы находитесь в черном списке у этого пользователя. Невозможно добавить его в друзья");
-        }
-
-        if (user.getFriends().contains(friend)) {
-            throw new UserAlreadyFriendException();
-        }
-
         user.getFriends().add(friend);
         userDAO.save(user);
     }
 
     @Transactional
-    public void deleteFriend(User currentUser, User friend) throws BaseCoreException {
+    public void deleteFriend(User currentUser, User friend) {
         User user = userDAO.findUserById(currentUser.getId());
-
-        if (!user.getFriends().contains(friend)) {
-            throw new UserNotFriendException("Этот пользователь не является вашим другом");
-        }
-
         user.getFriends().remove(friend);
         userDAO.save(user);
     }
@@ -258,13 +275,8 @@ public class UserService implements UserDetailsManager {
     }
 
     @Transactional
-    public void addBlocked(User currentUser, User blocked) throws BaseCoreException {
+    public void addBlocked(User currentUser, User blocked) {
         User user = userDAO.findUserById(currentUser.getId());
-
-        if (user.getBlocked().contains(blocked)) {
-            throw new UserAreBlockedException("Этот пользователь уже заблокирован");
-        }
-
         user.getBlocked().add(blocked);
         user.getFriends().remove(blocked);
         blocked.getFriends().remove(user);
@@ -273,13 +285,8 @@ public class UserService implements UserDetailsManager {
     }
 
     @Transactional
-    public void deleteBlocked(User currentUser, User blocked) throws BaseCoreException {
+    public void deleteBlocked(User currentUser, User blocked) {
         User user = userDAO.findUserById(currentUser.getId());
-
-        if (!user.getBlocked().contains(blocked)) {
-            throw new UserAreNotBlockedException("Этот пользователь не заблокирован");
-        }
-
         user.getBlocked().remove(blocked);
         userDAO.save(user);
     }

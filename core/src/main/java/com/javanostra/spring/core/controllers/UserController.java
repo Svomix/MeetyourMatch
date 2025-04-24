@@ -2,6 +2,7 @@ package com.javanostra.spring.core.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
+import com.javanostra.spring.core.dto.RelationUserDTO;
 import com.javanostra.spring.core.dto.ResponseDTO;
 import com.javanostra.spring.core.dto.UserProfileDTO;
 import com.javanostra.spring.core.entities.*;
@@ -9,6 +10,7 @@ import com.javanostra.spring.core.exceptions.BaseCoreException;
 import com.javanostra.spring.core.exceptions.EmailVerificationCodeException;
 import com.javanostra.spring.core.exceptions.UserDoesNotExistException;
 import com.javanostra.spring.core.mail.MailService;
+import com.javanostra.spring.core.security.ContextRepository;
 import com.javanostra.spring.core.services.AuthenticationService;
 import com.javanostra.spring.core.services.ConfirmationTokenService;
 import com.javanostra.spring.core.services.UserService;
@@ -41,6 +43,7 @@ public class UserController {
     private final MailService mailService;
     private final ConfirmationTokenService confirmationTokenService;
     private final AuthenticationService authenticationService;
+    private final ContextRepository contextRepository;
 
     ObjectMapper mapper = new ObjectMapper();
     {
@@ -61,7 +64,18 @@ public class UserController {
             @RequestParam(value = "name_pattern", required = false) String namePattern
     ) {
         UserSpecification specification = new UserSpecification(new UserSearchCriteria(namePattern));
-        return userService.findAllUsers(PageRequest.of(offset - 1, limit), specification);
+        Page<UserProfileDTO> users = userService.findAllUsers(PageRequest.of(offset - 1, limit), specification);
+        User currentUser = userService.getCurrentUser();
+        if (currentUser != null) {
+            return users.map(
+                    user -> RelationUserDTO.createFromUserProfileDTO(
+                            user,
+                            userService.getRelation(currentUser.getId(), user.getId()),
+                            userService.getRelation(user.getId(), currentUser.getId())
+                            )
+            ); //TODO: remove current user from page
+        }
+        return users;
     }
 
     @GetMapping("/{user_id}")
