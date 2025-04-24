@@ -83,3 +83,7 @@
   font-weight: bold;
   color: var(--red);
 }
+
+.invisible {
+  display: none;
+}

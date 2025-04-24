@@ -7,7 +7,7 @@ import { fetchProfileInfo } from '@store/profileSlice';
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './page.module.css';
 
@@ -18,6 +18,8 @@ export default function ProfilePage() {
   const [password2, setPassword2] = useState(null);
 
   const [error, setError] = useState(null);
+
+  const avatarRef = useRef()
 
   const router = useRouter();
 
@@ -67,6 +69,22 @@ export default function ProfilePage() {
     router.refresh();
   }
 
+  async function onAvatar(e){
+    e.preventDefault()
+    const formData = new FormData()
+    formData.set("file", e.target.files[0])
+
+    try {
+      await authed.post('/account/setImage', formData);
+    } catch (e) {
+      alert(e);
+    }
+
+    await dispatch(fetchProfileInfo()).unwrap();
+
+    router.refresh();
+  }
+
   function resetError() {
     setError('');
   }
@@ -87,14 +105,15 @@ export default function ProfilePage() {
           />
           <p className={styles.param_name}>Аватар</p>
           <div className={styles.avatar_container}>
-            <div className={styles.avatar_hover}>Изменить аватар</div>
+            <div className={styles.avatar_hover} onClick={(e) => avatarRef.current.click(e)}>Изменить аватар</div>
             <Image
-              src="/user_logo.jpg"
+              src={info ? (info.avatarPath || "/user_logo.jpg") : "data:"}
               alt="User avatar"
               width={128}
               height={128}
               className={styles.user_avatar}
             />
+            <input type="file" ref={avatarRef} accept="image/*" className={styles.invisible} onChange={onAvatar}/>
           </div>
 
           <p className={styles.param_name}>Пароль</p>

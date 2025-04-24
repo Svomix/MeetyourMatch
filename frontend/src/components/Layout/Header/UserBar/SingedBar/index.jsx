@@ -40,7 +40,7 @@ export default () => {
         <p className={styles.username}>{info?.username}</p>
         <Image
           className={styles.userLogo}
-          src={'/user_logo.jpg'}
+          src={info?.avatarPath || "/user_logo.jpg"}
           width={48}
           height={48}
           alt="User logo"
