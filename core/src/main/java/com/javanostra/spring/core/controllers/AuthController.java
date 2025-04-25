@@ -4,15 +4,15 @@ import com.javanostra.spring.core.dto.ConfirmationTokenDTO;
 import com.javanostra.spring.core.dto.NewUserDTO;
 import com.javanostra.spring.core.dto.ResponseDTO;
 import com.javanostra.spring.core.dto.UpdateConfirmationTokenDTO;
-import com.javanostra.spring.core.entities.ConfirmationToken;
+import com.javanostra.spring.core.entities.Token;
 import com.javanostra.spring.core.entities.User;
+import com.javanostra.spring.core.enums.TokenType;
 import com.javanostra.spring.core.exceptions.*;
 import com.javanostra.spring.core.mail.MailService;
 import com.javanostra.spring.core.security.ContextRepository;
-import com.javanostra.spring.core.security.SecurityConfig;
 import com.javanostra.spring.core.services.AuthenticationService;
 import com.javanostra.spring.core.services.AuthorizationService;
-import com.javanostra.spring.core.services.ConfirmationTokenService;
+import com.javanostra.spring.core.services.TokenService;
 import com.javanostra.spring.core.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,21 +20,13 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.SecureRandom;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Set;
-
-import static com.javanostra.spring.core.security.VerificationCodeGenerator.generateCode;
 
 @RestController
 @RequestMapping("/api/register")
@@ -46,7 +38,7 @@ public class AuthController {
     private final AuthorizationService authorizationService;
     private final ContextRepository contextRepository;
     private final AuthenticationService authenticationService;
-    private final ConfirmationTokenService confirmationTokenService;
+    private final TokenService tokenService;
     private final MailService mailService;
 
     @PostMapping
@@ -68,9 +60,9 @@ public class AuthController {
         newUserEnt.setCreatedAt(Timestamp.from(Instant.now()));
         userService.createUser(newUserEnt);
 
-        ConfirmationToken token = ConfirmationToken.createConfirmationTokenForUser(newUserEnt);
-        confirmationTokenService.saveConfirmationToken(token);
-        mailService.sendVerificationCodeEmail(newUserEnt.getEmail(),"Подтвердите вашу электронную почту", token.getToken(), newUserEnt.getUsername());
+        Token token = Token.createTokenForUser(newUserEnt, TokenType.EMAIL_VERIFY);
+        tokenService.saveToken(token);
+        mailService.sendTokenInformationEmail(newUserEnt.getEmail(),"Подтверждение электронной почты", token, newUserEnt.getUsername());
         //authenticationService.UpdateToken(newUserEnt, request, response);
 
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "created account " + newUser.getUsername()));
@@ -84,15 +76,15 @@ public class AuthController {
                 throw new UserAlreadyEnabledException("Почта пользователя уже подтверждена");
             }
 
-            ConfirmationToken validToken = confirmationTokenService.getConfirmationToken(user.getId());
+            Token validToken = tokenService.getToken(user.getId(), TokenType.EMAIL_VERIFY);
             if (LocalDateTime.now().isAfter(validToken.getExpiredAt())) {
-                throw new EmailVerificationCodeException("Код подтверждения просрочен");
+                throw new EmailVerificationCodeException("Код подтверждения просрочен. Сделайте запрос нового");
             }
 
             if (validToken.getToken().equals(token.getToken())) {
                 user.setIsEnabled(true);
                 userService.updateUser(user);
-                confirmationTokenService.deleteConfirmationToken(validToken);
+                tokenService.deleteToken(validToken);
                 authenticationService.UpdateToken(user, request, response);
                 return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "Электронная почта подтверждена!"));
             }
@@ -113,10 +105,16 @@ public class AuthController {
             if (user.getIsEnabled()) {
                 throw new UserAlreadyEnabledException("Почта пользователя уже подтверждена");
             }
-            ConfirmationToken token = ConfirmationToken.createConfirmationTokenForUser(user);
-            token.setId(confirmationTokenService.getConfirmationToken(user.getId()).getId());
-            confirmationTokenService.updateConfirmationToken(token);
-            mailService.sendVerificationCodeEmail(user.getEmail(), "Подтвердите вашу электронную почту", token.getToken(), user.getUsername());
+            Token token = Token.createTokenForUser(user, TokenType.EMAIL_VERIFY);
+            Token previousToken = tokenService.getToken(user.getId(), TokenType.EMAIL_VERIFY);
+
+            if (previousToken == null) {
+                throw new TokenStateException("Не поступало попытки зарегистрироваться");
+            }
+
+            token.setId(previousToken.getId());
+            tokenService.updateToken(token);
+            mailService.sendTokenInformationEmail(user.getEmail(), "Подтверждение электронной почты", token, user.getUsername());
             return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "Код был выслан на вашу электронную почту"));
         }
         else {

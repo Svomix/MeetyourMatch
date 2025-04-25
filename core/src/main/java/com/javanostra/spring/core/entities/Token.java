@@ -1,5 +1,6 @@
 package com.javanostra.spring.core.entities;
 
+import com.javanostra.spring.core.enums.TokenType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,11 +11,11 @@ import java.time.LocalDateTime;
 import static com.javanostra.spring.core.security.VerificationCodeGenerator.generateCode;
 
 @Entity
-@Table(name = "account_verification_token")
+@Table(name = "tokens")
 @Getter
 @Setter
 @NoArgsConstructor
-public class ConfirmationToken {
+public class Token {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,16 +29,21 @@ public class ConfirmationToken {
     private LocalDateTime createdAt;
     private LocalDateTime expiredAt;
 
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "token_type")
+    private TokenType tokenType;
 
-    public ConfirmationToken(String token, User user, LocalDateTime createdAt, LocalDateTime expiredAt) {
+
+    public Token(String token, User user, LocalDateTime createdAt, LocalDateTime expiredAt, TokenType type) {
         this.token = token;
         this.user = user;
         this.createdAt = createdAt;
         this.expiredAt = expiredAt;
+        this.tokenType = type;
     }
 
-    public static ConfirmationToken createConfirmationTokenForUser(User user) {
+    public static Token createTokenForUser(User user, TokenType type) {
         LocalDateTime now = LocalDateTime.now();
-        return new ConfirmationToken(generateCode(), user, now, now.plusMinutes(15));
+        return new Token(generateCode(), user, now, now.plusMinutes(15), type);
     }
 }

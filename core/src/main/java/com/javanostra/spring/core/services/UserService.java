@@ -58,7 +58,7 @@ public class UserService implements UserDetailsManager {
     @NonNull
     private final TagDAO tagDAO;
     @NonNull
-    private final ConfirmationTokenDAO tokenDAO;
+    private final TokenDAO tokenDAO;
     @NonNull
     private final ChatRoomDAO chatRoomDAO;
 

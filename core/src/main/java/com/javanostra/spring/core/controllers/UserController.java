@@ -4,20 +4,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.javanostra.spring.core.dto.RelationUserDTO;
 import com.javanostra.spring.core.dto.ResponseDTO;
+import com.javanostra.spring.core.dto.UpdateConfirmationTokenDTO;
 import com.javanostra.spring.core.dto.UserProfileDTO;
 import com.javanostra.spring.core.entities.*;
-import com.javanostra.spring.core.exceptions.BaseCoreException;
-import com.javanostra.spring.core.exceptions.EmailVerificationCodeException;
-import com.javanostra.spring.core.exceptions.UserDoesNotExistException;
+import com.javanostra.spring.core.enums.TokenType;
+import com.javanostra.spring.core.exceptions.*;
 import com.javanostra.spring.core.mail.MailService;
 import com.javanostra.spring.core.security.ContextRepository;
 import com.javanostra.spring.core.services.AuthenticationService;
-import com.javanostra.spring.core.services.ConfirmationTokenService;
+import com.javanostra.spring.core.services.TokenService;
 import com.javanostra.spring.core.services.UserService;
 import com.javanostra.spring.core.specifications.UserSearchCriteria;
 import com.javanostra.spring.core.specifications.UserSpecification;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -32,7 +33,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -41,7 +41,7 @@ public class UserController {
 
     private final UserService userService;
     private final MailService mailService;
-    private final ConfirmationTokenService confirmationTokenService;
+    private final TokenService tokenService;
     private final AuthenticationService authenticationService;
     private final ContextRepository contextRepository;
 
@@ -158,32 +158,44 @@ public class UserController {
 //    }
 
     @PostMapping("/sendResetCode")
-    public ResponseDTO sendResetPasswordCode(@NonNull @RequestParam("email") String email, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseDTO sendResetPasswordCode(@NonNull @RequestParam("email") String email) throws BaseCoreException {
         if (!userService.userExistsByEmail(email)) {
-            return new ResponseDTO(HttpStatus.BAD_REQUEST.value(), "Пользователя с данной электронной почтой не существует");
+            throw new UserDoesNotExistException("Пользователя с данной электронной почтой не существует");
         }
 
         User user = userService.findByEmail(email);
 
-        ConfirmationToken token = ConfirmationToken.createConfirmationTokenForUser(user);
-        confirmationTokenService.saveConfirmationToken(token);
-        mailService.sendVerificationCodeEmail(user.getEmail(),"Подтвердите вашу электронную почту", token.getToken(), user.getUsername());
+        if (tokenService.getToken(user.getId(), TokenType.PASSWORD_RESET) != null) {
+            throw new TokenStateException("Токен для обновления пароля уже существует");
+        }
+
+        Token token = Token.createTokenForUser(user, TokenType.PASSWORD_RESET);
+        tokenService.saveToken(token);
+        mailService.sendTokenInformationEmail(user.getEmail(),"Сброс пароля", token, user.getUsername());
 
         return new ResponseDTO(HttpStatus.OK.value(), "Код был успешно отправлен");
     }
 
-    @GetMapping("/checkResetCode")
-    public ResponseDTO checkResetPasswordCode(@NonNull @RequestParam("code") String code, @NonNull @RequestParam("email") String email, HttpServletRequest request, HttpServletResponse response) throws BaseCoreException {
+    @PutMapping("/updatePassword")
+    public ResponseDTO checkResetPasswordCode(@NonNull @RequestParam("password") String password,
+                                              @NonNull @RequestParam("code") String code,
+                                              @NonNull @RequestParam("email") String email) throws BaseCoreException {
         User user = userService.findByEmail(email);
 
         if (user != null) {
-            ConfirmationToken validToken = confirmationTokenService.getConfirmationToken(user.getId());
+            Token validToken = tokenService.getToken(user.getId(), TokenType.PASSWORD_RESET);
+
+            if (validToken == null) {
+                throw new TokenStateException("Не создан токен для обновления пароля");
+            }
+
             if (LocalDateTime.now().isAfter(validToken.getExpiredAt())) {
-                throw new EmailVerificationCodeException("Код подтверждения просрочен");
+                throw new EmailVerificationCodeException("Код подтверждения просрочен. Сделайте запрос нового");
             }
 
             if (validToken.getToken().equals(code)) {
-                confirmationTokenService.deleteConfirmationToken(validToken);
+                tokenService.deleteToken(validToken);
+                authenticationService.ChangePassword(user, password);
                 return new ResponseDTO(HttpStatus.OK.value(), "Введен правильный код");
             }
             else {
@@ -194,12 +206,28 @@ public class UserController {
         }
     }
 
-    @PutMapping("/updatePassword")
-    public ResponseDTO updatePassword(@NonNull @RequestParam("password") String password, @NonNull @RequestParam("email") String email, HttpServletRequest request, HttpServletResponse response) {
+    @PutMapping("/updateCode")
+    public ResponseDTO updateResetCode(@NonNull @RequestParam("email") String email) throws BaseCoreException {
         User user = userService.findByEmail(email);
-        authenticationService.ChangePassword(user, password);
-        return new ResponseDTO(HttpStatus.OK.value(), "Пароль обновлен");
+
+        if (user != null) {
+            Token token = Token.createTokenForUser(user, TokenType.PASSWORD_RESET);
+            Token previousToken = tokenService.getToken(user.getId(), TokenType.PASSWORD_RESET);
+
+            if (previousToken == null) {
+                throw new TokenStateException("Не поступало попытки зарегистрироваться");
+            }
+
+            token.setId(previousToken.getId());
+            tokenService.updateToken(token);
+            mailService.sendTokenInformationEmail(user.getEmail(), "Сброс пароля", token, user.getUsername());
+            return new ResponseDTO(HttpStatus.OK.value(), "Код был выслан на вашу электронную почту");
+        }
+        else {
+            throw new UserDoesNotExistException("Пользователя с данной электронной почтой не существует");
+        }
     }
+
     @GetMapping("/users")
     public ResponseEntity<List<User>> findConnectedUsers()
     {

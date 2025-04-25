@@ -1,5 +1,6 @@
 package com.javanostra.spring.core.mail;
 
+import com.javanostra.spring.core.entities.Token;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
@@ -13,13 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Service
 @AllArgsConstructor
@@ -27,14 +21,14 @@ public class MailService {
     private JavaMailSender mailSender;
 
     @Async
-    public void sendVerificationCodeEmail(String to, String subject, String token, String username) {
+    public void sendTokenInformationEmail(String to, String subject, Token token, String username) {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
 
         try {
             helper.setTo(to);
             helper.setSubject(subject);
-            mimeMessage.setContent(buildVerificationCodeEmail(token, username), "text/html;charset=UTF-8");
+            mimeMessage.setContent(buildTokenInformationEmail(token.getToken(), username, subject), "text/html;charset=UTF-8");
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -42,13 +36,14 @@ public class MailService {
     }
 
 
-    private String buildVerificationCodeEmail(String token, String username) {
+    private String buildTokenInformationEmail(String token, String username, String subject) {
         Document doc = null;
         try {
-            File file = new ClassPathResource("static/verificationCodeEmail.html").getFile();
+            File file = new ClassPathResource("static/tokenInformationEmail.html").getFile();
             doc = Jsoup.parse(file);
             doc.getElementById("greetingUser").appendText("Здравствуйте, %s".formatted(username));
             doc.getElementById("code").appendText(token);
+            doc.getElementById("subject").appendText(subject);
         } catch (IOException e) {
             e.printStackTrace();
         }
