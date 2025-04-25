@@ -117,9 +117,10 @@ public interface UserApiService {
     @POST("/api/v1/users/sendResetCode")
     Call<ResponseDTO> sendResetPasswordCode(@Query("email") String email);
 
-    @GET("/api/v1/users/checkResetCode")
-    Call<ResponseDTO> checkResetPasswordCode(@Query("code") String code, @Query("email") String email);
-
     @PUT("/api/v1/users/updatePassword")
-    Call<ResponseDTO> updatePassword(@Query("password") String password, @Query("email") String email);
+    Call<ResponseDTO> checkResetPasswordCode(@Query("password") String password, @Query("code") String code, @Query("email") String email);
+
+    @PUT("/api/v1/users/updateCode")
+    Call<ResponseDTO> updateResetCode(@Query("email") String email);
+
 }
