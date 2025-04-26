@@ -63,14 +63,6 @@ public class User implements UserDetails {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "user_friends",
-            joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") },
-            inverseJoinColumns = { @JoinColumn(name = "friend_id", referencedColumnName = "id") }
-    )
-    private Set<User> friends;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
             name = "user_blocked",
             joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") },
             inverseJoinColumns = { @JoinColumn(name = "blocked_id", referencedColumnName = "id") }

@@ -6,6 +6,7 @@ import com.javanostra.spring.core.dto.*;
 import com.javanostra.spring.core.entities.Event;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.entities.UserInterest;
+import com.javanostra.spring.core.entities.UserRelation;
 import com.javanostra.spring.core.enums.Relation;
 import com.javanostra.spring.core.exceptions.*;
 import com.javanostra.spring.core.security.ContextRepository;
@@ -237,9 +238,12 @@ public class AccountController {
     }
 
     @GetMapping("/getRelation")
-    public RelationUserDTO getUserRelation(@RequestParam("user_id") Long userId) {
+    public RelationUserDTO getUserRelation(@RequestParam("user_id") Long userId) throws BaseCoreException {
         User currentUser = userService.getCurrentUser();
         User user = userService.findUserById(userId);
+        if (user == null) {
+            throw new UserDoesNotExistException("Несуществующий пользователь");
+        }
         UserProfileDTO userDTO = mapper.convertValue(user, UserProfileDTO.class);
         Relation myRelation = userService.getRelation(currentUser.getId(), userId);
         Relation userRelation = userService.getRelation(userId, currentUser.getId());
@@ -256,30 +260,104 @@ public class AccountController {
         return userService.getFriends(user, PageRequest.of(page - 1, limit), namePattern);
     }
 
-    @PostMapping("/friends")
-    public ResponseDTO addFriend(@RequestParam("friend_id") Long friendId) throws BaseCoreException {
-        User currentUser = userService.getCurrentUser();
+    @GetMapping("/requests/outgoing")
+    public Page<UserProfileDTO> getOutgoingFriendRequests(
+            @RequestParam(value = "page", defaultValue = "1") @Min(1) Integer page,
+            @RequestParam(value = "limit", defaultValue = "30") @Min(1) Integer limit,
+            @RequestParam(value = "name_pattern", defaultValue = "") String namePattern
+    ) {
+        User user = userService.getCurrentUser();
 
-        if (currentUser.getId().equals(friendId)) {
+        return userService.getOutgoingFriendRequests(user.getId(), PageRequest.of(page - 1, limit), namePattern);
+    }
+
+    @GetMapping("/requests/ingoing")
+    public Page<UserProfileDTO> getIngoingFriendRequests(
+            @RequestParam(value = "page", defaultValue = "1") @Min(1) Integer page,
+            @RequestParam(value = "limit", defaultValue = "30") @Min(1) Integer limit,
+            @RequestParam(value = "name_pattern", defaultValue = "") String namePattern
+    ) {
+        User user = userService.getCurrentUser();
+
+        return userService.getIngoingFriendRequests(user.getId(), PageRequest.of(page - 1, limit), namePattern);
+    }
+
+    @PostMapping("/requests")
+    public ResponseDTO sendFriendRequest(@RequestParam("user_id") Long userId) throws BaseCoreException {
+        User user = userService.getCurrentUser();
+
+        if (!userService.userExistsById(userId)) {
+            throw new UserDoesNotExistException("Несуществующий пользователь");
+        }
+
+        if (user.getId().equals(userId)) {
             throw new UserIsSameException();
         }
 
-        User friend = userService.findUserById(friendId);
-
-        if (userService.checkIfInBlocked(friend.getId(), currentUser.getId())) {
-            throw new UserAreBlockedException("Вы находитесь в черном списке у этого пользователя. Невозможно добавить его в друзья");
+        if (userService.checkIfInRequest(userId, user.getId())) {
+            throw new FriendRequestStateException("Заявка в друзья отправлена уже с другой стороны");
         }
 
-        if (userService.checkIfInFriends(currentUser.getId(), friend.getId())) {
+        if (userService.checkIfInBlocked(userId, user.getId())) {
+            throw new UserAreBlockedException("Этот пользователь вас заблокировал");
+        }
+
+        if (userService.checkIfInBlocked(user.getId(), userId)) {
+            throw new UserAreBlockedException("Этот пользователь заблокирован у вас");
+        }
+
+        if (userService.checkIfInFriends(userId, user.getId())) {
             throw new UserAlreadyFriendException();
         }
 
-        userService.addFriend(currentUser, friend);
-
-        String message = friend.getFriends().contains(currentUser)?
-                "Пользователь был добавлен в друзья" : "Пользователю была отправлена заявка в друзья";
+        userService.sendFriendRequest(user.getId(), userId);
         //TODO: Send notification to user about friend request
-        return new ResponseDTO(HttpStatus.OK.value(), message);
+        return new ResponseDTO(HttpStatus.OK.value(), "Пользователю была отправлена заявка в друзья");
+    }
+
+    @PutMapping("/requests")
+    public ResponseDTO acceptFriendRequest(@RequestParam("user_id") Long userId) throws BaseCoreException {
+        User user = userService.getCurrentUser();
+
+        if (!userService.userExistsById(userId)) {
+            throw new UserDoesNotExistException("Несуществующий пользователь");
+        }
+
+        if (!userService.checkIfInRequest(userId, user.getId())) {
+            throw new FriendRequestStateException("Пользователь не подавал заявку в друзья");
+        }
+
+        if (userService.checkIfInFriends(userId, user.getId())) {
+            throw new UserAlreadyFriendException();
+        }
+
+        userService.acceptFriendRequest(user.getId(), userId);
+        return new ResponseDTO(HttpStatus.OK.value(), "Вы приняли заявку в друзья");
+    }
+
+    @DeleteMapping("/requests")
+    public ResponseDTO deleteFriendRequest(@RequestParam("user_id") Long userId) throws BaseCoreException {
+        User user = userService.getCurrentUser();
+
+        if (!userService.userExistsById(userId)) {
+            throw new UserDoesNotExistException("Несуществующий пользователь");
+        }
+
+        if (userService.checkIfInRequest(user.getId(), userId)) {
+            userService.deleteFriendRequest(userId, user.getId());
+            return new ResponseDTO(HttpStatus.OK.value(), "Вы отозвали заявку в друзья");
+        }
+
+        if (!userService.checkIfInRequest(userId, user.getId())) {
+            throw new FriendRequestStateException("Пользователь не подавал заявку в друзья");
+        }
+
+        if (userService.checkIfInFriends(userId, user.getId())) {
+            throw new UserAlreadyFriendException();
+        }
+
+        userService.deleteFriendRequest(user.getId(), userId);
+        return new ResponseDTO(HttpStatus.OK.value(), "Вы отклонили заявку в друзья");
     }
 
     @DeleteMapping("/friends")
@@ -292,16 +370,18 @@ public class AccountController {
 
         User friend = userService.findUserById(friendId);
 
+        if (friend == null) {
+            throw new UserDoesNotExistException("Несуществующий пользователь");
+        }
+
         if (!userService.checkIfInFriends(currentUser.getId(), friend.getId())) {
             throw new UserNotFriendException("Этот пользователь не является вашим другом");
         }
 
         userService.deleteFriend(currentUser, friend);
 
-        String message = friend.getFriends().contains(currentUser)?
-                "Пользователь был удален из друзей" : "Вы отозвали заявку в друзья";
         //TODO: Send notification to user about friend deleting
-        return new ResponseDTO(HttpStatus.OK.value(), message);
+        return new ResponseDTO(HttpStatus.OK.value(), "Пользователь был удален из друзей");
     }
 
     @GetMapping("/blocked")
@@ -324,6 +404,10 @@ public class AccountController {
 
         User blocked = userService.findUserById(blockedId);
 
+        if (blocked == null) {
+            throw new UserDoesNotExistException("Несуществующий пользователь");
+        }
+
         if (userService.checkIfInBlocked(currentUser.getId(), blocked.getId())) {
             throw new UserAreBlockedException("Этот пользователь уже заблокирован");
         }
@@ -342,6 +426,10 @@ public class AccountController {
         }
 
         User blocked = userService.findUserById(blockedId);
+
+        if (blocked == null) {
+            throw new UserDoesNotExistException("Несуществующий пользователь");
+        }
 
         if (!userService.checkIfInBlocked(currentUser.getId(), blocked.getId())) {
             throw new UserAreNotBlockedException("Этот пользователь не заблокирован");

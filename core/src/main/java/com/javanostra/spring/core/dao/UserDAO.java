@@ -16,6 +16,7 @@ public interface UserDAO extends JpaRepository<User, Integer>, PagingAndSortingR
     User findByEmail(String email);
     boolean existsByUsernameIgnoreCase(String username);
     boolean existsByEmailIgnoreCase(String username);
+    boolean existsById(Long id);
     User findUserById(Long id);
     void deleteUserById(Long id);
     List<User> findAllByIsEnabledFalseAndCreatedAtBefore(LocalDateTime time);

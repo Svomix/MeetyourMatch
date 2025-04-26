@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.javanostra.spring.core.dao.UserDAO;
 import com.javanostra.spring.core.dto.FullUserProfileDTO;
 import com.javanostra.spring.core.dto.UserProfileDTO;
-import com.javanostra.spring.core.entities.ChatRoom;
-import com.javanostra.spring.core.entities.User;
+import com.javanostra.spring.core.entities.*;
 import com.javanostra.spring.core.dao.*;
 import com.javanostra.spring.core.enums.Relation;
 import com.javanostra.spring.core.enums.Status;
@@ -34,8 +33,6 @@ import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 import com.javanostra.spring.core.dao.UsersAttributeValueDAO;
 import com.javanostra.spring.core.dao.UsersEventDAO;
-import com.javanostra.spring.core.entities.UserAttribute;
-import com.javanostra.spring.core.entities.UserActions;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -61,6 +58,8 @@ public class UserService implements UserDetailsManager {
     private final TokenDAO tokenDAO;
     @NonNull
     private final ChatRoomDAO chatRoomDAO;
+    @NonNull
+    private final UserRelationDAO userRelationDAO;
 
     AuthenticationManager authenticationManager;
 
@@ -118,6 +117,10 @@ public class UserService implements UserDetailsManager {
 
     public boolean userExistsByEmail(String email) {
         return userDAO.existsByEmailIgnoreCase(email);
+    }
+
+    public boolean userExistsById(Long id) {
+        return userDAO.existsById(id);
     }
 
     @Override
@@ -193,8 +196,8 @@ public class UserService implements UserDetailsManager {
     public Relation getRelation(Long currentUserId, Long userId) {
         User currentUser = userDAO.findUserById(currentUserId);
         User user = userDAO.findUserById(userId);
-
-        if (currentUser.getFriends().contains(user)) {
+        UserRelation userRelation = userRelationDAO.findByUserIdAndFriendId(currentUserId, userId);
+        if (userRelation != null && userRelation.getIsAccepted()) {
             return Relation.FRIEND;
         }
 
@@ -205,11 +208,28 @@ public class UserService implements UserDetailsManager {
         return Relation.NONE;
     }
 
-    @Transactional
     public boolean checkIfInFriends(Long currentUserId, Long userId) {
-        User currentUser = userDAO.findUserById(currentUserId);
-        User user = userDAO.findUserById(userId);
-        return currentUser.getFriends().contains(user);
+        UserRelation userRelation = userRelationDAO.findByUserIdAndFriendId(currentUserId, userId);
+        if (userRelation != null && userRelation.getIsAccepted()) {
+            return true;
+        }
+
+        userRelation = userRelationDAO.findByUserIdAndFriendId(userId, currentUserId);
+
+        if (userRelation != null && userRelation.getIsAccepted()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean checkIfInRequest(Long senderId, Long receiverId) {
+        UserRelation userRelation = userRelationDAO.findByUserIdAndFriendId(senderId, receiverId);
+        if (userRelation != null && !userRelation.getIsAccepted()) {
+            return true;
+        }
+
+        return false;
     }
 
     @Transactional
@@ -219,10 +239,8 @@ public class UserService implements UserDetailsManager {
         return currentUser.getBlocked().contains(user);
     }
 
-    @Transactional
     public Page<UserProfileDTO> getFriends(User currentUser, Pageable pageable, String namePattern) {
-        User user = userDAO.findUserById(currentUser.getId());
-        List<User> friends = user.getFriends()
+        List<User> friends = userRelationDAO.findFriendsByUserId(currentUser.getId())
                 .stream()
                 .filter(u -> u.getUsername().contains(namePattern))
                 .toList();
@@ -233,18 +251,55 @@ public class UserService implements UserDetailsManager {
         ).map(a -> mapper.convertValue(a, UserProfileDTO.class));
     }
 
+    public Page<UserProfileDTO> getOutgoingFriendRequests(Long userId, Pageable pageable, String namePattern) {
+        List<User> senders = userRelationDAO.findAllSendersByFriendId(userId)
+                .stream()
+                .filter(u -> u.getUsername().contains(namePattern))
+                .toList();
+        return new PageImpl<>(
+                senders,
+                pageable,
+                senders.size()
+        ).map(a -> mapper.convertValue(a, UserProfileDTO.class));
+    }
+
+    public Page<UserProfileDTO> getIngoingFriendRequests(Long userId, Pageable pageable, String namePattern) {
+        List<User> receivers = userRelationDAO.findAllReceiversByUserId(userId)
+                .stream()
+                .filter(u -> u.getUsername().contains(namePattern))
+                .toList();
+        return new PageImpl<>(
+                receivers,
+                pageable,
+                receivers.size()
+        ).map(a -> mapper.convertValue(a, UserProfileDTO.class));
+    }
+
     @Transactional
-    public void addFriend(User currentUser, User friend) {
-        User user = userDAO.findUserById(currentUser.getId());
-        user.getFriends().add(friend);
-        userDAO.save(user);
+    public void sendFriendRequest(Long currentUserId, Long userId) {
+        UserRelation userRelation = new UserRelation();
+        userRelation.setUserId(currentUserId);
+        userRelation.setFriendId(userId);
+        userRelation.setIsAccepted(false);
+        userRelationDAO.save(userRelation);
+    }
+
+    @Transactional
+    public void acceptFriendRequest(Long currentUserId, Long userId) {
+        UserRelation userRelation = userRelationDAO.findByUserIdAndFriendId(userId, currentUserId);
+        userRelation.setIsAccepted(true);
+        userRelationDAO.save(userRelation);
+    }
+
+    @Transactional
+    public void deleteFriendRequest(Long currentUserId, Long userId) {
+        userRelationDAO.deleteByUserIdAndFriendId(userId, currentUserId);
     }
 
     @Transactional
     public void deleteFriend(User currentUser, User friend) {
-        User user = userDAO.findUserById(currentUser.getId());
-        user.getFriends().remove(friend);
-        userDAO.save(user);
+        userRelationDAO.deleteByUserIdAndFriendId(currentUser.getId(), friend.getId());
+        userRelationDAO.deleteByUserIdAndFriendId(friend.getId(), currentUser.getId());
     }
 
     @Transactional
@@ -278,10 +333,9 @@ public class UserService implements UserDetailsManager {
     public void addBlocked(User currentUser, User blocked) {
         User user = userDAO.findUserById(currentUser.getId());
         user.getBlocked().add(blocked);
-        user.getFriends().remove(blocked);
-        blocked.getFriends().remove(user);
+        userRelationDAO.deleteByUserIdAndFriendId(currentUser.getId(), blocked.getId());
+        userRelationDAO.deleteByUserIdAndFriendId(blocked.getId(), currentUser.getId());
         userDAO.save(user);
-        userDAO.save(blocked);
     }
 
     @Transactional
