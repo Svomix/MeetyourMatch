@@ -8,6 +8,7 @@ import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 @AllArgsConstructor
@@ -18,7 +19,8 @@ public class EventSpecification implements Specification<Event> {
     @Override
     public Predicate toPredicate(Root<Event> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         if(Objects.nonNull(searchCriteria.getEventTitle())){
-            return criteriaBuilder.like(root.get("title"), "%" + searchCriteria.getEventTitle() + "%");
+            String search = String.join("%", searchCriteria.getEventTitle().toLowerCase().split(" "));
+            return criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + search + "%");
         };
         return null;
     }
