@@ -20,6 +20,10 @@ public class TagService {
         return tagDAO.findById(id).orElseThrow(NoSuchTagException::new);
     }
 
+    public Tag findByNameIgnoreCase(String name) throws NoSuchTagException {
+        return tagDAO.findByNameIgnoreCase(name).orElseThrow(NoSuchTagException::new);
+    }
+
     public List<Tag> findAll() {
         return tagDAO.findAll();
     }

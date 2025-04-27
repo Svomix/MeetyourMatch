@@ -58,7 +58,7 @@ public class EventController {
             @RequestParam(value = "s", required = false) String search
     ) {
         User user = userService.getCurrentUser();
-        EventSpecification specification = new EventSpecification(new EventSearchCriteria(search));
+        EventSpecification specification = new EventSpecification(EventSearchCriteria.fromString(search, tagService));
         Page<Event> events = eventService.findAllEventsRaw(PageRequest.of(page - 1, limit), specification);
         return userActionsService.populateUserActions(events, user);
     }
