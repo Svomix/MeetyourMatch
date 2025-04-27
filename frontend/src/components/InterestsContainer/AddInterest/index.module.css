@@ -1,8 +1,3 @@
-.wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 1vh;
-}
 .btn {
   width: fit-content;
   padding: 0.25rem 1rem;

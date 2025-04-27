@@ -43,13 +43,15 @@ export default function InterestsContainer() {
               </div>
             </div>
           ))}
+          {
+            <AddInterest
+              data={getAvailableInterests()}
+              onSelect={onSelect}
+              placeholder={'начните печатать...'}
+            />
+          }
         </div>
       </div>
-      <AddInterest
-        data={getAvailableInterests()}
-        onSelect={onSelect}
-        placeholder={'начните печатать...'}
-      />
     </div>
   );
 }

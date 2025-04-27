@@ -98,7 +98,6 @@ export default ({ events, cardWidth, cardHeight }) => {
 
   // Функция перерасчета параметров
   const resize = () => {
-    console.log(wrapperRef);
     if (wrapperRef.current && cardRef.current) {
       params.gap = (wrapperRef.current.offsetWidth - 3 * cardRef.current.offsetWidth) / 2 - 10;
       params.step = cardRef.current.offsetWidth + params.gap;

@@ -1,56 +1,29 @@
-.header {
-  font-size: 3.5rem;
-  font-weight: bold;
-  color: var(--white);
-  text-align: center;
-  padding: 1rem 0;
-}
-
 .container {
-  margin: 0 auto;
-  padding: 1rem 1rem;
-  max-width: 1300px;
-  width: 100%;
-}
-
-.input {
-  margin: 0.75rem 0;
-  min-width: 300px;
-  background: var(--grey);
-}
-
-.settings_container {
-  display: grid;
-  grid-template-columns: 2fr 3fr;
-  gap: 4vw;
-}
-
-.param_name {
-  color: var(--white);
-  font-size: 1.75rem;
-  margin: 0.25rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4vh 0;
+  gap: 1vh;
 }
 
 .avatar_container {
-  cursor: pointer;
   position: relative;
-  width: 128px;
-  height: 128px;
+  cursor: pointer;
+  overflow: hidden;
 }
-.user_avatar {
-  width: 100%;
-  vertical-align: top;
-}
+
 .avatar_hover {
-  display: flex;
-  text-align: center;
-  align-items: center;
-  color: var(--gold);
   position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
   width: 100%;
   height: 100%;
   top: 0;
   left: 0;
+  border-radius: 100%;
+  color: var(--gold);
   background: rgba(0, 0, 0, 0.6);
   opacity: 0;
   transition: all 0.1s;
@@ -60,30 +33,53 @@
   opacity: 1;
 }
 
-.save_button {
-  margin: 4px 0px 12px 0px;
-  padding: 12px 24px;
-  font-size: 1.75rem;
-  font-weight: bold;
-  background-color: var(--gold);
-  border: var(--border-width) solid var(--grey);
-  border-radius: var(--border-radius);
-  color: var(--grey);
+.avatar_img {
+  border: var(--border-width) solid var(--black);
+  width: 200px;
+  height: 200px;
+  border-radius: 100%;
 }
 
-.save_button:disabled {
-  background-color: var(--light-grey);
-  pointer-events: none;
-}
-
-.error {
-  font-size: 1rem;
-  min-height: 1.1rem;
-  text-align: center;
-  font-weight: bold;
-  color: var(--red);
-}
-
-.invisible {
+.avatar_input {
   display: none;
+}
+
+.input {
+  margin: 0.75rem 0;
+  min-width: 300px;
+  background: var(--grey);
+}
+
+.name_container {
+  display: flex;
+  justify-content: center;
+  gap: 1vw;
+}
+
+.name {
+  font-size: 32px;
+  color: var(--white);
+}
+
+.edit_profile svg {
+  fill: var(--white);
+  transition: all 0.2s;
+  -webkit-transition: all 0.2s;
+}
+
+.edit_profile:hover svg {
+  fill: var(--gold);
+}
+
+.interests_container {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  gap: 0.5vh;
+}
+
+.interests {
+  font-size: 36px;
+  font-weight: bold;
+  color: var(--white);
 }

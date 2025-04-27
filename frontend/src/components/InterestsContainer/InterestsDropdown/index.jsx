@@ -13,7 +13,6 @@ export default function interestsDropdown({ data, placeholder, onSelect, classNa
     e.preventDefault();
     data_wrap.current?.classList.add(styles.block);
     data_wrap.current?.classList.remove(styles.invisible);
-    input.current.placeholder = '';
     setFilter('');
   }
 
@@ -43,23 +42,16 @@ export default function interestsDropdown({ data, placeholder, onSelect, classNa
 
   return (
     <div className={classNames(styles.dropdown_wrap, className)}>
-      <button
-        className={styles.input_wrap}
-        onClick={(e) => {
-          e.preventDefault();
-          input.current?.focus();
-        }}
-      >
-        <input
-          placeholder={placeholder}
-          ref={input}
-          className={styles.input}
-          type="text"
-          onFocus={onFocus}
-          onBlur={onBlur}
-          onChange={onChange}
-        />
-      </button>
+      <input
+        placeholder={placeholder}
+        ref={input}
+        className={styles.input}
+        type="text"
+        onFocus={onFocus}
+        onBlur={onBlur}
+        onChange={onChange}
+      />
+
       <span ref={data_wrap} className={classNames(styles.data_container, styles.invisible)}>
         {getFiltered(data).map((row) => (
           <button

@@ -4,6 +4,7 @@
   align-self: center;
   justify-content: space-between;
   gap: 2vh;
+  min-width: 40vw;
 }
 
 .main_container_wrap {

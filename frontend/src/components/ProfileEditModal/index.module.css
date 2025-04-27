@@ -1,0 +1,89 @@
+.modal {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--grey);
+  border: 2px solid var(--gold);
+  border-radius: var(--border-radius);
+  width: 25vw;
+  height: 50vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5vh;
+}
+
+.modal::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.header {
+  font-size: 40px;
+  font-weight: bold;
+  color: var(--white);
+}
+
+.input_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7vh;
+}
+
+.param_name {
+  font-size: 24px;
+  color: var(--white);
+}
+
+.input {
+  width: 20vw;
+}
+
+.btns_wrapper {
+  display: flex;
+  gap: 2vw;
+}
+
+.cancel_button,
+.save_button {
+  padding: 10px 20px;
+  font-size: 28px;
+  font-weight: bold;
+  border: var(--border-width) solid var(--black);
+  border-radius: var(--border-radius);
+  transition: 200ms ease-in-out;
+}
+
+.cancel_button:hover {
+  transform: scale(1.03);
+  filter: drop-shadow(0 0 5px var(--black));
+}
+
+.save_button:hover {
+  transform: scale(1.03);
+  filter: drop-shadow(0 0 10px var(--gold));
+}
+
+.cancel_button {
+  background-color: var(--grey);
+  color: var(--white);
+}
+
+.save_button {
+  background-color: var(--gold);
+  color: var(--grey);
+}
+
+.save_button:disabled {
+  background-color: var(--light-grey);
+  pointer-events: none;
+}
+
+.error {
+  font-size: 1rem;
+  min-height: 1.1rem;
+  text-align: center;
+  font-weight: bold;
+  color: var(--red);
+}

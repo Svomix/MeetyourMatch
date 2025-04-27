@@ -1,16 +1,16 @@
 'use client';
-import classNames from '@/utils/classnames';
 import { useState } from 'react';
 import InterestsDropdown from '../InterestsDropdown';
+import classNames from '@/utils/classnames';
 import styles from './index.module.css';
 
 export default ({ data, placeholder, onSelect, className }) => {
   const [drop, setDrop] = useState(false);
+
   const onAdd = (data) => {
     setDrop(false);
     onSelect(data);
   };
-
   const onClick = (e) => {
     e.preventDefault();
     setDrop((prev) => !prev);
@@ -18,9 +18,11 @@ export default ({ data, placeholder, onSelect, className }) => {
 
   return (
     <div className={styles.wrapper}>
-      <button className={classNames(styles.btn, drop && styles.btn_active)} onClick={onClick}>
-        {drop ? 'Отменить' : '+ Добавить'}
-      </button>
+      {!drop && (
+        <button className={classNames(styles.btn, className)} onClick={onClick}>
+          + Добавить
+        </button>
+      )}
       {drop && (
         <InterestsDropdown
           data={data}

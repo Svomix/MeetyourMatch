@@ -1,7 +1,6 @@
 'use client';
 import { authed } from '@/services/axiosInstance';
 import LogoutButton from '@components/Buttons/LogoutButton';
-import InputField from '@components/InputField';
 import InterestsContainer from '@components/InterestsContainer';
 import { fetchProfileInfo } from '@store/profileSlice';
 
@@ -9,70 +8,21 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import ProfileEditModal from '@components/ProfileEditModal';
 import styles from './page.module.css';
 
 export default function ProfilePage() {
   const dispatch = useDispatch();
-  const [username, setUsername] = useState(null);
-  const [password, setPassword] = useState(null);
-  const [password2, setPassword2] = useState(null);
-
-  const [error, setError] = useState(null);
-
-  const avatarRef = useRef()
-
   const router = useRouter();
+  const avatarRef = useRef();
 
   const info = useSelector((state) => state.profileInfo);
+  const [isModal, setIsModal] = useState(false);
 
-  const username_changed = username !== null && username !== info.username;
-  const password_changed = password && password2;
-
-  const can_save = username_changed || password_changed;
-
-  async function onSave(e) {
+  async function onAvatar(e) {
     e.preventDefault();
-    if (password_changed) {
-      if (password !== password2) {
-        setError('Пароли не совпадают');
-        setPassword2('');
-        return;
-      }
-      try {
-        await authed.post('/account/setPassword', null, {
-          params: {
-            password: password
-          }
-        });
-      } catch (e) {
-        alert(e);
-      } finally {
-        setPassword('');
-        setPassword2('');
-      }
-    }
-
-    if (username_changed) {
-      try {
-        await authed.post('/account/setName', null, {
-          params: { username: username }
-        });
-      } catch (e) {
-        if (e.response.data.exception === 'UserAlreadyExistsException')
-          setError(e.response.data.error);
-        else alert(e);
-      }
-    }
-
-    await dispatch(fetchProfileInfo()).unwrap();
-
-    router.refresh();
-  }
-
-  async function onAvatar(e){
-    e.preventDefault()
-    const formData = new FormData()
-    formData.set("file", e.target.files[0])
+    const formData = new FormData();
+    formData.set('file', e.target.files[0]);
 
     try {
       await authed.post('/account/setImage', formData);
@@ -81,74 +31,55 @@ export default function ProfilePage() {
     }
 
     await dispatch(fetchProfileInfo()).unwrap();
-
     router.refresh();
   }
 
-  function resetError() {
-    setError('');
+  function onEditProfile() {
+    setIsModal(true);
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.settings_container}>
-        <div>
-          <h1 className={styles.header}>Мой профиль</h1>
-          <p className={styles.param_name}>Имя пользователя</p>
-          <InputField
-            className={styles.input}
-            value={username || ''}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Имя"
-            name="name"
-            onFocus={resetError}
-          />
-          <p className={styles.param_name}>Аватар</p>
+    <>
+      <div className={styles.container}>
+        <div className={styles.person_container}>
           <div className={styles.avatar_container}>
-            <div className={styles.avatar_hover} onClick={(e) => avatarRef.current.click(e)}>Изменить аватар</div>
+            <div className={styles.avatar_hover} onClick={(e) => avatarRef.current.click(e)}>
+              Изменить аватар
+            </div>
             <Image
-              src={info ? (info.avatarPath || "/user_logo.jpg") : "data:"}
-              alt="User avatar"
-              width={128}
-              height={128}
-              className={styles.user_avatar}
+              src={info ? info.avatarPath || '/user_logo.jpg' : 'data:'}
+              alt="avatar"
+              width={200}
+              height={200}
+              className={styles.avatar_img}
             />
-            <input type="file" ref={avatarRef} accept="image/*" className={styles.invisible} onChange={onAvatar}/>
+            <input
+              type="file"
+              ref={avatarRef}
+              accept="image/*"
+              className={styles.avatar_input}
+              onChange={onAvatar}
+            />
           </div>
-
-          <p className={styles.param_name}>Пароль</p>
-          <InputField
-            className={styles.input}
-            value={password || ''}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Новый пароль"
-            name="password"
-            type="password"
-            onFocus={resetError}
-          />
-
-          <InputField
-            className={styles.input}
-            value={password2 || ''}
-            onChange={(e) => setPassword2(e.target.value)}
-            placeholder="Повторите пароль"
-            name="password2"
-            type="password"
-            onFocus={resetError}
-          />
-          {error && <p className={styles.error}>{error}</p>}
-
-          <button disabled={!can_save} onClick={onSave} className={styles.save_button}>
-            Сохранить
-          </button>
+          <div className={styles.name_container}>
+            <h1 className={styles.name}>Имя</h1>
+            <button className={styles.edit_profile} onClick={onEditProfile}>
+              <svg height="32px" width="32px" viewBox="0 0 348.882 348.882">
+                <g>
+                  <path d="M333.988,11.758l-0.42-0.383C325.538,4.04,315.129,0,304.258,0c-12.187,0-23.888,5.159-32.104,14.153L116.803,184.231 c-1.416,1.55-2.49,3.379-3.154,5.37l-18.267,54.762c-2.112,6.331-1.052,13.333,2.835,18.729c3.918,5.438,10.23,8.685,16.886,8.685 c0,0,0.001,0,0.001,0c2.879,0,5.693-0.592,8.362-1.76l52.89-23.138c1.923-0.841,3.648-2.076,5.063-3.626L336.771,73.176 C352.937,55.479,351.69,27.929,333.988,11.758z M130.381,234.247l10.719-32.134l0.904-0.99l20.316,18.556l-0.904,0.99 L130.381,234.247z M314.621,52.943L182.553,197.53l-20.316-18.556L294.305,34.386c2.583-2.828,6.118-4.386,9.954-4.386 c3.365,0,6.588,1.252,9.082,3.53l0.419,0.383C319.244,38.922,319.63,47.459,314.621,52.943z" />
+                  <path d="M303.85,138.388c-8.284,0-15,6.716-15,15v127.347c0,21.034-17.113,38.147-38.147,38.147H68.904 c-21.035,0-38.147-17.113-38.147-38.147V100.413c0-21.034,17.113-38.147,38.147-38.147h131.587c8.284,0,15-6.716,15-15 s-6.716-15-15-15H68.904c-37.577,0-68.147,30.571-68.147,68.147v180.321c0,37.576,30.571,68.147,68.147,68.147h181.798 c37.576,0,68.147-30.571,68.147-68.147V153.388C318.85,145.104,312.134,138.388,303.85,138.388z" />
+                </g>
+              </svg>
+            </button>
+          </div>
         </div>
-
-        <div>
-          <h1 className={styles.header}>Интересы</h1>
+        <div className={styles.interests_container}>
+          <h1 className={styles.interests}>Ваши интересы</h1>
           <InterestsContainer />
         </div>
+        <LogoutButton />
       </div>
-      <LogoutButton />
-    </div>
+      {isModal && <ProfileEditModal setActive={setIsModal} />}
+    </>
   );
 }

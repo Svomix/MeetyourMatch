@@ -7,5 +7,5 @@ export default async () => {
   const cookieStore = await cookies();
   const token = cookieStore.get(tokenType.ACCESS_TOKEN);
 
-  return <>{token?.value ? <SingedMain /> : <UnsignedMain />}</>;
+  return <>{token?.value ? <SingedMain /> : <UnsignedMain />} </>;
 };
