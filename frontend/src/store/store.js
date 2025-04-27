@@ -3,6 +3,7 @@ import modalSlice from '@store/modalSlice';
 import authSlice from './authSlice';
 import profileSlice from "./profileSlice";
 import eventSlice from "./eventStore";
+import tagSlice from "./tagStore";
 
 // const reHydrateStore = () => {
 //   if (typeof window === 'undefined') return undefined;
@@ -24,6 +25,7 @@ export const store = configureStore({
     auth: authSlice,
     profileInfo: profileSlice,
     eventInfo: eventSlice,
+    tagsInfo: tagSlice
   },
   // preloadedState: reHydrateStore(),
   //middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(appMiddleware)

@@ -69,3 +69,24 @@
 .input::placeholder {
   color: var(--light-grey);
 }
+
+.suggest_box {
+  position: absolute;
+  top: 120%;
+  left: 0;
+  width: 100%;
+  padding: 8px 0;
+  background-color: var(--bgc-strong);
+  border-radius: 8px;
+  max-height: 50dvh;
+  overflow: auto;
+}
+
+.suggest_item {
+  padding: 1.5px 8px;
+  cursor: pointer;
+}
+
+.suggest_item:hover {
+  background-color: var(--bgc-weak);
+}

@@ -2,7 +2,7 @@
 import classNames from '@/utils/classnames';
 import styles from './index.module.css';
 
-export default ({ placeholder, className, value, onChange, onSearch }) => {
+export default ({ placeholder, className, value, onChange, onSearch, suggestions }) => {
   return (
     <div className={styles.search_wrap}>
       <section
@@ -14,6 +14,13 @@ export default ({ placeholder, className, value, onChange, onSearch }) => {
         <button className={styles.magnifier} onClick={onSearch}>
           <Magnifier />
         </button>
+        {suggestions && suggestions.length > 0 &&
+          <div className={styles.suggest_box}>
+            {suggestions.map((s) =>
+              <div key={s.name} className={styles.suggest_item} onClick={(e) => {e.target.value = s.rep; onChange(e)}}>{s.name}</div>
+            )}
+          </div>
+        }
       </section>
     </div>
   );
