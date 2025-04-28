@@ -51,14 +51,32 @@ public class EventController {
         objectMapper.registerModule(new Hibernate6Module()); //TODO: move to a bean / class
     }
 
-    @GetMapping("/rec")
-    public EventDTO findRec()
+    @GetMapping("/recAndroid")
+    public EventDTO findRecAndroid()
     {
         User user = userService.getCurrentUser();
         List<UserRecInterests> interests = userRecInterestsService.findAllById(user.getId());
         UserRecInterests interest = WeightedRandomChoice.weightedChoice(interests);
         Event event = eventService.getRandEvent(interest.getInterest());
         return mapper.convertValue(event, EventDTO.class);
+    }
+    
+    @GetMapping("/recWeb")
+    public List<EventDTO> findRecWeb()
+    {
+        User user = userService.getCurrentUser();
+        List<UserRecInterests> interests = userRecInterestsService.findAllById(user.getId());
+        List<UserRecInterests> recInterests = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            recInterests.add(WeightedRandomChoice.weightedChoice(interests));
+        }
+        List<EventDTO> events = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            for(int j = 0; j < 2; j++) {
+                events.add(mapper.convertValue(eventService.getRandEvent(recInterests.get(i).getInterest()), EventDTO.class));
+            }
+        }
+        return events;
     }
 
     @GetMapping

@@ -2,12 +2,12 @@ package com.javanostra.spring.core.controllers;
 
 import com.javanostra.spring.core.dto.NewUserDTO;
 import com.javanostra.spring.core.dto.ResponseDTO;
+import com.javanostra.spring.core.entities.Tag;
 import com.javanostra.spring.core.entities.User;
+import com.javanostra.spring.core.entities.UserRecInterests;
 import com.javanostra.spring.core.exceptions.BaseCoreException;
 import com.javanostra.spring.core.exceptions.UserAlreadyExistsException;
-import com.javanostra.spring.core.services.AuthenticationService;
-import com.javanostra.spring.core.services.AuthorizationService;
-import com.javanostra.spring.core.services.UserService;
+import com.javanostra.spring.core.services.*;
 import com.javanostra.spring.core.vk.VkClient;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,7 +35,8 @@ public class VkController {
     private final AuthorizationService authorizationService;
     private final AuthenticationService authenticationService;
     private final PasswordEncoder passwordEncoder;
-
+    private final TagService tagService;
+    private final UserRecInterestsService userRecInterestsService;
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO> vkRegister(String accessToken,
                                                   @Valid @ModelAttribute NewUserDTO newUser,
@@ -53,7 +54,9 @@ public class VkController {
         newUserEnt.setAuthorities(Set.of(authorizationService.getDefaultGroup()));
         newUserEnt.setCreatedAt(Timestamp.from(Instant.now()));
         userService.createUser(newUserEnt);
-
+        for (Tag tag : tagService.findAll()) {
+            userRecInterestsService.save(UserRecInterests.builder().user_id(newUserEnt.getId()).interest(tag.getName()).weight(0.1).build());
+        }
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "Успешно создан аккаунт через ВК с никнеймом: " + newUser.getUsername()));
     }
 
