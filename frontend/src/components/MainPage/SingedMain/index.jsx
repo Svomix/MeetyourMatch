@@ -11,7 +11,7 @@ export default () => {
 
   useEffect(() => {
     const instance = Cookies.get(tokenType.ACCESS_TOKEN) ? authed : unauthed;
-    instance.get(`/v1/events?limit=8&page=5`).then((response) => {
+    instance.get(`/v1/events/recWeb`).then((response) => {
       setEvents(response.data.content);
     });
   }, []);
