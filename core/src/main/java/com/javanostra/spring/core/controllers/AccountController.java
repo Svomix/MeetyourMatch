@@ -36,10 +36,6 @@ public class AccountController {
     @NonNull
     private final CityService cityService;
     @NonNull
-    private final ContextRepository contextRepository;
-    @NonNull
-    private final PasswordEncoder passwordEncoder;
-    @NonNull
     private final InterestService interestService;
     @NonNull
     private final AuthenticationService authenticationService;
@@ -253,7 +249,7 @@ public class AccountController {
     public ResponseDTO setPassword(@NonNull @RequestParam("password") String password, HttpServletRequest request, HttpServletResponse response) {
         User user = userService.getCurrentUser();
 
-        authenticationService.ChangePassword(user, passwordEncoder.encode(password));
+        authenticationService.ChangePassword(user, password);
 
         authenticationService.UpdateToken(user, request, response);
 
