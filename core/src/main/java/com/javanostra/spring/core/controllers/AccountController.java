@@ -3,10 +3,7 @@ package com.javanostra.spring.core.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.javanostra.spring.core.dto.*;
-import com.javanostra.spring.core.entities.Event;
-import com.javanostra.spring.core.entities.User;
-import com.javanostra.spring.core.entities.UserInterest;
-import com.javanostra.spring.core.entities.UserRelation;
+import com.javanostra.spring.core.entities.*;
 import com.javanostra.spring.core.enums.Relation;
 import com.javanostra.spring.core.exceptions.*;
 import com.javanostra.spring.core.security.ContextRepository;
@@ -49,8 +46,10 @@ public class AccountController {
     @NonNull
     private final UserActionsService userActionsService;
     private final EventService eventService;
-
+    @NonNull
+    private final UserRecInterestsService userRecInterestsService;
     ObjectMapper mapper = new ObjectMapper();
+
     {
         mapper.registerModule(new Hibernate6Module()); //TODO: move to a bean / class
     }
@@ -59,7 +58,7 @@ public class AccountController {
     public ResponseEntity<FullUserProfileDTO> getAccountInfo() {
         User currentUser = userService.getCurrentUser();
 
-        if(Objects.nonNull(currentUser))
+        if (Objects.nonNull(currentUser))
             return ResponseEntity.ok(mapper.convertValue(currentUser, FullUserProfileDTO.class));
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
@@ -69,7 +68,7 @@ public class AccountController {
     public ResponseEntity<Set<UserInterest>> getMyInterests() {
         User currentUser = userService.getCurrentUser();
 
-        if(Objects.nonNull(currentUser))
+        if (Objects.nonNull(currentUser))
             return ResponseEntity.ok(interestService.getUserInterests(currentUser));
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
@@ -78,13 +77,16 @@ public class AccountController {
     @PostMapping("/interests")
     public ResponseEntity<String> addInterest(@RequestParam("id") Integer id) throws BaseCoreException {
         User currentUser = userService.getCurrentUser();
-
-        if(Objects.nonNull(currentUser)) {
+        if (Objects.nonNull(currentUser)) {
             UserInterest interest = interestService.getUserInterestById(id);
             interestService.addUserInterest(currentUser, interest);
+            UserRecInterests interestRec = userRecInterestsService.findByIdAndName(currentUser.getId(), interest.getName());
+            if (interestRec.getWeight() < 0.75) {
+                interestRec.setWeight(interestRec.getWeight() + 0.2);
+                userRecInterestsService.save(interestRec);
+            }
             return ResponseEntity.ok("success");
         }
-
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
 
@@ -92,9 +94,14 @@ public class AccountController {
     public ResponseEntity<String> removeInterest(@RequestParam("id") Integer id) throws BaseCoreException {
         User currentUser = userService.getCurrentUser();
 
-        if(Objects.nonNull(currentUser)) {
+        if (Objects.nonNull(currentUser)) {
             UserInterest interest = interestService.getUserInterestById(id);
             interestService.removeUserInterest(currentUser, interest);
+            UserRecInterests interestRec = userRecInterestsService.findByIdAndName(currentUser.getId(), interest.getName());
+            if (interestRec.getWeight() > 0.2) {
+                interestRec.setWeight(interestRec.getWeight() - 0.15);
+                userRecInterestsService.save(interestRec);
+            }
             return ResponseEntity.ok("success");
         }
 
@@ -106,7 +113,15 @@ public class AccountController {
         User currentUser = userService.getCurrentUser();
         Event event = eventService.findEventById(eventId);
 
-        if(Objects.nonNull(currentUser)) {
+        if (Objects.nonNull(currentUser)) {
+            for (Tag tag : event.getTags()) {
+                String name = tag.getName();
+                UserRecInterests interestRec = userRecInterestsService.findByIdAndName(currentUser.getId(), name);
+                if (interestRec.getWeight() < 0.75) {
+                    interestRec.setWeight(interestRec.getWeight() + 0.005);
+                    userRecInterestsService.save(interestRec);
+                }
+            }
             return ResponseEntity.ok(userActionsService.setLiked(currentUser, event, value.orElseGet(() -> !userActionsService.getUserEventActions(currentUser, event).getIsLiked())));
         }
 
@@ -118,7 +133,15 @@ public class AccountController {
         User currentUser = userService.getCurrentUser();
         Event event = eventService.findEventById(eventId);
 
-        if(Objects.nonNull(currentUser)) {
+        if (Objects.nonNull(currentUser)) {
+            for (Tag tag : event.getTags()) {
+                String name = tag.getName();
+                UserRecInterests interestRec = userRecInterestsService.findByIdAndName(currentUser.getId(), name);
+                if (interestRec.getWeight() > 0.1) {
+                    interestRec.setWeight(interestRec.getWeight() - 0.005);
+                    userRecInterestsService.save(interestRec);
+                }
+            }
             return ResponseEntity.ok(userActionsService.setDisliked(currentUser, event, value.orElseGet(() -> !userActionsService.getUserEventActions(currentUser, event).getIsDisliked())));
         }
 
@@ -130,7 +153,7 @@ public class AccountController {
         User currentUser = userService.getCurrentUser();
         Event event = eventService.findEventById(eventId);
 
-        if(Objects.nonNull(currentUser)) {
+        if (Objects.nonNull(currentUser)) {
             return ResponseEntity.ok(userActionsService.setCalendar(currentUser, event, value.orElseGet(() -> !userActionsService.getUserEventActions(currentUser, event).getInCalendar())));
         }
 
@@ -142,7 +165,7 @@ public class AccountController {
         User currentUser = userService.getCurrentUser();
         Event event = eventService.findEventById(eventId);
 
-        if(Objects.nonNull(currentUser)) {
+        if (Objects.nonNull(currentUser)) {
             return ResponseEntity.ok(userActionsService.getUserEventActions(currentUser, event));
         }
 
@@ -153,7 +176,7 @@ public class AccountController {
     public ResponseEntity<List<UserActionDTO>> getCalendar() throws BaseCoreException {
         User currentUser = userService.getCurrentUser();
 
-        if(Objects.nonNull(currentUser)) {
+        if (Objects.nonNull(currentUser)) {
             return ResponseEntity.ok(userActionsService.findUserEventsInCalendar(currentUser));
         }
 
@@ -161,7 +184,7 @@ public class AccountController {
     }
 
     @PostMapping("/setCity")
-    public ResponseEntity<ResponseDTO> setCity(@RequestParam("city") Long city_id){
+    public ResponseEntity<ResponseDTO> setCity(@RequestParam("city") Long city_id) {
         try {
             User currentUser = userService.getCurrentUser();
 
@@ -172,14 +195,14 @@ public class AccountController {
             }
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO(HttpStatus.UNAUTHORIZED.value(), "Нет авторизации!"));
-        }catch (NoSuchElementException exception){
+        } catch (NoSuchElementException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(HttpStatus.BAD_REQUEST.value(), "Такого города не существует!"));
         }
     }
 
     @PostMapping("/setEmail")
     public ResponseDTO setEmail(@NonNull @RequestParam("email") String email, HttpServletRequest request, HttpServletResponse response) throws BaseCoreException {
-        if(userService.userExistsByEmail(email))
+        if (userService.userExistsByEmail(email))
             throw new UserAlreadyExistsException("Пользователь с такой почтой уже существует");
 
         User user = userService.getCurrentUser();
@@ -206,14 +229,14 @@ public class AccountController {
             }
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        } catch (IOException exception){
+        } catch (IOException exception) {
             throw new FileUploadFailedException("no image");
         }
     }
 
     @PostMapping("/setName")
     public ResponseDTO setUsername(@NonNull @RequestParam("username") String username, HttpServletRequest request, HttpServletResponse response) throws BaseCoreException {
-        if(userService.userExists(username))
+        if (userService.userExists(username))
             throw new UserAlreadyExistsException("Пользователь с таким именем уже существует");
 
         User user = userService.getCurrentUser();
@@ -227,7 +250,7 @@ public class AccountController {
     }
 
     @PostMapping("/setPassword")
-    public ResponseDTO setPassword(@NonNull @RequestParam("password") String password, HttpServletRequest request, HttpServletResponse response){
+    public ResponseDTO setPassword(@NonNull @RequestParam("password") String password, HttpServletRequest request, HttpServletResponse response) {
         User user = userService.getCurrentUser();
 
         authenticationService.ChangePassword(user, passwordEncoder.encode(password));

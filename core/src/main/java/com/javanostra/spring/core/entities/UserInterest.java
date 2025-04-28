@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -22,7 +21,6 @@ public class UserInterest {
 
     @Column(nullable = false, unique = true)
     private String name;
-
     @JsonIgnore
     @ManyToMany(mappedBy = "interests", fetch = FetchType.LAZY)
     private Set<User> users;

@@ -4,6 +4,7 @@ import com.javanostra.spring.core.entities.Event;
 import com.javanostra.spring.core.entities.Location;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +14,6 @@ import java.util.List;
 public interface EventDAO extends JpaRepository<Event, Long>, PagingAndSortingRepository<Event, Long>, JpaSpecificationExecutor<Event> {
     Event findEventById(long id);
     List<Event> findEventsByLocation(Location location);
+    @Query("SELECT e FROM Event e JOIN e.tags t WHERE t.name = :tagName")
+    List<Event> findByTag(String tag);
 }

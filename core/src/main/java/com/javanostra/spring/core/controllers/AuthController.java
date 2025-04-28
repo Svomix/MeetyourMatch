@@ -6,14 +6,13 @@ import com.javanostra.spring.core.dto.ResponseDTO;
 import com.javanostra.spring.core.dto.UpdateConfirmationTokenDTO;
 import com.javanostra.spring.core.entities.Token;
 import com.javanostra.spring.core.entities.User;
+import com.javanostra.spring.core.entities.UserRecInterests;
 import com.javanostra.spring.core.enums.TokenType;
 import com.javanostra.spring.core.exceptions.*;
 import com.javanostra.spring.core.mail.MailService;
 import com.javanostra.spring.core.security.ContextRepository;
-import com.javanostra.spring.core.services.AuthenticationService;
-import com.javanostra.spring.core.services.AuthorizationService;
-import com.javanostra.spring.core.services.TokenService;
-import com.javanostra.spring.core.services.UserService;
+import com.javanostra.spring.core.services.*;
+import com.javanostra.spring.core.utils.TagList;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -40,6 +39,7 @@ public class AuthController {
     private final AuthenticationService authenticationService;
     private final TokenService tokenService;
     private final MailService mailService;
+    private final UserRecInterestsService userRecInterestsService;
 
     @PostMapping
     public ResponseEntity<ResponseDTO> register(@Valid @ModelAttribute NewUserDTO newUser,
@@ -59,12 +59,13 @@ public class AuthController {
         newUserEnt.setAuthorities(Set.of(authorizationService.getDefaultGroup()));
         newUserEnt.setCreatedAt(Timestamp.from(Instant.now()));
         userService.createUser(newUserEnt);
-
         Token token = Token.createTokenForUser(newUserEnt, TokenType.EMAIL_VERIFY);
         tokenService.saveToken(token);
-        mailService.sendTokenInformationEmail(newUserEnt.getEmail(),"Подтверждение электронной почты", token, newUserEnt.getUsername());
+        mailService.sendTokenInformationEmail(newUserEnt.getEmail(), "Подтверждение электронной почты", token, newUserEnt.getUsername());
         //authenticationService.UpdateToken(newUserEnt, request, response);
-
+        for (String tag : TagList.getInterests()) {
+            userRecInterestsService.save(UserRecInterests.builder().user_id(newUserEnt.getId()).interest(tag).weight(0.1).build());
+        }
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "created account " + newUser.getUsername()));
     }
 
@@ -87,12 +88,10 @@ public class AuthController {
                 tokenService.deleteToken(validToken);
                 authenticationService.UpdateToken(user, request, response);
                 return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "Электронная почта подтверждена!"));
-            }
-            else {
+            } else {
                 throw new EmailVerificationCodeException("Введен неправильный код");
             }
-        }
-        else {
+        } else {
             throw new UserDoesNotExistException("Пользователя с данной электронной почтой не существует");
         }
     }
@@ -116,8 +115,7 @@ public class AuthController {
             tokenService.updateToken(token);
             mailService.sendTokenInformationEmail(user.getEmail(), "Подтверждение электронной почты", token, user.getUsername());
             return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "Код был выслан на вашу электронную почту"));
-        }
-        else {
+        } else {
             throw new UserDoesNotExistException("Пользователя с данной электронной почтой не существует");
         }
     }

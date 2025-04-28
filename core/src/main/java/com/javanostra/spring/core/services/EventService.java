@@ -14,6 +14,7 @@ import com.javanostra.spring.core.entities.*;
 import com.javanostra.spring.core.exceptions.BaseCoreException;
 import com.javanostra.spring.core.exceptions.NoSuchCommentException;
 import com.javanostra.spring.core.exceptions.NoSuchEventException;
+import com.javanostra.spring.core.exceptions.NoSuchTagException;
 import com.javanostra.spring.core.specifications.EventSpecification;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,7 @@ import javax.xml.stream.events.Comment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,7 +55,10 @@ public class EventService {
     public Page<Event> findAllEventsRaw(Pageable pageable, Specification<Event> specification) {
         return eventDAO.findAll(specification, pageable);
     }
-
+    @Transactional
+    public List<Event> findAllByTag(String tagName) {
+        return eventDAO.findByTag(tagName);
+    }
     public Event findEventById(Long eventId) throws BaseCoreException {
         return eventDAO.findById(eventId).orElseThrow(NoSuchEventException::new);
     }
@@ -63,6 +68,14 @@ public class EventService {
         FullEventDTO result = mapper.convertValue(event, FullEventDTO.class);
         result.setComments(event.getComments().stream().map(a -> mapper.convertValue(a, CommentDTO.class)).toList());
         return result;
+    }
+
+    public Event getRandEvent(String tagName)
+    {
+        List<Event> l = findAllByTag(tagName);
+        Random rand = new Random();
+        int r = rand.nextInt(l.size());
+        return l.get(r);
     }
 
     @Transactional
@@ -83,7 +96,6 @@ public class EventService {
         eventDAO.save(event);
         return comment;
     }
-
     @Transactional
     public void removeComment(Long eventId, EventComment comment) throws BaseCoreException {
         Event event = eventDAO.findById(eventId).orElseThrow(NoSuchEventException::new);

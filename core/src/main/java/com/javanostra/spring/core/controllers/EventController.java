@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.javanostra.spring.core.dto.*;
 import com.javanostra.spring.core.entities.*;
+import com.javanostra.spring.core.entities.Event;
 import com.javanostra.spring.core.exceptions.*;
+import com.javanostra.spring.core.recommendations.WeightedRandomChoice;
 import com.javanostra.spring.core.services.*;
 import com.javanostra.spring.core.specifications.EventSearchCriteria;
 import com.javanostra.spring.core.specifications.EventSpecification;
@@ -22,10 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.*;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.UUID;
 
 import static org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO;
 
@@ -41,7 +41,7 @@ public class EventController {
     private final FileService fileService;
     private final TagService tagService;
     private final LocationService locationService;
-
+    private final UserRecInterestsService userRecInterestsService;
     ObjectMapper mapper = new ObjectMapper();
 
 
@@ -49,6 +49,16 @@ public class EventController {
 
     {
         objectMapper.registerModule(new Hibernate6Module()); //TODO: move to a bean / class
+    }
+
+    @GetMapping("/Rec")
+    public EventDTO findRec()
+    {
+        User user = userService.getCurrentUser();
+        List<UserRecInterests> interests = userRecInterestsService.findAllById(user.getId());
+        UserRecInterests interest = WeightedRandomChoice.weightedChoice(interests);
+        Event event = eventService.getRandEvent(interest.getInterest());
+        return mapper.convertValue(event, EventDTO.class);
     }
 
     @GetMapping
@@ -139,7 +149,7 @@ public class EventController {
                     }
                 }
                 if(Objects.nonNull(eventDto.getTags())) {
-                    List<Tag> tags = new java.util.ArrayList<>(List.of());
+                    List<Tag> tags = new ArrayList<>(List.of());
                     for(Long tag_id : eventDto.getTags()){
                         tags.add(tagService.findById(tag_id));
                     }
