@@ -58,7 +58,8 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
     private void updatePassword(String password, String email) {
         UserApiService apiService = RetrofitClient.getRetrofit(this).create(UserApiService.class);
-        Call<ResponseDTO> call = apiService.updatePassword(password, email);
+        String code = ""; // TODO:
+        Call<ResponseDTO> call = apiService.updatePassword(password, code, email);
 
         call.enqueue(new Callback<ResponseDTO>() {
             @Override

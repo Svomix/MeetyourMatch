@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="CircleImageViewStyle" parent="Widget.MaterialComponents.ShapeableImageView">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
@@ -123,7 +123,7 @@
 
     <style name="DialogCheckboxStyle" parent="Widget.AppCompat.CompoundButton.CheckBox">
         <item name="android:textColor">@color/textColorPrimaryModern</item>
-        <item name="buttonTint">@color/actionIconColor</item> <!-- Акцентный цвет -->
+        <item name="buttonTint">@color/actionIconColor</item> 
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">8dp</item>
         <item name="android:paddingStart">4dp</item>
@@ -132,7 +132,7 @@
 
     <style name="DialogRadioButtonStyle" parent="Widget.AppCompat.CompoundButton.RadioButton">
         <item name="android:textColor">@color/textColorPrimaryModern</item>
-        <item name="buttonTint">@color/actionIconColor</item> <!-- Акцентный цвет -->
+        <item name="buttonTint">@color/actionIconColor</item> 
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">8dp</item>
         <item name="android:paddingStart">4dp</item>
@@ -140,49 +140,82 @@
     </style>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- ... другие атрибуты ... -->
-        <!-- Применяем стиль для диалогов -->
+        
+        
         <item name="alertDialogTheme">@style/AppAlertDialogStyle</item>
     </style>
 
-    <!-- Стиль для AlertDialog -->
+    
     <style name="AppAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <!-- Цвет фона диалога -->
-        <item name="android:background">@color/backgroundColorModern</item> <!-- Ваш темный фон -->
-        <!-- Цвет текста заголовка -->
-        <item name="android:textColorPrimary">@color/textColorPrimaryModern</item> <!-- Ваш основной цвет текста -->
-        <!-- Цвет текста сообщения/элементов -->
-        <item name="android:textColorSecondary">@color/textColorSecondaryModern</item> <!-- Ваш вторичный цвет текста -->
-        <!-- Цвет кнопок (позитивной, негативной, нейтральной) -->
-        <item name="colorAccent">@color/actionIconColor</item> <!-- Ваш акцентный цвет (желто-оранжевый) -->
-        <item name="android:textColorAlertDialogListItem">@color/textColorPrimaryModern</item> <!-- Цвет текста в списках (для MultiChoice) -->
+        
+        <item name="android:background">@color/backgroundColorModern</item> 
+        
+        <item name="android:textColorPrimary">@color/textColorPrimaryModern</item> 
+        
+        <item name="android:textColorSecondary">@color/textColorSecondaryModern</item> 
+        
+        <item name="colorAccent">@color/actionIconColor</item> 
+        <item name="android:textColorAlertDialogListItem">@color/textColorPrimaryModern</item> 
 
-        <!-- Стиль для кнопок -->
+        
         <item name="buttonBarPositiveButtonStyle">@style/AlertDialogButtonStyle</item>
         <item name="buttonBarNegativeButtonStyle">@style/AlertDialogButtonStyle</item>
         <item name="buttonBarNeutralButtonStyle">@style/AlertDialogButtonStyle</item>
 
-        <!-- Стиль для CheckBox и RadioButton (применяем акцентный цвет) -->
+        
         <item name="android:checkboxStyle">@style/AlertDialogCheckboxStyle</item>
         <item name="android:radioButtonStyle">@style/AlertDialogRadioButtonStyle</item>
 
     </style>
 
-    <!-- Стиль для кнопок диалога -->
+    
     <style name="AlertDialogButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@color/actionIconColor</item> <!-- Акцентный цвет текста кнопок -->
+        <item name="android:textColor">@color/actionIconColor</item> 
     </style>
 
-    <!-- Стиль для CheckBox -->
+    
     <style name="AlertDialogCheckboxStyle" parent="Widget.AppCompat.CompoundButton.CheckBox">
         <item name="android:textColor">@color/textColorPrimaryModern</item>
-        <item name="buttonTint">@color/actionIconColor</item> <!-- Цвет "галочки" -->
+        <item name="buttonTint">@color/actionIconColor</item> 
     </style>
 
-    <!-- Стиль для RadioButton -->
+    
     <style name="AlertDialogRadioButtonStyle" parent="Widget.AppCompat.CompoundButton.RadioButton">
         <item name="android:textColor">@color/textColorPrimaryModern</item>
-        <item name="buttonTint">@color/actionIconColor</item> <!-- Цвет "точки" -->
+        <item name="buttonTint">@color/actionIconColor</item> 
+    </style>
+
+    <style name="ModernButtonStyle" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:background">@drawable/button_background</item>
+        <item name="android:textColor">@color/buttonTextColorPrimary</item> 
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:shadowColor">#80000000</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">3</item>
+        <item name="android:shadowRadius">6</item>
+        <item name="android:gravity">center_vertical|start</item> 
+    </style>
+
+    <style name="ModernDangerButtonStyle" parent="ModernButtonStyle">
+        <item name="android:background">@drawable/button_background_danger</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    
+    <style name="ModernAcceptButtonStyle" parent="ModernButtonStyle">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:drawableTint" tools:targetApi="m">@color/white</item>
+    </style>
+
+    <style name="ModernSecondaryButtonStyle" parent="ModernButtonStyle">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:drawableTint" tools:targetApi="m">@color/white</item>
     </style>
 
 </resources>

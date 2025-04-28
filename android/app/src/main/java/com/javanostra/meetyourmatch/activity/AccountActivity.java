@@ -1,7 +1,5 @@
 package com.javanostra.meetyourmatch.activity;
 
-import static androidx.fragment.app.DialogFragment.STYLE_NO_FRAME;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -223,30 +221,30 @@ public class  AccountActivity extends AppCompatActivity {
     private void performGetUserTags(Long userId) {
         UserApiService apiServiceAcc = RetrofitClient.getRetrofit(this).create(UserApiService.class);
 
-        apiServiceAcc.getUserTags(userId).enqueue(new Callback<List<Tag>>() {
-            @Override
-            public void onResponse(Call<List<Tag>> call, Response<List<Tag>> response) {
-                if (response.isSuccessful()) {
-                    Log.d("GetUserTags", "Successful: " + response.message());
-                    currentUserTags = response.body();
-
-                    StringBuilder builder = new StringBuilder();
-                    int size = Math.min(5, currentUserTags.size());
-                    for (int i = 0; i < size; i++) {
-                        builder.append("#").append(currentUserTags.get(i).getName());
-                        if (i != size-1) builder.append(", ");
-                    }
-                    tagsShow.setText(builder.toString());
-                } else {
-                    Log.e("GetUserTags", "Error: " + response.message() + response.errorBody());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Tag>> call, Throwable t) {
-                Log.e("GetUserTags", "Network error: " + t.getMessage());
-            }
-        });
+//        apiServiceAcc.getUserTags(userId).enqueue(new Callback<List<Tag>>() {
+//            @Override
+//            public void onResponse(Call<List<Tag>> call, Response<List<Tag>> response) {
+//                if (response.isSuccessful()) {
+//                    Log.d("GetUserTags", "Successful: " + response.message());
+//                    currentUserTags = response.body();
+//
+//                    StringBuilder builder = new StringBuilder();
+//                    int size = Math.min(5, currentUserTags.size());
+//                    for (int i = 0; i < size; i++) {
+//                        builder.append("#").append(currentUserTags.get(i).getName());
+//                        if (i != size-1) builder.append(", ");
+//                    }
+//                    tagsShow.setText(builder.toString());
+//                } else {
+//                    Log.e("GetUserTags", "Error: " + response.message() + response.errorBody());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<Tag>> call, Throwable t) {
+//                Log.e("GetUserTags", "Network error: " + t.getMessage());
+//            }
+//        });
     }
 
     public void performUploadImage(Uri fileUri) {
@@ -261,7 +259,7 @@ public class  AccountActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     try {
                         String responseBody = response.body().string();
-                        performSetImage(responseBody);
+                        //performSetImage(responseBody);
                         Log.d("ImageAPI","Upload success: " + response.message());
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -305,23 +303,23 @@ public class  AccountActivity extends AppCompatActivity {
         });
     }
 
-    private void performSetImage(String imageUrl) {
-        AccountApiService apiServiceAcc = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
-
-        apiServiceAcc.setImage(imageUrl).enqueue(new Callback<ResponseDTO>() {
-            @Override
-            public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
-                if (response.isSuccessful()) {
-                    Log.d("SetAvatarImage", "Success: " + response.body().getCode());
-                } else {
-                    Log.e("SetAvatarImage", "Error: " + response.body().getCode() + " " + response.body().getMessage());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseDTO> call, Throwable t) {
-                Log.e("SetAvatarImage","Network error: " + t.getMessage());
-            }
-        });
-    }
+//    private void performSetImage(String imageUrl) {
+//        AccountApiService apiServiceAcc = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
+//
+//        apiServiceAcc.setImage(imageUrl).enqueue(new Callback<ResponseDTO>() {
+//            @Override
+//            public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+//                if (response.isSuccessful()) {
+//                    Log.d("SetAvatarImage", "Success: " + response.body().getCode());
+//                } else {
+//                    Log.e("SetAvatarImage", "Error: " + response.body().getCode() + " " + response.body().getMessage());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseDTO> call, Throwable t) {
+//                Log.e("SetAvatarImage","Network error: " + t.getMessage());
+//            }
+//        });
+//    }
 }

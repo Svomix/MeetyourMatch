@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet"
+    android:orientation="vertical"
+    android:padding="24dp"
+    app:layout_behavior="@string/bottom_sheet_behavior"
+    tools:context=".fragment.SearchUsersBottomSheetFragment">
+
+    <EditText
+        android:id="@+id/editTextSearchUsers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_border_background"
+        android:drawableStart="@drawable/chosen_search"
+        android:drawablePadding="12dp"
+        android:fontFamily="@font/open_sans"
+        android:hint="@string/search_user_hint"
+        android:imeOptions="actionSearch"
+        android:inputType="textFilter"
+        android:padding="14dp"
+        android:textColor="@color/textColorPrimaryModern"
+        android:textColorHint="@color/textColorTertiaryModern"
+        android:textSize="16sp"
+        app:drawableTint="@color/textColorSecondaryModern" />
+
+    <ProgressBar
+        android:id="@+id/progressBarSearchUsers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/colorPrimaryAction"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textViewEmptyState"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="24dp"
+        android:text="@string/users_not_found"
+        android:textColor="@color/textColorSecondaryModern"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewAllUsers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="400dp"
+        android:minHeight="200dp"
+        android:visibility="visible"
+        tools:listitem="@layout/item_user_search" />
+
+</LinearLayout>

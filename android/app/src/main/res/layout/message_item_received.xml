@@ -9,8 +9,6 @@
     android:paddingStart="8dp"
     android:paddingEnd="64dp">
 
-    <!-- Optional: Add ImageView for sender avatar here if desired -->
-
     <TextView
         android:id="@+id/text_message_body"
         android:text="hi man, how are you?"
@@ -20,7 +18,7 @@
         android:maxWidth="260dp"
         android:padding="12dp"
         android:elevation="2dp"
-        android:textColor="#000000"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,6 +29,7 @@
         android:layout_height="wrap_content"
         android:textSize="10sp"
         android:layout_marginStart="4dp"
+        android:textColor="@color/textColorTertiaryModern"
         app:layout_constraintStart_toEndOf="@id/text_message_body"
         app:layout_constraintBottom_toBottomOf="@id/text_message_body"
         tools:ignore="SmallSp" />

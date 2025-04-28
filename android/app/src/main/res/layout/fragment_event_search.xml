@@ -16,6 +16,7 @@
         android:background="@drawable/round_border_background"
         android:drawableStart="@drawable/ic_baseline_search_24"
         android:drawablePadding="4dp"
+        android:fontFamily="@font/open_sans"
         android:hint="Поиск..."
         android:inputType="text"
         android:paddingStart="16dp"

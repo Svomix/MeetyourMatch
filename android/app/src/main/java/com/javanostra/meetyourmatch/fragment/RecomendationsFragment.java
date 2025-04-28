@@ -52,7 +52,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RecomendationsFragment extends Fragment implements GestureDetector.OnGestureListener {
-    private List<Event> events;
+    private Event event;
     private int currentEventIndex = 0;
     private UserProfileDTO currentUser;
 
@@ -81,12 +81,10 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
         headers.put("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) " +
                 "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Mobile Safari/537.36");
 
-        fetchAllEvents();
+        fetchOneEvent();
         fetchAccountInfo();
 
-        displayCurrentEvent();
-
-        event_full_description.setOnClickListener(v -> handleDescription(events.get(currentEventIndex)));
+        event_full_description.setOnClickListener(v -> handleDescription(event));
         event_refresh.setOnClickListener(v -> handleRefresh());
         like_button.setOnClickListener(v -> handleLike());
         dislike_button.setOnClickListener(v -> handleDislike());
@@ -103,8 +101,8 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
     }
 
     private void displayCurrentEvent() {
-        if (events != null && currentEventIndex < events.size()) {
-            Event currentEvent = events.get(currentEventIndex);
+        if (event != null) {
+            Event currentEvent = event;
             event_title.setText(currentEvent.getTitle());
             event_description.setText(currentEvent.getDescription());
             GlideUrl glideUrl = new GlideUrl(
@@ -150,7 +148,7 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
         currentEventIndex++;
         showActionImage(R.drawable.ic_baseline_refresh_24);
 
-        displayCurrentEvent();
+        fetchOneEvent();
     }
 
     public interface OnRecommendationsInteractionListener {
@@ -168,21 +166,21 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
     }
 
     private void handleLike() {
-        fetchSwitchLike(events.get(currentEventIndex).getId(), true);
-        fetchSwitchDislike(events.get(currentEventIndex).getId(), false);
+        fetchSwitchLike(event.getId(), true);
+        fetchSwitchDislike(event.getId(), false);
         currentEventIndex++;
         showActionImage(R.drawable.ic_baseline_thumb_up_24);
 
-        displayCurrentEvent();
+        fetchOneEvent();
     }
 
     private void handleDislike() {
-        fetchSwitchDislike(events.get(currentEventIndex).getId(), true);
-        fetchSwitchLike(events.get(currentEventIndex).getId(), false);
+        fetchSwitchDislike(event.getId(), true);
+        fetchSwitchLike(event.getId(), false);
         currentEventIndex++;
         showActionImage(R.drawable.ic_baseline_thumb_down_24);
 
-        displayCurrentEvent();
+        fetchOneEvent();
     }
 
     @Override
@@ -271,7 +269,7 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
     }
 
     private void animateSwipeToDown(View view) {
-        handleDescription(events.get(currentEventIndex));
+        handleDescription(event);
         view.animate()
                 .translationY(view.getHeight() / 3)
                 .setDuration(400)
@@ -330,21 +328,21 @@ public class RecomendationsFragment extends Fragment implements GestureDetector.
                 .start();
     }
 
-    public void fetchAllEvents() {
-        EventApiService apiService = RetrofitClient.getRetrofit(getActivity().getApplicationContext()).create(EventApiService.class);
+    public void fetchOneEvent() {
+        EventApiService apiService = RetrofitClient.getRetrofit(getContext()).create(EventApiService.class);
 
-        apiService.findAllEventsPageout(0, 15).enqueue(new Callback<List<Event>>() {
+        apiService.findRec().enqueue(new Callback<Event>() {
             @Override
-            public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
+            public void onResponse(Call<Event> call, Response<Event> response) {
                 if (response.isSuccessful()) {
-                    events = response.body();
+                    event = response.body();
                     displayCurrentEvent();
                 } else {
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Event>> call, Throwable t) {
+            public void onFailure(Call<Event> call, Throwable t) {
             }
         });
     }

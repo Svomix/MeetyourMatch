@@ -27,10 +27,12 @@ import com.javanostra.meetyourmatch.persistance.cookie.CookieManager;
 import com.javanostra.meetyourmatch.persistance.entity.Element;
 import com.javanostra.meetyourmatch.persistance.entity.Interest;
 import com.javanostra.meetyourmatch.persistance.entity.Tag;
+import com.javanostra.meetyourmatch.persistance.entity.UserInterest;
 import com.javanostra.meetyourmatch.persistance.entity.UserProfileDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -123,10 +125,10 @@ public class InterestSelectionActivity extends AppCompatActivity {
 
     private void performGetUserInterests() {
         AccountApiService apiServiceAcc = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
-        Call<List<Interest>> firstCall = apiServiceAcc.getMyInterests();
-        firstCall.enqueue(new Callback<List<Interest>>() {
+        Call<Set<UserInterest>> firstCall = apiServiceAcc.getMyInterests();
+        firstCall.enqueue(new Callback<Set<UserInterest>>() {
             @Override
-            public void onResponse(Call<List<Interest>> call, Response<List<Interest>> response) {
+            public void onResponse(Call<Set<UserInterest>> call, Response<Set<UserInterest>> response) {
                 if (response.isSuccessful()) {
                     response.body().forEach(System.out::println);
                     Toast.makeText(InterestSelectionActivity.this, R.string.successfulInterest, Toast.LENGTH_SHORT).show();
@@ -137,18 +139,18 @@ public class InterestSelectionActivity extends AppCompatActivity {
                 }
             }
             @Override
-            public void onFailure(Call<List<Interest>> call, Throwable t) {
+            public void onFailure(Call<Set<UserInterest>> call, Throwable t) {
                 Toast.makeText(InterestSelectionActivity.this, R.string.connectionError + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void setAllUserInterests(List<Interest> userInterests) {
+    private void setAllUserInterests(Set<UserInterest> userInterests) {
         int size = adapter.getItemCount();
         for (int i = 0; i < size; ++i) {
             boolean hasInterest = false;
-            for (int j = 0; j < userInterests.size(); ++j) {
-                if (userInterests.get(j).getName().equals(adapter.getElement(i).getName())) {
+            for (UserInterest interest : userInterests) {
+                if (interest.getName().equals(adapter.getElement(i).getName())) {
                     hasInterest = true;
                     break;
                 }

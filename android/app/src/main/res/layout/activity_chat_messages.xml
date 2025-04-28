@@ -2,109 +2,130 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    android:foregroundTint="#161616"
     tools:context=".activity.ChatMessagesActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
+    <include
+        android:id="@+id/custom_toolbar_layout"
+        layout="@layout/chat_toolbar_custom"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_chat"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:titleTextColor="@color/white"
-            app:navigationIcon="?attr/homeAsUpIndicator" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/messagesRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/blockStatusTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/custom_toolbar_layout" />
 
-    </com.google.android.material.appbar.AppBarLayout>
+    <TextView
+        android:id="@+id/blockStatusTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/red"
+        android:fontFamily="@font/open_sans"
+        android:gravity="center"
+        android:padding="12dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/inputLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="@string/chat_interaction_blocked"
+        tools:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/inputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/bars"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:minHeight="56dp"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <EditText
+            android:id="@+id/messageEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/round_border_background"
+            android:fontFamily="@font/open_sans"
+            android:hint="@string/hint_enter_message"
+            android:inputType="textMultiLine|textCapSentences"
+            android:maxHeight="120dp"
+            android:minHeight="48dp"
+            android:paddingStart="16dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="10dp"
+            android:textColor="@color/textColorPrimaryModern"
+            android:textColorHint="@color/textColorTertiaryModern"
+            android:textSize="16sp" />
+
+        <ImageButton
+            android:id="@+id/sendButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/desc_send_message"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/baseline_send_24"
+            app:tint="@color/colorPrimaryAction" />
+
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:indeterminateTint="@color/actionIconColor"
+        android:progressTintMode="add"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/inputLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/custom_toolbar_layout"
+        app:layout_constraintVertical_bias="0.45"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/statusTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/sansation_bold"
+        android:textColor="@color/colorPrimaryAction"
+        android:textSize="12sp"
         android:visibility="gone"
-        android:textColor="?attr/colorError"
-        app:layout_constraintTop_toBottomOf="@id/progressBar"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="Connecting..."
-        tools:visibility="visible"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/messagesRecyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:paddingBottom="8dp"
-        android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/statusTextView"
-        app:layout_constraintBottom_toTopOf="@id/view_divider"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <View
-        android:id="@+id/view_divider"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintBottom_toTopOf="@id/layout_chatbox"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <!-- Layout for message input -->
-    <LinearLayout
-        android:id="@+id/layout_chatbox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:background="#FFFFFF"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <EditText
-            android:id="@+id/messageEditText"
-            android:hint="Enter message"
-            android:background="@android:color/transparent"
-            android:layout_gravity="center"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:maxLines="6"/>
-
-        <ImageButton
-            android:id="@+id/sendButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@android:drawable/ic_menu_send"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Send Message"
-            app:tint="?attr/colorPrimary" />
-
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@id/progressBar"
+        tools:text="Загрузка..."
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

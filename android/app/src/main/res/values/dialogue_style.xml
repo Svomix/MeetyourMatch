@@ -1,9 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="CustomDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+    <style name="CustomDialogButton.Positive" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/colorPrimaryAction</item>
+        <item name="rippleColor">@color/buttonColorFocused</item>
+    </style>
+
+    <style name="CustomDialogButton.NegativeNeutral" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/textColorSecondaryModern</item>
+        <item name="rippleColor">@color/buttonColorFocused</item>
+    </style>
+
+    <style name="CustomDialogBodyText" parent="MaterialAlertDialog.MaterialComponents.Body.Text">
+        <item name="android:textColor">@color/textColorSecondaryModern</item>
+    </style>
+
+    <style name="CustomDialogTheme" parent="Theme.MaterialComponents.Dialog.Alert">
+        <!--
+            Это позволяет задать свой фон с закругленными углами
+            android:background="@drawable/dialog_rounded_background"
+            dialog_rounded_background - shape drawable с цветом @color/backgroundColorModern
+        -->
         <item name="android:windowBackground">@android:color/transparent</item>
+
         <item name="android:windowNoTitle">true</item>
+
         <item name="android:windowMinWidthMajor">90%</item>
         <item name="android:windowMinWidthMinor">90%</item>
+
+        <item name="android:backgroundTint">@color/backgroundColorModern</item>
+
+        <item name="android:textColorPrimary">@color/textColorPrimaryModern</item>
+        <item name="android:textColorSecondary">@color/textColorSecondaryModern</item>
+
+        <item name="materialAlertDialogBodyTextStyle">@style/CustomDialogBodyText</item>
+
+        <item name="colorAccent">@color/colorPrimaryAction</item>
+        <item name="colorPrimary">@color/colorPrimaryAction</item>
+
+        <item name="buttonBarPositiveButtonStyle">@style/CustomDialogButton.Positive</item>
+        <item name="buttonBarNegativeButtonStyle">@style/CustomDialogButton.NegativeNeutral</item>
+        <item name="buttonBarNeutralButtonStyle">@style/CustomDialogButton.NegativeNeutral</item>
     </style>
 </resources>

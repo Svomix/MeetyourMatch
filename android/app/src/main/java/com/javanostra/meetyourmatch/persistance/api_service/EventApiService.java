@@ -20,6 +20,9 @@ import retrofit2.http.Query;
 
 public interface EventApiService {
 
+    @GET("/api/v1/events/recAndroid")
+    Call<Event> findRec();
+
     @GET("/api/v1/events")
     Call<PagedResponse<Event>> findAllEvents(
             @Query("offset") Integer offset,

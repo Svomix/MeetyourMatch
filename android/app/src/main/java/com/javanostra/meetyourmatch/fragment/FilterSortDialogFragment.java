@@ -26,6 +26,7 @@ import androidx.fragment.app.DialogFragment;
 import com.javanostra.meetyourmatch.R;
 import com.javanostra.meetyourmatch.persistance.entity.Interest;
 import com.javanostra.meetyourmatch.persistance.entity.Tag;
+import com.javanostra.meetyourmatch.persistance.entity.UserInterest;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public class FilterSortDialogFragment extends DialogFragment {
             boolean currentCalendar,
             EventSearchFragment.SortCriteria currentSort,
             Set<Long> currentTagIds,
-            List<Interest> availableTagsList,
+            List<UserInterest> availableTagsList,
             FilterSortListener listener) {
 
         FilterSortDialogFragment fragment = new FilterSortDialogFragment();
@@ -83,7 +84,7 @@ public class FilterSortDialogFragment extends DialogFragment {
         args.putSerializable(ARG_CURRENT_SORT, currentSort);
         args.putSerializable(ARG_CURRENT_TAG_IDS, new HashSet<>(currentTagIds));
         if (availableTagsList instanceof ArrayList) {
-            args.putSerializable(ARG_AVAILABLE_TAGS, (ArrayList<Interest>)availableTagsList);
+            args.putSerializable(ARG_AVAILABLE_TAGS, (ArrayList<UserInterest>)availableTagsList);
         } else {
             args.putSerializable(ARG_AVAILABLE_TAGS, new ArrayList<>(availableTagsList));
         }
@@ -187,8 +188,8 @@ public class FilterSortDialogFragment extends DialogFragment {
         Dialog dialog = getDialog();
         if (dialog != null && dialog.getWindow() != null) {
             int width = (int)(getResources().getDisplayMetrics().widthPixels * 0.90);
-            // int height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            // dialog.getWindow().setLayout(width, height);
+            
+            
             dialog.getWindow().setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
     }

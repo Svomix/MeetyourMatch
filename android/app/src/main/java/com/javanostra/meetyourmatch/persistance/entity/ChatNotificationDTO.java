@@ -1,13 +1,14 @@
 package com.javanostra.meetyourmatch.persistance.entity;
 
 import com.google.gson.annotations.SerializedName;
-import com.javanostra.meetyourmatch.persistance.entity.ChatMessage;
+
+import java.sql.Timestamp;
 import java.util.Date;
 
 public class ChatNotificationDTO {
 
     @SerializedName("id")
-    private String id;
+    private Long id;
     @SerializedName("senderId")
     private String senderId;
     @SerializedName("recipientId")
@@ -15,12 +16,12 @@ public class ChatNotificationDTO {
     @SerializedName("content")
     private String content;
     @SerializedName("timestamp")
-    private Date timestamp;
+    private Timestamp timestamp;
 
     public ChatNotificationDTO() {}
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
     public String getSenderId() { return senderId; }
     public void setSenderId(String senderId) { this.senderId = senderId; }
     public String getRecipientId() { return recipientId; }
@@ -28,12 +29,13 @@ public class ChatNotificationDTO {
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
     public Date getTimestamp() { return timestamp; }
-    public void setTimestamp(Date timestamp) { this.timestamp = timestamp; }
+    public void setTimestamp(Timestamp timestamp) { this.timestamp = timestamp; }
 
     public ChatMessage toChatMessage() {
-        ChatMessage msg = new ChatMessage(this.senderId, this.recipientId, this.content);
+        ChatMessage msg = new ChatMessage(this.senderId, this.recipientId, this.content, null);
         msg.setId(this.id);
-        msg.setTimestamp(this.timestamp != null ? this.timestamp : new Date()); // Handle null timestamp
+        msg.setTimestamp(this.timestamp != null ? this.timestamp : new Timestamp(new Date().getTime()));
+        //msg.setTimestamp(this.timestamp);
         return msg;
     }
 

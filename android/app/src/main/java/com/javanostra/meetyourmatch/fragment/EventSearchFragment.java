@@ -41,8 +41,10 @@ import com.javanostra.meetyourmatch.persistance.api_service.EventApiService;
 import com.javanostra.meetyourmatch.persistance.api_service.PagedResponse;
 import com.javanostra.meetyourmatch.persistance.entity.Event;
 import com.javanostra.meetyourmatch.persistance.entity.Interest;
+import com.javanostra.meetyourmatch.persistance.entity.UserInterest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -68,7 +70,7 @@ public class EventSearchFragment extends Fragment
 
     private List<Event> allEvents = new ArrayList<>();
     private List<Event> filteredAndSortedEvents = new ArrayList<>();
-    private List<Interest> availableTags = new ArrayList<>();
+    private List<UserInterest> availableTags = new ArrayList<>();
     private boolean tagsFetched = false;
 
     private String currentSearchQuery = "";
@@ -105,7 +107,7 @@ public class EventSearchFragment extends Fragment
         buttonNextPage = view.findViewById(R.id.button_next_page);
         textPageInfo = view.findViewById(R.id.text_page_info);
         scrollViewEvents = view.findViewById(R.id.scrollViewEvents);
-        //progressBar = view.findViewById(R.id.progressBar);
+        
 
         setupListeners();
         calculateItemSize();
@@ -154,7 +156,7 @@ public class EventSearchFragment extends Fragment
         if (!tagsFetched && getContext() != null) {
             Toast.makeText(getContext(), "Загрузка списка тегов...", Toast.LENGTH_SHORT).show();
             fetchAvailableTags();
-            // return;
+            
         }
 
         FilterSortDialogFragment dialogFragment = FilterSortDialogFragment.newInstance(
@@ -190,7 +192,7 @@ public class EventSearchFragment extends Fragment
     }
 
     private void fetchAllEvents() {
-        // TODO: showLoading(true);
+        
         if (getContext() == null) return;
 
         EventApiService apiService = RetrofitClient.getRetrofit(getContext()).create(EventApiService.class);
@@ -204,7 +206,7 @@ public class EventSearchFragment extends Fragment
                             return;
                         }
 
-                        // TODO: showLoading(false);
+                        
                         if (response.isSuccessful() && response.body() != null) {
                             allEvents = response.body().getContent();
                             Log.d(TAG, "Fetched " + allEvents.size() + " events successfully.");
@@ -224,7 +226,7 @@ public class EventSearchFragment extends Fragment
                             return;
                         }
 
-                        // TODO: showLoading(false);
+                        
                         Log.e(TAG, "Failure fetching events", t);
                         Toast.makeText(getContext(), "Ошибка сети при загрузке событий", Toast.LENGTH_SHORT).show();
                         allEvents.clear();
@@ -237,16 +239,16 @@ public class EventSearchFragment extends Fragment
         if (getContext() == null || tagsFetched) return;
 
         AccountApiService apiServiceAcc = RetrofitClient.getRetrofit(getContext()).create(AccountApiService.class);
-        apiServiceAcc.getMyInterests().enqueue(new Callback<List<Interest>>() {
+        apiServiceAcc.getMyInterests().enqueue(new Callback<Set<UserInterest>>() {
             @Override
-            public void onResponse(Call<List<Interest>> call, Response<List<Interest>> response) {
+            public void onResponse(Call<Set<UserInterest>> call, Response<Set<UserInterest>> response) {
                 if (!isAdded() || getContext() == null || getView() == null) {
                     Log.w(TAG, "fetchAvailableTags onResponse: Fragment not attached or view destroyed.");
                     return;
                 }
 
                 if (response.isSuccessful() && response.body() != null) {
-                    availableTags = response.body();
+                    availableTags = new ArrayList<UserInterest>(response.body());
                     tagsFetched = true;
                     Log.d(TAG, "Fetched " + availableTags.size() + " tags.");
                 } else {
@@ -254,7 +256,7 @@ public class EventSearchFragment extends Fragment
                 }
             }
             @Override
-            public void onFailure(@NonNull Call<List<Interest>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<Set<UserInterest>> call, @NonNull Throwable t) {
                 if (!isAdded() || getContext() == null || getView() == null) {
                     Log.w(TAG, "fetchAvailableTags onFailure: Fragment not attached or view destroyed.");
                     return;
@@ -317,19 +319,19 @@ public class EventSearchFragment extends Fragment
         }
 
         if (!selectedTagIds.isEmpty()) {
-//   TODO         if (event.getTags() == null || event.getTags().isEmpty()) {
-//                return false; // У события нет тегов, а фильтр по тегам активен
-//            }
-//            boolean tagMatchFound = false;
-//            for (Tag eventTag : event.getTags()) {
-//                if (selectedTagIds.contains(eventTag.getId())) {
-//                    tagMatchFound = true;
-//                    break;
-//                }
-//            }
-//            if (!tagMatchFound) {
-//                return false;
-//            }
+
+
+
+
+
+
+
+
+
+
+
+
+
         }
 
         return true;
@@ -431,7 +433,7 @@ public class EventSearchFragment extends Fragment
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.width = itemSize;
             params.height = GridLayout.LayoutParams.WRAP_CONTENT;
-            // params.setMargins(dpToPx(4), dpToPx(4), dpToPx(4), dpToPx(4));
+            
             eventItem.setLayoutParams(params);
 
             CardView eventCardImage = eventItem.findViewById(R.id.cardView);
@@ -454,17 +456,17 @@ public class EventSearchFragment extends Fragment
 
             eventTitle.setText(event.getTitle());
 
-//        TODO    if (event.getTags() != null && !event.getTags().isEmpty()) {
-//                String tagsString = event.getTags().stream()
-//                        .map(Tag::getName) // Получаем имя каждого тега
-//                        .filter(name -> name != null && !name.isEmpty())
-//                        .limit(3) // Ограничиваем количество для отображения
-//                        .collect(Collectors.joining(", ")); // Соединяем через запятую
-//                eventTagsText.setText(tagsString);
-//                eventTagsText.setVisibility(View.VISIBLE);
-//            } else {
-//                eventTagsText.setVisibility(View.GONE);
-//            }
+
+
+
+
+
+
+
+
+
+
+
 
 
             eventItem.setOnClickListener(v -> openEventDetails(event));

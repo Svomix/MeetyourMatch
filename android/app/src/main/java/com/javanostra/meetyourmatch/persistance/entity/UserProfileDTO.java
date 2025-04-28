@@ -12,6 +12,11 @@ public class UserProfileDTO {
     private String description;
     private String avatarPath;
 
+    public UserProfileDTO(String username, String email) {
+        this.username = username;
+        this.email = email;
+    }
+
     public Long getId() {
         return id;
     }

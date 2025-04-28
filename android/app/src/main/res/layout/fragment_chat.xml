@@ -4,18 +4,106 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
     tools:context=".fragment.ChatFragment">
+
+    <FrameLayout
+        android:id="@+id/search_container"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/round_border_background"
+        android:paddingStart="12dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:id="@+id/et_chat_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/transparent"
+            android:drawableStart="@drawable/ic_baseline_search_24"
+            android:drawablePadding="4dp"
+            android:fontFamily="@font/open_sans"
+            android:hint="@string/search_chats_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1"
+            android:paddingStart="4dp"
+            android:paddingEnd="30dp"
+            android:textColor="@color/textColorPrimaryModern"
+            android:textColorHint="@color/textColorTertiaryModern" />
+
+        <ImageButton
+            android:id="@+id/ib_clear_search"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="end|center_vertical"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/desc_clear_search"
+            android:src="@drawable/baseline_close_24"
+            android:visibility="gone"
+            app:tint="@color/textColorSecondaryModern" />
+
+    </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chatRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:clipToPadding="false"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_container"
+        tools:listitem="@layout/chat_list_item" />
+
+    <TextView
+        android:id="@+id/empty_view_chat_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_chats_found"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/textColorSecondaryModern"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_container"
+        tools:visibility="visible" />
+
+    <ProgressBar
+        android:id="@+id/progressBar_chat_list"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_container"
+        tools:visibility="visible" />
+
+    <ImageButton
+        android:id="@+id/fab_new_chat"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/round_border_background"
+        android:contentDescription="@string/desc_new_chat"
+        android:elevation="6dp"
+        android:padding="12dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/baseline_person_add_24"
+        app:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
