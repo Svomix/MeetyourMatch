@@ -57,42 +57,49 @@ public class EventController {
     }
 
     @GetMapping("/recAndroid")
-    public EventDTO findRecAndroid() {
+    public ResponseEntity<EventDTO> findRecAndroid() {
         User user = userService.getCurrentUser();
-        List<UserRecInterests> interests = userRecInterestsService.findAllById(user.getId());
-        if (interests.isEmpty()) {
-            for (Tag tag : tagService.findAll()) {
-                userRecInterestsService.save(UserRecInterests.builder().user_id(user.getId()).interest(tag.getName()).weight(0.1).build());
+        if (Objects.nonNull(user)) {
+            List<UserRecInterests> interests = userRecInterestsService.findAllById(user.getId());
+            if (interests.isEmpty()) {
+                for (Tag tag : tagService.findAll()) {
+                    userRecInterestsService.save(UserRecInterests.builder().user_id(user.getId()).interest(tag.getName()).weight(0.1).build());
+                }
             }
+            UserRecInterests interest = WeightedRandomChoice.weightedChoice(interests);
+            Event event = eventService.getRandEvent(interest.getInterest());
+            EventDTO eventDTO = mapper.convertValue(event, EventDTO.class);
+            eventDTO.setUserAction(userActionsService.getUserEventActionsE(event, user));
+            eventDTO.setUserActionCounters(userActionsService.getEventCounters(event));
+            return ResponseEntity.ok(eventDTO);
         }
-        UserRecInterests interest = WeightedRandomChoice.weightedChoice(interests);
-        Event event = eventService.getRandEvent(interest.getInterest());
-        EventDTO eventDTO = mapper.convertValue(event, EventDTO.class);
-        eventDTO.setUserAction(userActionsService.getUserEventActionsE(event, user));
-        eventDTO.setUserActionCounters(userActionsService.getEventCounters(event));
-        return eventDTO;
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
 
     @GetMapping("/recWeb")
-    public Page<EventDTO> findRecWeb() {
+    public ResponseEntity<Page<EventDTO>> findRecWeb() {
         User user = userService.getCurrentUser();
-        List<UserRecInterests> interests = userRecInterestsService.findAllById(user.getId());
-        if (interests.isEmpty()) {
-            for (Tag tag : tagService.findAll()) {
-                userRecInterestsService.save(UserRecInterests.builder().user_id(user.getId()).interest(tag.getName()).weight(0.1).build());
+        if (Objects.nonNull(user)) {
+            List<UserRecInterests> interests = userRecInterestsService.findAllById(user.getId());
+            if (interests.isEmpty()) {
+                for (Tag tag : tagService.findAll()) {
+                    userRecInterestsService.save(UserRecInterests.builder().user_id(user.getId()).interest(tag.getName()).weight(0.1).build());
+                }
+                interests = userRecInterestsService.findAllById(user.getId());
             }
-        }
-        List<UserRecInterests> recInterests = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            recInterests.add(WeightedRandomChoice.weightedChoice(interests));
-        }
-        List<Event> events = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 2; j++) {
-                events.add(eventService.getRandEvent(recInterests.get(i).getInterest()));
+            List<UserRecInterests> recInterests = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                recInterests.add(WeightedRandomChoice.weightedChoice(interests));
             }
+            List<Event> events = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 2; j++) {
+                    events.add(eventService.getRandEvent(recInterests.get(i).getInterest()));
+                }
+            }
+            return ResponseEntity.ok(userActionsService.populateUserActions(new PageImpl<>(events), user));
         }
-        return userActionsService.populateUserActions(new PageImpl<>(events), user);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
 
     @GetMapping
