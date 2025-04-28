@@ -39,6 +39,7 @@ public class EventService {
     private final EventAttributeValueDAO eventAttributeValueDAO;
     private final EventCommentDAO eventCommentDAO;
     //private final AttributeDAO attributeDAO;
+    private final TagService tagService;
     private final TagDAO tagDAO;
 
     ObjectMapper mapper = new ObjectMapper();
@@ -57,7 +58,8 @@ public class EventService {
     }
     @Transactional
     public List<Event> findAllByTag(String tagName) {
-        return eventDAO.findByTag(tagName);
+        Tag t = tagDAO.findByName(tagName);
+        return eventDAO.findAllByTagId(t.getId());
     }
     public Event findEventById(Long eventId) throws BaseCoreException {
         return eventDAO.findById(eventId).orElseThrow(NoSuchEventException::new);

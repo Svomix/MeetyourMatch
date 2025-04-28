@@ -4,6 +4,7 @@ import com.javanostra.spring.core.dto.ConfirmationTokenDTO;
 import com.javanostra.spring.core.dto.NewUserDTO;
 import com.javanostra.spring.core.dto.ResponseDTO;
 import com.javanostra.spring.core.dto.UpdateConfirmationTokenDTO;
+import com.javanostra.spring.core.entities.Tag;
 import com.javanostra.spring.core.entities.Token;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.entities.UserRecInterests;
@@ -12,7 +13,6 @@ import com.javanostra.spring.core.exceptions.*;
 import com.javanostra.spring.core.mail.MailService;
 import com.javanostra.spring.core.security.ContextRepository;
 import com.javanostra.spring.core.services.*;
-import com.javanostra.spring.core.utils.TagList;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -40,6 +40,7 @@ public class AuthController {
     private final TokenService tokenService;
     private final MailService mailService;
     private final UserRecInterestsService userRecInterestsService;
+    private final TagService tagService;
 
     @PostMapping
     public ResponseEntity<ResponseDTO> register(@Valid @ModelAttribute NewUserDTO newUser,
@@ -63,8 +64,8 @@ public class AuthController {
         tokenService.saveToken(token);
         mailService.sendTokenInformationEmail(newUserEnt.getEmail(), "Подтверждение электронной почты", token, newUserEnt.getUsername());
         //authenticationService.UpdateToken(newUserEnt, request, response);
-        for (String tag : TagList.getInterests()) {
-            userRecInterestsService.save(UserRecInterests.builder().user_id(newUserEnt.getId()).interest(tag).weight(0.1).build());
+        for (Tag tag : tagService.findAll()) {
+            userRecInterestsService.save(UserRecInterests.builder().user_id(newUserEnt.getId()).interest(tag.getName()).weight(0.1).build());
         }
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "created account " + newUser.getUsername()));
     }

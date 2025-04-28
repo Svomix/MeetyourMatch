@@ -51,7 +51,7 @@ public class EventController {
         objectMapper.registerModule(new Hibernate6Module()); //TODO: move to a bean / class
     }
 
-    @GetMapping("/Rec")
+    @GetMapping("/rec")
     public EventDTO findRec()
     {
         User user = userService.getCurrentUser();
