@@ -58,38 +58,44 @@ public class EventController {
     @GetMapping("/recAndroid")
     public EventDTO findRecAndroid() {
         User user = userService.getCurrentUser();
-        List<UserRecInterests> interests = userRecInterestsService.findAllById(user.getId());
-        if (interests.isEmpty()) {
-            for (Tag tag : tagService.findAll()) {
-                userRecInterestsService.save(UserRecInterests.builder().user_id(user.getId()).interest(tag.getName()).weight(0.1).build());
+        if (Objects.nonNull(user)) {
+            List<UserRecInterests> interests = userRecInterestsService.findAllById(user.getId());
+            if (interests.isEmpty()) {
+                for (Tag tag : tagService.findAll()) {
+                    userRecInterestsService.save(UserRecInterests.builder().user_id(user.getId()).interest(tag.getName()).weight(0.1).build());
+                }
             }
+            UserRecInterests interest = WeightedRandomChoice.weightedChoice(interests);
+            Event event = eventService.getRandEvent(interest.getInterest());
+            return mapper.convertValue(event, EventDTO.class);
         }
-        UserRecInterests interest = WeightedRandomChoice.weightedChoice(interests);
-        Event event = eventService.getRandEvent(interest.getInterest());
-        return mapper.convertValue(event, EventDTO.class);
+        return null;
     }
 
     @GetMapping("/recWeb")
     public List<EventDTO> findRecWeb() {
         User user = userService.getCurrentUser();
-        List<UserRecInterests> interests = userRecInterestsService.findAllById(user.getId());
-        if (interests.isEmpty()) {
-            for (Tag tag : tagService.findAll()) {
-                userRecInterestsService.save(UserRecInterests.builder().user_id(user.getId()).interest(tag.getName()).weight(0.1).build());
+        if (Objects.nonNull(user)) {
+            List<UserRecInterests> interests = userRecInterestsService.findAllById(user.getId());
+            if (interests.isEmpty()) {
+                for (Tag tag : tagService.findAll()) {
+                    userRecInterestsService.save(UserRecInterests.builder().user_id(user.getId()).interest(tag.getName()).weight(0.1).build());
+                }
+                interests = userRecInterestsService.findAllById(user.getId());
             }
-            interests = userRecInterestsService.findAllById(user.getId());
-        }
-        List<UserRecInterests> recInterests = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            recInterests.add(WeightedRandomChoice.weightedChoice(interests));
-        }
-        List<EventDTO> events = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 2; j++) {
-                events.add(mapper.convertValue(eventService.getRandEvent(recInterests.get(i).getInterest()), EventDTO.class));
+            List<UserRecInterests> recInterests = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                recInterests.add(WeightedRandomChoice.weightedChoice(interests));
             }
+            List<EventDTO> events = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 2; j++) {
+                    events.add(mapper.convertValue(eventService.getRandEvent(recInterests.get(i).getInterest()), EventDTO.class));
+                }
+            }
+            return events;
         }
-        return events;
+        return null;
     }
 
     @GetMapping
