@@ -8,15 +8,11 @@ import com.javanostra.spring.core.entities.*;
 import com.javanostra.spring.core.dao.*;
 import com.javanostra.spring.core.enums.Relation;
 import com.javanostra.spring.core.enums.Status;
-import com.javanostra.spring.core.exceptions.*;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Async;
@@ -38,7 +34,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -318,10 +313,15 @@ public class UserService implements UserDetailsManager {
 
     @Transactional
     public List<UserProfileDTO> getUserChats(String username) {
-        List<ChatRoom> chatRooms = chatRoomDAO.findBySenderId(username);
+        List<ChatRoom> chatRooms = chatRoomDAO.findById(username);
         List<String> userNames = new ArrayList<>();
-        for (ChatRoom chatRoom : chatRooms)
-            userNames.add(chatRoom.getRecipientId());
+        for (ChatRoom chatRoom : chatRooms) {
+            if (chatRoom.getRecipientId().equals(username))
+                userNames.add(chatRoom.getSenderId());
+            else if (chatRoom.getSenderId().equals(username))
+                userNames.add(chatRoom.getRecipientId());
+        }
+
         List<UserProfileDTO> users = new ArrayList<>();
         for (String userName : userNames) {
             users.add(mapper.convertValue(userDAO.findByUsername(userName), UserProfileDTO.class));

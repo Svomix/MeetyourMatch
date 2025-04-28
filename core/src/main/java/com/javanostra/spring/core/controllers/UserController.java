@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.javanostra.spring.core.dto.RelationUserDTO;
 import com.javanostra.spring.core.dto.ResponseDTO;
-import com.javanostra.spring.core.dto.UpdateConfirmationTokenDTO;
 import com.javanostra.spring.core.dto.UserProfileDTO;
 import com.javanostra.spring.core.entities.*;
 import com.javanostra.spring.core.enums.TokenType;
@@ -16,9 +15,6 @@ import com.javanostra.spring.core.services.TokenService;
 import com.javanostra.spring.core.services.UserService;
 import com.javanostra.spring.core.specifications.UserSearchCriteria;
 import com.javanostra.spring.core.specifications.UserSpecification;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -89,20 +85,6 @@ public class UserController {
     public Boolean checkUserIfExistsByEmail(@PathVariable("email") String email) {
         return userService.userExistsByEmail(email);
     }
-    
-//    @GetMapping("/{user_id}/tags")
-//    public List<Tag> findUserTags(@PathVariable("user_id") Long userId) {
-//        return userService.findUserTagsByUserId(userId);
-//    }
-
-//    @GetMapping("/{user_id}/attributes")
-//    public Page<Attribute> findEventAttributesByEventId(
-//            @PathVariable("user_id") Long userId,
-//            @RequestParam(value = "offset", defaultValue = "0") Integer offset,
-//            @RequestParam(value = "limit", defaultValue = "5") Integer limit
-//    ) {
-//        return userService.findUserAttributesByUserId(userId, PageRequest.of(offset, limit));
-//    }
 
     @PostMapping
     public void saveUser(@RequestBody User user) {
@@ -113,22 +95,6 @@ public class UserController {
     public void saveUserEvent(@RequestBody UserActions event) {
         userService.saveUserEvent(event);
     }
-
-//    @PostMapping("/{user_id}/attributes/{attr_id}")
-//    public void createEventAttributeByEventId(
-//            @PathVariable("user_id") Long userId,
-//            @PathVariable("attr_id") Long attrId,
-//            @RequestBody String value) {
-//        userService.createUserAttributeValue(userId, attrId, value);
-//    }
-
-//    @DeleteMapping("/{user_id}/attributes/{attr_id}/{value}")
-//    public void deleteEventAttributeByEventId(
-//            @PathVariable("user_id") Long userId,
-//            @PathVariable("attr_id") Long attrId,
-//            @PathVariable("value") String value) {
-//        userService.deleteUAVByUserAndAttributeAndValue(userId, attrId, value);
-//    }
 
     @PutMapping
     public void updateUser(@RequestBody User user) {
@@ -149,13 +115,6 @@ public class UserController {
     public void deleteUserEventById(@PathVariable("event_id") Long eventId) {
         userService.deleteUserEventById(eventId);
     }
-
-//    @DeleteMapping("/{user_id}/attributes/{attr_id}")
-//    public void deleteEventAttributeByAttrId(
-//            @PathVariable("user_id") Long userId,
-//            @PathVariable("attr_id") Long attrId) {
-//        userService.deleteUserAttributeByAttrId(userId, attrId);
-//    }
 
     @PostMapping("/sendResetCode")
     public ResponseDTO sendResetPasswordCode(@NonNull @RequestParam("email") String email) throws BaseCoreException {

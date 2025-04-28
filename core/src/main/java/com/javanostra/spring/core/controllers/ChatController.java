@@ -46,16 +46,27 @@ public class ChatController {
     public ChatMessage processMessages(@Payload ChatMessage chatMessage) {
         chatMessage.setTimestamp(new Timestamp(new Date().getTime()));
         ChatMessage savedMsg = chatMessageService.save(chatMessage);
+
+        ChatNotificationDTO chatNotification = ChatNotificationDTO.builder()
+                .id(savedMsg.getId())
+                .senderId(savedMsg.getSenderId())
+                .recipientId(savedMsg.getRecipientId())
+                .content(savedMsg.getContent())
+                .timestamp(savedMsg.getTimestamp())
+                .build();
+
         messagingTemplate.convertAndSendToUser(
-                chatMessage.getRecipientId(), "/queue/messages",
-                ChatNotificationDTO.builder()
-                        .id(savedMsg.getId())
-                        .senderId(savedMsg.getSenderId())
-                        .recipientId(savedMsg.getRecipientId())
-                        .content(savedMsg.getContent())
-                        .timestamp(savedMsg.getTimestamp())
-                        .build()
+                chatNotification.getRecipientId(), "/queue/messages",
+                chatNotification
         );
+
+        if (!chatNotification.getSenderId().equals(chatNotification.getRecipientId())) {
+            messagingTemplate.convertAndSendToUser(
+                    chatNotification.getSenderId(), "/queue/messages",
+                    chatNotification
+            );
+        }
+
         return savedMsg;
     }
 }
