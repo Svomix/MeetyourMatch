@@ -14,7 +14,7 @@ public interface ChatRoomDAO extends JpaRepository<ChatRoom, Long>, PagingAndSor
     Optional<ChatRoom> findBySenderIdAndRecipientId(@Param("senderId") String senderId,
                                                     @Param("recipientId") String recipientId);
 
-    @Query("SELECT cr FROM ChatRoom cr WHERE cr.senderId = :senderId")
-    List<ChatRoom> findBySenderId(@Param("senderId") String senderId);
+    @Query("SELECT cr FROM ChatRoom cr WHERE cr.senderId = :id OR cr.recipientId = :id")
+    List<ChatRoom> findById(@Param("id") String id);
 }
 

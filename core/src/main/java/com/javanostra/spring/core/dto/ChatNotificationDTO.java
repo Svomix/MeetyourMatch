@@ -1,5 +1,6 @@
 package com.javanostra.spring.core.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -14,5 +15,6 @@ public class ChatNotificationDTO {
     private String senderId;
     private String recipientId;
     private String content;
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Timestamp timestamp;
 }
