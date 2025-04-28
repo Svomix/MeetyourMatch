@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.HttpStatus;
@@ -66,11 +67,14 @@ public class EventController {
         }
         UserRecInterests interest = WeightedRandomChoice.weightedChoice(interests);
         Event event = eventService.getRandEvent(interest.getInterest());
-        return mapper.convertValue(event, EventDTO.class);
+        EventDTO eventDTO = mapper.convertValue(event, EventDTO.class);
+        eventDTO.setUserAction(userActionsService.getUserEventActionsE(event, user));
+        eventDTO.setUserActionCounters(userActionsService.getEventCounters(event));
+        return eventDTO;
     }
 
     @GetMapping("/recWeb")
-    public List<EventDTO> findRecWeb() {
+    public Page<EventDTO> findRecWeb() {
         User user = userService.getCurrentUser();
         List<UserRecInterests> interests = userRecInterestsService.findAllById(user.getId());
         if (interests.isEmpty()) {
@@ -82,13 +86,13 @@ public class EventController {
         for (int i = 0; i < 5; i++) {
             recInterests.add(WeightedRandomChoice.weightedChoice(interests));
         }
-        List<EventDTO> events = new ArrayList<>();
+        List<Event> events = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 2; j++) {
-                events.add(mapper.convertValue(eventService.getRandEvent(recInterests.get(i).getInterest()), EventDTO.class));
+                events.add(eventService.getRandEvent(recInterests.get(i).getInterest()));
             }
         }
-        return events;
+        return userActionsService.populateUserActions(new PageImpl<>(events), user);
     }
 
     @GetMapping
