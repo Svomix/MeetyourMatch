@@ -1,6 +1,5 @@
 package com.javanostra.spring.core.services;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.javanostra.spring.core.dao.EventAttributeValueDAO;
@@ -10,27 +9,21 @@ import com.javanostra.spring.core.dao.TagDAO;
 import com.javanostra.spring.core.dto.CommentDTO;
 import com.javanostra.spring.core.dto.EventDTO;
 import com.javanostra.spring.core.dto.FullEventDTO;
-import com.javanostra.spring.core.entities.*;
+import com.javanostra.spring.core.entities.Event;
+import com.javanostra.spring.core.entities.EventComment;
+import com.javanostra.spring.core.entities.Tag;
 import com.javanostra.spring.core.exceptions.BaseCoreException;
 import com.javanostra.spring.core.exceptions.NoSuchCommentException;
 import com.javanostra.spring.core.exceptions.NoSuchEventException;
-import com.javanostra.spring.core.exceptions.NoSuchTagException;
-import com.javanostra.spring.core.specifications.EventSpecification;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.stereotype.Service;
 
-import javax.xml.stream.events.Comment;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor

@@ -88,14 +88,13 @@ public class EventController {
                 interests = userRecInterestsService.findAllById(user.getId());
             }
             List<UserRecInterests> recInterests = new ArrayList<>();
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 10; i++) {
                 recInterests.add(WeightedRandomChoice.weightedChoice(interests));
+                interests.remove(recInterests.get(i));
             }
             List<Event> events = new ArrayList<>();
-            for (int i = 0; i < 5; i++) {
-                for (int j = 0; j < 2; j++) {
-                    events.add(eventService.getRandEvent(recInterests.get(i).getInterest()));
-                }
+            for (int i = 0; i < 10; i++) {
+                events.add(eventService.getRandEvent(recInterests.get(i).getInterest()));
             }
             return ResponseEntity.ok(userActionsService.populateUserActions(new PageImpl<>(events), user));
         }
