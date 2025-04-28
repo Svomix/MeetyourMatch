@@ -77,6 +77,7 @@ public class EventController {
             for (Tag tag : tagService.findAll()) {
                 userRecInterestsService.save(UserRecInterests.builder().user_id(user.getId()).interest(tag.getName()).weight(0.1).build());
             }
+            interests = userRecInterestsService.findAllById(user.getId());
         }
         List<UserRecInterests> recInterests = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
