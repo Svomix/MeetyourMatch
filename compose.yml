@@ -50,6 +50,7 @@ services:
     ports:
       # The HTTP port
       - "8081:8081"
+      - "8000:8000"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
@@ -96,6 +97,8 @@ services:
     build:
       context: core/mocks/.
       dockerfile: Dockerfile
+    command:
+      "python3 populate_mocks.py"
     depends_on:
       - postgres
     profiles:
