@@ -31,27 +31,15 @@ export default function InterestsContainer() {
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.main_container_wrap}>
-        <div className={styles.main_container}>
-          {myInterests?.map((el) => (
-            <div key={el.key} className={styles.interest_item_wrap}>
-              <div className={styles.interest_item}>
-                {el.text}
-                <button className={styles.interest_remove} onClick={() => onRemove(el)}>
-                  {cross}
-                </button>
-              </div>
-            </div>
-          ))}
-          {
-            <AddInterest
-              data={getAvailableInterests()}
-              onSelect={onSelect}
-              placeholder={'начните печатать...'}
-            />
-          }
+      {myInterests?.map((el) => (
+        <div className={styles.interest_item}>
+          {el.text}
+          <button className={styles.interest_remove} onClick={() => onRemove(el)}>
+            {cross}
+          </button>
         </div>
-      </div>
+      ))}
+      <AddInterest data={getAvailableInterests()} onSelect={onSelect} />
     </div>
   );
 }

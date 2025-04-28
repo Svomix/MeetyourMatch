@@ -1,36 +1,76 @@
 'use client';
-import { useState } from 'react';
-import InterestsDropdown from '../InterestsDropdown';
-import classNames from '@/utils/classnames';
+import { useRef, useState } from 'react';
 import styles from './index.module.css';
+import classNames from '@/utils/classnames';
 
-export default ({ data, placeholder, onSelect, className }) => {
+export default ({ data, onSelect, className }) => {
   const [drop, setDrop] = useState(false);
+  const [filter, setFilter] = useState('');
 
-  const onAdd = (data) => {
-    setDrop(false);
-    onSelect(data);
-  };
-  const onClick = (e) => {
+  const input = useRef();
+
+  function getFiltered(data) {
+    return data?.filter(
+      (row) => row.text.toLocaleLowerCase().indexOf(filter.toLocaleLowerCase()) !== -1
+    );
+  }
+
+  function onFocus(e) {
     e.preventDefault();
-    setDrop((prev) => !prev);
-  };
+    setDrop(true);
+    input.current.placeholder = 'Начните печатать...';
+    setFilter('');
+  }
 
+  function onChange(e) {
+    e.preventDefault();
+    setFilter(e.target.value);
+  }
+
+  function onBlur(e) {
+    e.preventDefault();
+    setDrop(false);
+    input.current.placeholder = '+ Добавить';
+    if (!data.some((row) => row.text == input.current.value)) input.current.value = '';
+  }
+
+  function onAddInterest(e) {
+    setDrop(false);
+    input.current?.blur();
+    onSelect({ key: e.key, text: e.text });
+  }
+  console.log(getFiltered(data));
+  console.log(data?.length);
   return (
     <div className={styles.wrapper}>
-      {!drop && (
-        <button className={classNames(styles.btn, className)} onClick={onClick}>
-          + Добавить
-        </button>
-      )}
-      {drop && (
-        <InterestsDropdown
-          data={data}
-          placeholder={placeholder}
-          onSelect={onAdd}
-          className={styles.drop}
-        />
-      )}
+      <input
+        placeholder={'+ Добавить'}
+        ref={input}
+        className={classNames(!drop && styles.input_btn, drop && styles.input)}
+        type="text"
+        onFocus={onFocus}
+        onBlur={onBlur}
+        onChange={onChange}
+      />
+
+      <div className={classNames(styles.data_container, !drop && styles.invisible)}>
+        {data && getFiltered(data)?.length != 0 ? (
+          getFiltered(data).map((row) => (
+            <button
+              onMouseDown={(e) => {
+                e.preventDefault();
+                onAddInterest(row);
+              }}
+              key={row.key}
+              className={styles.data_btn}
+            >
+              {row.text}
+            </button>
+          ))
+        ) : (
+          <div className={styles.empty}>Пусто</div>
+        )}
+      </div>
     </div>
   );
 };

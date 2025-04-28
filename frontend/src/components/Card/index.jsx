@@ -1,5 +1,5 @@
 import Heart from '@components/Buttons/HeartButton';
-import mock_event_img from '@public/mock_event_img.jpg';
+import mock_event_img from '@public/mock_event_img.gif';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './index.module.css';

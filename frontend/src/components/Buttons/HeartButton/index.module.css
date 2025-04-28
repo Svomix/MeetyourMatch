@@ -9,7 +9,7 @@
 }
 
 .icon {
-  stroke: var(--black);
+  stroke: var(--light-grey);
 }
 
 .icon path {

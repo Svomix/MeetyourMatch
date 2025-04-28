@@ -90,7 +90,7 @@
 }
 
 .counter {
-  color: var(--black);
+  color: var(--light-grey);
   font-size: 26px;
   font-weight: 900;
 }
@@ -178,4 +178,30 @@
 
 .comments {
   padding: 0 40px;
+}
+
+.delete_event {
+  width: fit-content;
+  align-self: center;
+  padding: 6px 14px;
+  border-radius: calc(var(--border-radius) * 1.5);
+  background-color: var(--black);
+  border: 2px solid var(--black);
+  color: var(--white);
+  font-size: 24px;
+  font-weight: 900;
+  transition: 200ms ease-in-out;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.delete_event:hover {
+  border: 2px solid var(--gold);
+  background-color: var(--gold);
+  color: var(--red);
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(255, 174, 47, 0.5);
+}
+
+.delete_event:active {
+  background-color: var(--black);
 }

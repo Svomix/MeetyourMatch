@@ -1,7 +1,7 @@
 'use client';
 import Calendar from '@components/Buttons/CalendarButton';
 import Heart from '@components/Buttons/HeartButton';
-import mock_event_img from '@public/mock_event_img.jpg';
+import mock_event_img from '@public/mock_event_img.gif';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './index.module.css';
@@ -12,19 +12,31 @@ import { fetchEventInfo } from '@store/eventStore';
 import { getIsLoggedIn } from '@/services/authService';
 import { ModalPage, setModal } from '@store/modalSlice/index';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import BrokenHeart from '@components/Buttons/BrokenHeart';
+import { useRouter } from 'next/navigation';
 
 export default ({ path, event }) => {
   const dispatch = useDispatch();
+  const router = useRouter();
+  const is_admin = useSelector((state) => state.profileInfo)?.authorities.filter(
+    (el) => el.authority == 'ROLE_ADMIN'
+  ).length;
   let is_logged = getIsLoggedIn();
   let [liked, setLiked] = useState(false);
+  let [disliked, setDisliked] = useState(false);
   let [calendar, setCalendar] = useState(false);
   let [likeCount, setLikeCount] = useState();
+  let [dislikeCount, setDislikeCount] = useState();
   let [calendarCount, setCalendarCount] = useState();
+  console.log(is_admin);
 
   useEffect(() => {
     event.userAction && setLiked(event.userAction?.isLiked);
+    event.userAction && setDisliked(event.userAction?.isDisliked);
     event.userAction && setCalendar(event.userAction?.inCalendar);
     setLikeCount(event?.userActionCounters.likedCounter);
+    setDislikeCount(event?.userActionCounters.dislikedCounter);
     setCalendarCount(event?.userActionCounters.calendarCounter);
   }, [event]);
 
@@ -36,6 +48,21 @@ export default ({ path, event }) => {
         setLiked(resp.data.isLiked);
       });
     } else dispatch(setModal(ModalPage.Login));
+  };
+
+  const dislike_click = (e) => {
+    e.preventDefault();
+    setDislikeCount((prev) => prev + disliked * -2 + 1);
+    if (is_logged) {
+      authed.post(`/account/events/${event.id}/dislike`).then((resp) => {
+        setDisliked(resp.data.isDisliked);
+      });
+    } else dispatch(setModal(ModalPage.Login));
+  };
+
+  const onDelete = () => {
+    authed.delete(`v1/events/${event.id}`);
+    router.push('/search');
   };
 
   const calendar_click = (e) => {
@@ -99,6 +126,10 @@ export default ({ path, event }) => {
                     <span className={styles.counter}>{likeCount}</span>
                   </div>
                   <div className={styles.count_wrapper}>
+                    <BrokenHeart width={50} height={50} active={disliked} onClick={dislike_click} />
+                    <span className={styles.counter}>{dislikeCount}</span>
+                  </div>
+                  <div className={styles.count_wrapper}>
                     <Calendar width={50} height={50} active={calendar} onClick={calendar_click} />
                     <span className={styles.counter}>{calendarCount}</span>
                   </div>
@@ -135,6 +166,11 @@ export default ({ path, event }) => {
               onDelete={onDeleteComment}
             />
           </div>
+          {!!is_admin && (
+            <button className={styles.delete_event} onClick={onDelete}>
+              Удалить событие
+            </button>
+          )}
         </article>
       )}
     </>
