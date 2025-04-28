@@ -29,7 +29,7 @@ import retrofit2.Response;
 
 public class ForgottenPasswordActivity extends AppCompatActivity {
 
-    private EditText inputEmail;
+    private EditText inputEmail, inputPassword, inputPasswordApprove;
     private Button buttonContinue;
 
     @Override
@@ -46,19 +46,26 @@ public class ForgottenPasswordActivity extends AppCompatActivity {
         ImageButton buttonClose = findViewById(R.id.buttonClose);
         buttonClose.setOnClickListener(view -> finish());
 
-        inputEmail = findViewById(R.id.inputEmail);
-        inputEmail.addTextChangedListener(textWatcher);
-
         buttonContinue = findViewById(R.id.buttonContinue);
         buttonContinue.setEnabled(false);
 
+        inputEmail = findViewById(R.id.inputEmail);
+        inputEmail.addTextChangedListener(textWatcher);
+        inputPassword = findViewById(R.id.inputPassword);
+        inputPassword.addTextChangedListener(textWatcher);
+        inputPasswordApprove = findViewById(R.id.inputPasswordApprove);
+        inputPasswordApprove.addTextChangedListener(textWatcher);
+
         buttonContinue.setOnClickListener(view -> {
-            sendResetPasswordCode(inputEmail.getText().toString());
+            sendResetPasswordCode(
+                    inputEmail.getText().toString(),
+                    inputPassword.getText().toString()
+            );
         });
     }
 
 
-    private void sendResetPasswordCode(String email) {
+    private void sendResetPasswordCode(String email, String newPassword) {
         UserApiService apiService = RetrofitClient.getRetrofit(this).create(UserApiService.class);
 
         Call<ResponseDTO> call = apiService.sendResetPasswordCode(email);
@@ -70,6 +77,7 @@ public class ForgottenPasswordActivity extends AppCompatActivity {
                     Toast.makeText(ForgottenPasswordActivity.this, response.message(), Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(ForgottenPasswordActivity.this, ResetCodeActivity.class);
                     intent.putExtra("email", email);
+                    intent.putExtra("newPassword", newPassword);
                     startActivity(intent);
                 } else {
                     Toast.makeText(ForgottenPasswordActivity.this, "Ошибка: " + response.message(), Toast.LENGTH_SHORT).show();
@@ -94,11 +102,10 @@ public class ForgottenPasswordActivity extends AppCompatActivity {
 
         @Override
         public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-            if (isValidEmail(inputEmail.getText().toString())) {
-                buttonContinue.setEnabled(true);
-            } else {
-                buttonContinue.setEnabled(false);
-            }
+            buttonContinue.setEnabled(isValidEmail(inputEmail.getText().toString())
+                    && !inputPassword.getText().toString().isEmpty()
+                    && !inputPasswordApprove.getText().toString().isEmpty()
+                    && inputPassword.getText().toString().equals(inputPasswordApprove.getText().toString()));
         }
 
         @Override

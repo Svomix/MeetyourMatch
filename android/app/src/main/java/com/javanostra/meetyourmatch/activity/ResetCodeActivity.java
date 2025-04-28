@@ -47,6 +47,7 @@ public class ResetCodeActivity extends AppCompatActivity {
         });
 
         String email = getIntent().getExtras().get("email").toString();
+        String newPassword = getIntent().getExtras().get("newPassword").toString();
 
         TextView textMail = findViewById(R.id.textMail);
         textMail.setText(email);
@@ -56,7 +57,7 @@ public class ResetCodeActivity extends AppCompatActivity {
 
         buttonSendCode.setOnClickListener(v -> {
             Toast.makeText(ResetCodeActivity.this, "Код отправлен заново", Toast.LENGTH_SHORT).show();
-            //TODO: Add update code handler
+            updateResetCode(email);
             startResendTimer();
         });
 
@@ -79,32 +80,53 @@ public class ResetCodeActivity extends AppCompatActivity {
         confirmCodeButton = findViewById(R.id.buttonComplete);
         confirmCodeButton.setEnabled(false);
         confirmCodeButton.setOnClickListener(v -> {
-            testConfirmCode(getCode(), email);
+            testConfirmCode(getCode(), email, newPassword);
         });
     }
 
-    private void testConfirmCode(String code, String email) {
+    private void testConfirmCode(String code, String email, String newPassword) {
         UserApiService apiService = RetrofitClient.getRetrofit(this).create(UserApiService.class);
-//        Call<ResponseDTO> call = apiService.checkResetPasswordCode(code, email);
-//
-//        call.enqueue(new Callback<ResponseDTO>() {
-//            @Override
-//            public void onResponse(@NonNull Call<ResponseDTO> call, @NonNull Response<ResponseDTO> response) {
-//                if (response.isSuccessful()) {
-//                    Toast.makeText(ResetCodeActivity.this, response.message(), Toast.LENGTH_SHORT).show();
-//                    Intent intent = new Intent(ResetCodeActivity.this, ResetPasswordActivity.class);
-//                    intent.putExtra("email", email);
-//                    startActivity(intent);
-//                } else {
-//                    Toast.makeText(ResetCodeActivity.this, "Ошибка: " + response.message(), Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(@NonNull Call<ResponseDTO> call, @NonNull Throwable t) {
-//                Toast.makeText(ResetCodeActivity.this, "Ошибка сети: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        Call<ResponseDTO> call = apiService.checkResetPasswordCode(newPassword, code, email);
+
+        call.enqueue(new Callback<ResponseDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseDTO> call, @NonNull Response<ResponseDTO> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(ResetCodeActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(ResetCodeActivity.this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(ResetCodeActivity.this, "Ошибка: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseDTO> call, @NonNull Throwable t) {
+                Toast.makeText(ResetCodeActivity.this, "Ошибка сети: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updateResetCode(String email) {
+        UserApiService apiService = RetrofitClient.getRetrofit(this).create(UserApiService.class);
+        Call<ResponseDTO> call = apiService.updateResetCode(email);
+
+        call.enqueue(new Callback<ResponseDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseDTO> call, @NonNull Response<ResponseDTO> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(ResetCodeActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ResetCodeActivity.this, "Ошибка: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseDTO> call, @NonNull Throwable t) {
+                Toast.makeText(ResetCodeActivity.this, "Ошибка сети: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private String getCode() {

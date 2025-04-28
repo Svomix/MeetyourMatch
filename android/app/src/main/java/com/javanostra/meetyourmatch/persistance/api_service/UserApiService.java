@@ -73,11 +73,7 @@ public interface UserApiService {
 
     // updatePassword(@RequestParam("password") String password, @RequestParam("code") String code, @RequestParam("email") String email) -> ResponseDTO
     @PUT("/api/v1/users/updatePassword")
-    Call<ResponseDTO> updatePassword(
-            @Query("password") String password,
-            @Query("code") String code,
-            @Query("email") String email
-    );
+    Call<ResponseDTO> checkResetPasswordCode(@Query("password") String password, @Query("code") String code, @Query("email") String email);
 
     // updateResetCode(@RequestParam("email") String email) -> ResponseDTO
     @PUT("/api/v1/users/updateCode")
