@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.javanostra.spring.core.dto.*;
 import com.javanostra.spring.core.entities.*;
-import com.javanostra.spring.core.entities.Event;
-import com.javanostra.spring.core.exceptions.*;
+import com.javanostra.spring.core.exceptions.BaseCoreException;
+import com.javanostra.spring.core.exceptions.FileServiceException;
+import com.javanostra.spring.core.exceptions.FileUploadFailedException;
+import com.javanostra.spring.core.exceptions.FormatErrorException;
 import com.javanostra.spring.core.recommendations.WeightedRandomChoice;
 import com.javanostra.spring.core.services.*;
 import com.javanostra.spring.core.specifications.EventSearchCriteria;
@@ -24,8 +26,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 import static org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO;
 
@@ -52,27 +56,35 @@ public class EventController {
     }
 
     @GetMapping("/recAndroid")
-    public EventDTO findRecAndroid()
-    {
+    public EventDTO findRecAndroid() {
         User user = userService.getCurrentUser();
         List<UserRecInterests> interests = userRecInterestsService.findAllById(user.getId());
+        if (interests.isEmpty()) {
+            for (Tag tag : tagService.findAll()) {
+                userRecInterestsService.save(UserRecInterests.builder().user_id(user.getId()).interest(tag.getName()).weight(0.1).build());
+            }
+        }
         UserRecInterests interest = WeightedRandomChoice.weightedChoice(interests);
         Event event = eventService.getRandEvent(interest.getInterest());
         return mapper.convertValue(event, EventDTO.class);
     }
-    
+
     @GetMapping("/recWeb")
-    public List<EventDTO> findRecWeb()
-    {
+    public List<EventDTO> findRecWeb() {
         User user = userService.getCurrentUser();
         List<UserRecInterests> interests = userRecInterestsService.findAllById(user.getId());
+        if (interests.isEmpty()) {
+            for (Tag tag : tagService.findAll()) {
+                userRecInterestsService.save(UserRecInterests.builder().user_id(user.getId()).interest(tag.getName()).weight(0.1).build());
+            }
+        }
         List<UserRecInterests> recInterests = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             recInterests.add(WeightedRandomChoice.weightedChoice(interests));
         }
         List<EventDTO> events = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            for(int j = 0; j < 2; j++) {
+            for (int j = 0; j < 2; j++) {
                 events.add(mapper.convertValue(eventService.getRandEvent(recInterests.get(i).getInterest()), EventDTO.class));
             }
         }
@@ -104,7 +116,7 @@ public class EventController {
         User user = userService.getCurrentUser();
         FullEventDTO fullEventDTO = eventService.findEventDtoById(eventId);
         Event event = eventService.findEventById(eventId);
-        if(Objects.nonNull(user)) {
+        if (Objects.nonNull(user)) {
             fullEventDTO.setUserAction(userActionsService.getUserEventActionsE(event, user));
         }
         fullEventDTO.setUserActionCounters(userActionsService.getEventCounters(event));
@@ -133,15 +145,15 @@ public class EventController {
     public ResponseEntity<FileUploadedDTO> uploadImage(@RequestParam("file") MultipartFile file) throws BaseCoreException {
         try {
             User currentUser = userService.getCurrentUser();
-            if(Objects.nonNull(currentUser)) {
+            if (Objects.nonNull(currentUser)) {
                 //if(authorizationService.HasAdminAuthority(currentUser)){
-                    String object_id = UUID.randomUUID().toString();
-                    fileService.uploadFile("content", object_id, file.getInputStream(), file.getContentType());
-                    return ResponseEntity.ok(new FileUploadedDTO(object_id, fileService.getPath("content", object_id)));
+                String object_id = UUID.randomUUID().toString();
+                fileService.uploadFile("content", object_id, file.getInputStream(), file.getContentType());
+                return ResponseEntity.ok(new FileUploadedDTO(object_id, fileService.getPath("content", object_id)));
                 //}
             }
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        } catch (IOException exception){
+        } catch (IOException exception) {
             throw new FileUploadFailedException("no image");
         }
     }
@@ -149,38 +161,38 @@ public class EventController {
     @PostMapping("/uploadEvent")
     public ResponseEntity<EventDTO> uploadEvent(@Valid @RequestBody EventUploadDTO eventDto) throws BaseCoreException {
         User currentUser = userService.getCurrentUser();
-        if(Objects.nonNull(currentUser)) {
+        if (Objects.nonNull(currentUser)) {
             //if (authorizationService.HasAdminAuthority(currentUser)) {
-                Event event = new Event();
-                event.setTitle(eventDto.getTitle());
-                event.setDescription(eventDto.getDescription());
-                event.setDate(eventDto.getDate());
-                event.setPrice(eventDto.getPrice());
-                event.setSourceUrl(eventDto.getSourceUrl());
-                if(Objects.nonNull(eventDto.getLocationId())) {
-                    try {
-                        Long id = Long.parseLong(eventDto.getLocationId());
-                        Location loc = locationService.getLocationById(id);
-                        event.setLocation(loc);
-                    } catch (NumberFormatException e) {
-                        throw new FormatErrorException("format id not valid");
-                    }
+            Event event = new Event();
+            event.setTitle(eventDto.getTitle());
+            event.setDescription(eventDto.getDescription());
+            event.setDate(eventDto.getDate());
+            event.setPrice(eventDto.getPrice());
+            event.setSourceUrl(eventDto.getSourceUrl());
+            if (Objects.nonNull(eventDto.getLocationId())) {
+                try {
+                    Long id = Long.parseLong(eventDto.getLocationId());
+                    Location loc = locationService.getLocationById(id);
+                    event.setLocation(loc);
+                } catch (NumberFormatException e) {
+                    throw new FormatErrorException("format id not valid");
                 }
-                if(Objects.nonNull(eventDto.getTags())) {
-                    List<Tag> tags = new ArrayList<>(List.of());
-                    for(Long tag_id : eventDto.getTags()){
-                        tags.add(tagService.findById(tag_id));
-                    }
-                    event.setTags(tags);
+            }
+            if (Objects.nonNull(eventDto.getTags())) {
+                List<Tag> tags = new ArrayList<>(List.of());
+                for (Long tag_id : eventDto.getTags()) {
+                    tags.add(tagService.findById(tag_id));
                 }
-                if(Objects.nonNull(eventDto.getCoverFileId())){
-                    if(!fileService.fileExists("content", eventDto.getCoverFileId())){
-                        throw new FileServiceException("no such image");
-                    }
-                    event.setCoverImgUrl(fileService.getPath("content", eventDto.getCoverFileId()));
+                event.setTags(tags);
+            }
+            if (Objects.nonNull(eventDto.getCoverFileId())) {
+                if (!fileService.fileExists("content", eventDto.getCoverFileId())) {
+                    throw new FileServiceException("no such image");
                 }
-                eventService.saveEvent(event);
-                return ResponseEntity.ok(mapper.convertValue(event, EventDTO.class));
+                event.setCoverImgUrl(fileService.getPath("content", eventDto.getCoverFileId()));
+            }
+            eventService.saveEvent(event);
+            return ResponseEntity.ok(mapper.convertValue(event, EventDTO.class));
             //}
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
