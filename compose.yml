@@ -87,6 +87,7 @@ services:
       - "3000:3000"
     environment:
       BACKEND_URL: "http://backend:8080/"
+      S3_URL: "http://minio:9000/"
     profiles:
       - frontend
     restart: on-failure
