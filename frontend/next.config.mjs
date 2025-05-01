@@ -1,19 +1,20 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-  async rewrites() {
+  async rewrites() { //удалить/заменить это в продакшене (переменные среды тут не работают)
     return [
       {
         source: '/api/:path*',
-        destination: process.env.BACKEND_URL || 'http://localhost:8080/api/:path*'
+        destination: 'http://localhost:8080/api/:path*'
       },
       {
         source: '/static/:path*',
-        destination: process.env.S3_URL || 'http://localhost:9000/:path*'
+        destination: 'http://localhost:9000/:path*'
       }
     ];
   },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',

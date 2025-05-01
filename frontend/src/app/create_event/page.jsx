@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
-import mock_event_img from '@public/mock_event_img.jpg';
+import mock_event_img from '@public/mock_event_img.gif';
 import Image from 'next/image';
 import DateInput from '@components/Inputs/DateInput';
 import LabelInput from '@components/Inputs/LabelInput';
