@@ -4,7 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.javanostra.spring.core.dao.EventDAO;
 import com.javanostra.spring.core.dao.LocationDAO;
 import com.javanostra.spring.core.dto.MapObjectDTO;
+import com.javanostra.spring.core.dto.NewMapObjectDTO;
 import com.javanostra.spring.core.entities.Location;
+import com.javanostra.spring.core.exceptions.BaseCoreException;
+import com.javanostra.spring.core.exceptions.LocationInUseException;
+import com.javanostra.spring.core.exceptions.NoSuchLocationException;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -32,5 +36,21 @@ public class MapService {
             objects.add(mapObjectDTO);
         }
         return objects;
+    }
+
+    public MapObjectDTO createObject(NewMapObjectDTO newMapObjectDTO) {
+        Location location = objectMapper.convertValue(newMapObjectDTO, Location.class);
+        locationDAO.save(location);
+        return objectMapper.convertValue(location, MapObjectDTO.class);
+    }
+
+    public Location findLocationById(Long id) throws NoSuchLocationException {
+        return locationDAO.findById(id).orElseThrow(NoSuchLocationException::new);
+    }
+
+    public void deleteLocationById(Long id) throws BaseCoreException {
+        Location location = locationDAO.findById(id).orElseThrow(NoSuchLocationException::new);
+        if(!eventDAO.findEventsByLocation(location).isEmpty()) throw new LocationInUseException();
+        locationDAO.delete(location);
     }
 }
