@@ -1,13 +1,13 @@
+import { getIsLoggedIn } from '@/services/authService';
+import { authed } from '@/services/axiosInstance';
 import Heart from '@components/Buttons/HeartButton';
 import mock_event_img from '@public/mock_event_img.gif';
+import { ModalPage, setModal } from '@store/modalSlice/index';
 import Image from 'next/image';
 import Link from 'next/link';
-import styles from './index.module.css';
-import { getIsLoggedIn } from '@/services/authService';
-import { useDispatch } from 'react-redux';
-import { ModalPage, setModal } from '@store/modalSlice/index';
-import { authed } from '@/services/axiosInstance';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import styles from './index.module.css';
 
 export default ({ event, refLink, width, height }) => {
   const dispatch = useDispatch();
@@ -22,8 +22,9 @@ export default ({ event, refLink, width, height }) => {
 
   const heart_click = (e) => {
     e.preventDefault();
-    setLikeCount((prev) => prev + liked * -2 + 1);
+
     if (is_logged) {
+      setLikeCount((prev) => prev + liked * -2 + 1);
       authed.post(`/account/events/${event.id}/like`).then((resp) => {
         setLiked(resp.data.isLiked);
       });

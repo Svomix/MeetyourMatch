@@ -1,20 +1,19 @@
 'use client';
+import { getIsLoggedIn } from '@/services/authService';
+import { authed } from '@/services/axiosInstance';
+import BrokenHeart from '@components/Buttons/BrokenHeart';
 import Calendar from '@components/Buttons/CalendarButton';
 import Heart from '@components/Buttons/HeartButton';
+import CommentBox from '@components/CommentBox';
 import mock_event_img from '@public/mock_event_img.gif';
+import { fetchEventInfo } from '@store/eventStore';
+import { ModalPage, setModal } from '@store/modalSlice/index';
 import Image from 'next/image';
 import Link from 'next/link';
-import styles from './index.module.css';
-import CommentBox from '@components/CommentBox';
-import { authed } from '@/services/axiosInstance';
-import { useDispatch } from 'react-redux';
-import { fetchEventInfo } from '@store/eventStore';
-import { getIsLoggedIn } from '@/services/authService';
-import { ModalPage, setModal } from '@store/modalSlice/index';
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import BrokenHeart from '@components/Buttons/BrokenHeart';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import styles from './index.module.css';
 
 export default ({ path, event }) => {
   const dispatch = useDispatch();
@@ -42,8 +41,9 @@ export default ({ path, event }) => {
 
   const heart_click = (e) => {
     e.preventDefault();
-    setLikeCount((prev) => prev + liked * -2 + 1);
+
     if (is_logged) {
+      setLikeCount((prev) => prev + liked * -2 + 1);
       authed.post(`/account/events/${event.id}/like`).then((resp) => {
         setLiked(resp.data.isLiked);
       });
@@ -52,8 +52,9 @@ export default ({ path, event }) => {
 
   const dislike_click = (e) => {
     e.preventDefault();
-    setDislikeCount((prev) => prev + disliked * -2 + 1);
+
     if (is_logged) {
+      setDislikeCount((prev) => prev + disliked * -2 + 1);
       authed.post(`/account/events/${event.id}/dislike`).then((resp) => {
         setDisliked(resp.data.isDisliked);
       });
@@ -67,8 +68,9 @@ export default ({ path, event }) => {
 
   const calendar_click = (e) => {
     e.preventDefault();
-    setCalendarCount((prev) => prev + calendar * -2 + 1);
+
     if (is_logged) {
+      setCalendarCount((prev) => prev + calendar * -2 + 1);
       authed.post(`/account/events/${event.id}/calendar`).then((resp) => {
         setCalendar(resp.data.inCalendar);
       });
