@@ -168,6 +168,18 @@
   color: var(--black);
 }
 
+.place_select {
+  margin: 6px 0;
+  padding: 4px 12px;
+  border-radius: var(--border-radius);
+  background-color: var(--black);
+  border: 2px solid var(--black);
+  color: var(--white);
+  font-size: 24px;
+  font-weight: 600;
+  transition: 200ms ease-in-out;
+}
+
 .submit {
   padding: 10px 20px;
   border-radius: calc(var(--border-radius) * 1.5);
@@ -180,7 +192,7 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
-.submit:hover {
+.submit:hover, .place_select:hover {
   border: 2px solid var(--gold);
   background-color: var(--gold);
   color: var(--black);
@@ -188,7 +200,7 @@
   box-shadow: 0 6px 15px rgba(255, 174, 47, 0.5);
 }
 
-.submit:active {
+.submit:active, .place_select:active {
   color: var(--white);
   background-color: var(--black);
 }

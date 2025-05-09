@@ -11,6 +11,8 @@ import TextInput from '@components/Inputs/TextInput';
 import routes from '@routes';
 import { authed } from '@/services/axiosInstance';
 import { useRouter } from 'next/navigation';
+import { ModalPage, setModal } from '@store/modalSlice';
+import { useDispatch } from 'react-redux';
 
 export default () => {
   const router = useRouter();
@@ -23,6 +25,8 @@ export default () => {
   const [link, setLink] = useState('');
   const [img, setImg] = useState('');
   const [imgid, setImgid] = useState(null);
+
+  const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     console.log(e);
@@ -60,7 +64,8 @@ export default () => {
     setDate(e.target.value);
   };
   const onChangePlace = (e) => {
-    setPlace(e.target.value);
+    e.preventDefault()
+    dispatch(setModal(ModalPage.PlaceEditor))
   };
   const onChangePrice = (e) => {
     setPrice(e.target.value);
@@ -96,13 +101,7 @@ export default () => {
 
           <div className={styles.input_wrapper}>
             <label className={styles.meta}>Место: </label>
-            <LabelInput
-              name="place"
-              label={place}
-              onChange={onChangePlace}
-              maxLength={50}
-              placeholder={'Не указано'}
-            />
+            <button onClick={onChangePlace} className={styles.place_select}>Не указано</button>
           </div>
 
           <div className={styles.input_wrapper}>

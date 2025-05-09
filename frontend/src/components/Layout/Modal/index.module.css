@@ -9,6 +9,7 @@
   border: var(--border-width) solid var(--gold);
   border-radius: var(--border-radius);
   min-width: 500px;
+  padding: 8px;
 }
 
 .dialog_wrap {
@@ -114,3 +115,8 @@
   transform: scale(1.5);
 }
 
+.map_container {
+  display: grid;
+  min-width: 50vw;
+  min-height: 50vh;
+}

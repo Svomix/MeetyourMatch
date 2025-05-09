@@ -4,7 +4,7 @@ import Script from 'next/script';
 import styles from './index.module.css';
 import classNames from '@/utils/classnames';
 
-export default function Map({data, selected, onSelect}) {
+export default function Map({data, selected, onSelect, editable, onAddMarker}) {
   const mapElem = useRef();
 
   const [map, setMap] = useState(null)
@@ -15,11 +15,11 @@ export default function Map({data, selected, onSelect}) {
 
     markers.removeFrom(map);
     const new_markers = DG.featureGroup()
-
-    data.forEach(element => {
+    
+    data && data.forEach(element => {
       let myDivIcon = DG.divIcon({
         iconSize: [30, 30],
-        html: element.events.length.toString(),
+        html: element.events?.length?.toString(),
         className: classNames(styles.icon, selected && selected.id === element.id && styles.icon_active)
       });
 
@@ -31,7 +31,7 @@ export default function Map({data, selected, onSelect}) {
     new_markers.addTo(map);
     setMarkers(new_markers)
     // map.fitBounds(markers.getBounds());
-  }, [data, map, selected])
+  }, [data, map, selected, editable])
 
   function onLoad() {
     var map;
@@ -41,6 +41,10 @@ export default function Map({data, selected, onSelect}) {
         center: [53.211863, 50.17799],
         zoom: 13
       });
+
+      map.on("click", (e) => {
+        console.log(e)
+      })
 
       setMap(map)
       setMarkers(DG.featureGroup())

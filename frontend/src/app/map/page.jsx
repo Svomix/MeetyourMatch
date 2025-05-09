@@ -6,17 +6,18 @@ import styles from './page.module.css';
 import { useEffect, useState } from 'react';
 import { unauthed } from '@/services/axiosInstance';
 import MapEventCard from '@components/Map/MapEventCard';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAllLocations } from '@store/locationStore';
 
 export default function MapPage() {
-
-  const [data, setData] = useState([])
+  const dispatch = useDispatch()
+  const data = useSelector((state) => state.locationsInfo)
+  //const [data, setData] = useState([])
 
   const [selected, setSelected] = useState(null)
 
   useEffect(() => {
-    unauthed.get(`/maps/locations`).then(response => {
-      setData(response.data)
-    })
+    dispatch(fetchAllLocations())
   }, [])
 
   return (

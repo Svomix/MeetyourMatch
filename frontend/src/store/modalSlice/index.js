@@ -4,7 +4,8 @@ export const ModalPage = {
   None: 'None',
   Login: 'Login',
   Register: 'Register',
-  Verify: 'Verify'
+  Verify: 'Verify',
+  PlaceEditor: 'PlaceEditor'
 };
 
 const initialState = { page: ModalPage.None };
