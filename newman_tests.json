@@ -552,6 +552,116 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Recommend",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_path}}/api/v1/events/recWeb",
+							"host": [
+								"{{base_path}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"events",
+								"recWeb"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add location",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Ads\",\r\n    \"address\": \"\",\r\n    \"latitude\": 1.23,\r\n    \"longitude\": 3.21\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/maps/locations",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"maps",
+								"locations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove location",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/maps/locations/8795810900023775994",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"maps",
+								"locations",
+								"8795810900023775994"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "My events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_path}}/api/v1/events/my",
+							"host": [
+								"{{base_path}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"events",
+								"my"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"auth": {
@@ -611,7 +721,7 @@
 								{
 									"key": "file",
 									"type": "file",
-									"src": "/C:/Users/KOT/Desktop/HUH.gif"
+									"src": "/C:/Users/KOT/Desktop/wallpaperflare.com_wallpaper.jpg"
 								}
 							]
 						},
@@ -648,7 +758,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Test\",\r\n    \"description\": \"test test\",\r\n    \"coverFileId\": \"2902965e-46e1-459d-86b0-23e545a7af3e\",\r\n    \"date\" : \"2025-05-01T15:00:00\",\r\n    \"price\": \"1000рублей\",\r\n    \"tags\": [1,2,3,4],\r\n    \"locationId\": \"8795810900023775994\",\r\n    \"sourceUrl\": \"httttppppp\"\r\n}",
+							"raw": "{\r\n    \"title\": \"Test\",\r\n    \"description\": \"test test\",\r\n    \"coverFileId\": \"06a699e7-f1de-4bb0-9b1e-326b6c7a7ebe\",\r\n    \"date\" : \"2025-05-01T15:00:00\",\r\n    \"price\": \"1000рублей\",\r\n    \"tags\": [1,2,3,4],\r\n    \"locationId\": \"8795810900023775994\",\r\n    \"sourceUrl\": \"httttppppp\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

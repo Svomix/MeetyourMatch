@@ -207,6 +207,19 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
 
+    @GetMapping("/my")
+    public Page<EventDTO> findMyEvents(
+            @RequestParam(value = "page", defaultValue = "1") @Min(1) Integer page,
+            @RequestParam(value = "limit", defaultValue = "30") @Min(1) Integer limit
+    ) {
+        User user = userService.getCurrentUser();
+        if(Objects.nonNull(user)) {
+            Page<Event> events = eventService.findAllEventsByUserRaw(user, PageRequest.of(page - 1, limit));
+            return userActionsService.populateUserActions(events, user);
+        }
+        return null;
+    }
+
 //    @GetMapping("/{event_id}/tags")
 //    public List<Tag> findEventTags(@PathVariable("event_id") Long eventId) {
 //        return eventService.findEventTagsByEventId(eventId);

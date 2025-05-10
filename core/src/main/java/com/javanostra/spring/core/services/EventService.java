@@ -12,6 +12,7 @@ import com.javanostra.spring.core.dto.FullEventDTO;
 import com.javanostra.spring.core.entities.Event;
 import com.javanostra.spring.core.entities.EventComment;
 import com.javanostra.spring.core.entities.Tag;
+import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.exceptions.BaseCoreException;
 import com.javanostra.spring.core.exceptions.NoSuchCommentException;
 import com.javanostra.spring.core.exceptions.NoSuchEventException;
@@ -56,6 +57,10 @@ public class EventService {
     }
     public Event findEventById(Long eventId) throws BaseCoreException {
         return eventDAO.findById(eventId).orElseThrow(NoSuchEventException::new);
+    }
+
+    public Page<Event> findAllEventsByUserRaw(User user, Pageable pageable) {
+        return eventDAO.findEventsByCreatedBy(user, pageable);
     }
 
     public FullEventDTO findEventDtoById(Long eventId) throws BaseCoreException {
