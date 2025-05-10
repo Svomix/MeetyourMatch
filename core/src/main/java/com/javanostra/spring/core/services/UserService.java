@@ -334,6 +334,7 @@ public class UserService implements UserDetailsManager {
                         .orElse(null);
 
                 ChatInfoDTO chat = ChatInfoDTO.builder()
+                        .id(userDAO.findByUsername(username).getId())
                         .isGroup(false)
                         .username(otherUser)
                         .lastMessage(lastMessage != null ? lastMessage.getContent() : null)
@@ -349,6 +350,7 @@ public class UserService implements UserDetailsManager {
                         .orElse(null);
 
                 ChatInfoDTO chat = ChatInfoDTO.builder()
+                        .id(userDAO.findByUsername(username).getId())
                         .isGroup(false)
                         .username(otherUser)
                         .lastMessage(lastMessage != null ? lastMessage.getContent() : null)

@@ -30,7 +30,7 @@ public class ChatController {
     private final GroupChatService groupChatService;
 
     @GetMapping("/messagesHistory/{recipientId}")
-    public ResponseEntity<List<ChatMessage>> findChatMessages(@PathVariable("recipientId") String recipientId) {
+    public ResponseEntity<List<ChatMessage>> findChatHistoryMessages(@PathVariable("recipientId") String recipientId) {
         User user = userService.getCurrentUser();
         return ResponseEntity.ok(chatMessageService.findChatMessages(user.getUsername(), recipientId));
     }
