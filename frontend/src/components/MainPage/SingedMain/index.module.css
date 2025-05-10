@@ -3,8 +3,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 4vh;
-  margin-top: 4vh;
+  gap: 2vh;
+  padding: 4vh 0;
 }
 
 .text {
@@ -12,7 +12,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 0.5vh;
+  gap: 0.1vh;
 }
 
 .title {
@@ -32,4 +32,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.myEvents {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  justify-content: space-between;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  row-gap: 4vh;
 }

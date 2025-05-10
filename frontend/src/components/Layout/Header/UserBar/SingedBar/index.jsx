@@ -4,28 +4,27 @@ import active_bell_svg from '@public/BellActive.jsx';
 import calendar_svg from '@public/Calendar';
 import active_calendar_svg from '@public/CalendarActive';
 import { default as Routes, default as routes } from '@routes';
+import { ModalPage, setModal } from '@store/modalSlice';
+import { fetchProfileInfo } from '@store/profileSlice';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import ActiveLink from '../../ActiveLink';
 import styles from './index.module.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchProfileInfo } from '@store/profileSlice';
-import { ModalPage, setModal } from '@store/modalSlice';
 
 export default () => {
   const path = usePathname();
   const dispatch = useDispatch();
-  let [name, setName] = useState('username');
 
-  const info = useSelector(state => state.profileInfo)
+  const info = useSelector((state) => state.profileInfo);
 
-  if(info && info.isEnabled === false){
+  if (info && info.isEnabled === false) {
     dispatch(setModal(ModalPage.Verify));
   }
 
   useEffect(() => {
-    dispatch(fetchProfileInfo())
+    dispatch(fetchProfileInfo());
   }, []);
 
   return (
@@ -40,11 +39,10 @@ export default () => {
         <p className={styles.username}>{info?.username}</p>
         <Image
           className={styles.userLogo}
-          src={info?.avatarPath || "/user_logo.jpg"}
+          src={info?.avatarPath || '/user_logo.jpg'}
           width={48}
           height={48}
-          alt="User logo"
-        ></Image>
+        />
       </ActiveLink>
     </div>
   );

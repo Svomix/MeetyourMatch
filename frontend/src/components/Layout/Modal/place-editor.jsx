@@ -1,25 +1,21 @@
 'use client';
-import { unauthed } from '@/services/axiosInstance';
-import { setAuth } from '@store/authSlice';
+import Map from '@components/Map';
+import { fetchAllLocations } from '@store/locationStore';
 import { ModalPage, setModal } from '@store/modalSlice/index';
-import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllLocations } from '@store/locationStore';
-import InputField from '../../InputField';
 import styles from './index.module.css';
-import Map from '@components/Map';
 
 export default function PlaceEditor() {
   const dialog = useRef();
   const dispatch = useDispatch();
-  const locations = useSelector((state) => state.locationsInfo)
+  const locations = useSelector((state) => state.locationsInfo);
 
   useEffect(() => {
-    dispatch(fetchAllLocations())
-  }, [])
+    dispatch(fetchAllLocations());
+  }, []);
 
-  const [selected, setSelected] = useState(null)
+  const [selected, setSelected] = useState(null);
 
   useEffect(() => {
     dialog.current?.showModal();
@@ -40,16 +36,11 @@ export default function PlaceEditor() {
       <div className={styles.dialog_wrap}>
         <h1 className={styles.title}>Выбрать место</h1>
         <div className={styles.map_container}>
-          <Map data={locations} selected={selected} onSelect={setSelected}/>
+          <Map selected={selected} onSelect={setSelected} />
         </div>
         <p className={styles.register_desc}>{selected && selected.title}</p>
-        <button className={styles.button_submit}>
-          + Создать место
-        </button>
-        <button className={styles.button_submit}>
-          Выбрать
-        </button>
-
+        <button className={styles.button_submit}>+ Создать место</button>
+        <button className={styles.button_submit}>Выбрать</button>
       </div>
     </dialog>
   );
