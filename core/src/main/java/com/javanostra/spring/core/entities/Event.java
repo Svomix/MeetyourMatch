@@ -1,5 +1,6 @@
 package com.javanostra.spring.core.entities;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -55,5 +56,10 @@ public class Event {
 
     @Column(name = "source_url", length = 512)
     private String sourceUrl;
+
+    @ManyToOne
+    @Nullable
+    @JoinColumn(name = "creator_id")
+    private User createdBy;
 }
 

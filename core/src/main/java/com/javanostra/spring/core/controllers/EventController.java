@@ -47,8 +47,6 @@ public class EventController {
     private final TagService tagService;
     private final LocationService locationService;
     private final UserRecInterestsService userRecInterestsService;
-    ObjectMapper mapper = new ObjectMapper();
-
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -68,7 +66,7 @@ public class EventController {
             }
             UserRecInterests interest = WeightedRandomChoice.weightedChoice(interests);
             Event event = eventService.getRandEvent(interest.getInterest());
-            EventDTO eventDTO = mapper.convertValue(event, EventDTO.class);
+            EventDTO eventDTO = objectMapper.convertValue(event, EventDTO.class);
             eventDTO.setUserAction(userActionsService.getUserEventActionsE(event, user));
             eventDTO.setUserActionCounters(userActionsService.getEventCounters(event));
             return ResponseEntity.ok(eventDTO);
@@ -201,8 +199,9 @@ public class EventController {
                 }
                 event.setCoverImgUrl(fileService.getPath("content", eventDto.getCoverFileId()));
             }
+            event.setCreatedBy(currentUser);
             eventService.saveEvent(event);
-            return ResponseEntity.ok(mapper.convertValue(event, EventDTO.class));
+            return ResponseEntity.ok(objectMapper.convertValue(event, EventDTO.class));
             //}
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);

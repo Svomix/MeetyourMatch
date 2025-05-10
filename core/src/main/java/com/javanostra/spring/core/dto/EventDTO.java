@@ -26,6 +26,7 @@ public class EventDTO {
     private Location location;
     private String coverImgUrl;
     private String sourceUrl;
+    private UserProfileDTO createdBy;
     private UserActionEDTO userAction;
     private UserActionCountersDTO userActionCounters;
 }
