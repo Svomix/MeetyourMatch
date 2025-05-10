@@ -1,13 +1,12 @@
 package com.javanostra.spring.core.entities;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.javanostra.spring.core.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -26,8 +25,8 @@ public class User implements UserDetails {
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_authorities",
-            joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") },
-            inverseJoinColumns = { @JoinColumn(name = "authority_id", referencedColumnName = "id") }
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "authority_id", referencedColumnName = "id")}
     )
     private Set<UserAuthority> authorities;
 
@@ -56,16 +55,16 @@ public class User implements UserDetails {
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_interests",
-            joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") },
-            inverseJoinColumns = { @JoinColumn(name = "interest_id", referencedColumnName = "id") }
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "interest_id", referencedColumnName = "id")}
     )
     private Set<UserInterest> interests;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_blocked",
-            joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") },
-            inverseJoinColumns = { @JoinColumn(name = "blocked_id", referencedColumnName = "id") }
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "blocked_id", referencedColumnName = "id")}
     )
     private Set<User> blocked;
 
@@ -77,5 +76,8 @@ public class User implements UserDetails {
 
     @Column(name = "status")
     private Status status;
+
+    @ManyToMany(mappedBy = "members")
+    private List<GroupChat> chats = new ArrayList<>();
 }
 

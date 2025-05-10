@@ -1,35 +1,23 @@
 package com.javanostra.spring.core.entities;
 
+
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "Messages")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Message {
+public class GroupMessage {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     @ManyToOne
     @JoinColumn(name = "chat_id")
-    private ChatMessage chat;
-
+    private GroupChat chat;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    @Column(nullable = false)
     private String content;
-
-    @Column(nullable = false)
     private Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
 }
-

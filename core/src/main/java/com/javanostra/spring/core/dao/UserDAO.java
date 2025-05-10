@@ -1,5 +1,6 @@
 package com.javanostra.spring.core.dao;
 
+import com.javanostra.spring.core.entities.GroupChat;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;

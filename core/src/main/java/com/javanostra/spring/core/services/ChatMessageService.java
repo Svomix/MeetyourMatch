@@ -21,7 +21,7 @@ public class ChatMessageService {
     public ChatMessage save(ChatMessage chatMessage) {
         var chatId = chatRoomService.getChatRoomId(chatMessage.getSenderId(),
                 chatMessage.getRecipientId(),
-                true).orElseThrow(null); // ecx;
+                true).orElseThrow(null);
         chatMessage.setChatId(chatId);
         messageDAO.save(chatMessage);
         return chatMessage;

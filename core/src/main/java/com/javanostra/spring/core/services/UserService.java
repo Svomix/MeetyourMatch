@@ -1,11 +1,11 @@
 package com.javanostra.spring.core.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.javanostra.spring.core.dao.UserDAO;
+import com.javanostra.spring.core.dao.*;
+import com.javanostra.spring.core.dto.ChatInfoDTO;
 import com.javanostra.spring.core.dto.FullUserProfileDTO;
 import com.javanostra.spring.core.dto.UserProfileDTO;
 import com.javanostra.spring.core.entities.*;
-import com.javanostra.spring.core.dao.*;
 import com.javanostra.spring.core.enums.Relation;
 import com.javanostra.spring.core.enums.Status;
 import jakarta.transaction.Transactional;
@@ -27,11 +27,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-import com.javanostra.spring.core.dao.UsersAttributeValueDAO;
-import com.javanostra.spring.core.dao.UsersEventDAO;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,7 +53,12 @@ public class UserService implements UserDetailsManager {
     @NonNull
     private final ChatRoomDAO chatRoomDAO;
     @NonNull
+    private final GroupChatDao UserGroupChatDao;
+    @NonNull
     private final UserRelationDAO userRelationDAO;
+    private final UserGroupChatDAO userGroupChatDAO;
+    private final ChatMessageService chatMessageService;
+    private final GroupChatDao groupChatDao;
 
     AuthenticationManager authenticationManager;
 
@@ -161,6 +165,11 @@ public class UserService implements UserDetailsManager {
     }
 
     @Transactional
+    public List<GroupChat> getGroupChat(Long userId) {
+        return userGroupChatDAO.findAllByUserId(userId);
+    }
+
+    @Transactional
     public void createUserAttributeValue(Long userId, String attribute, String value) {
         UserAttribute userAttributeValue = new UserAttribute();
         userAttributeValue.setUser(userDAO.findUserById(userId));
@@ -179,7 +188,7 @@ public class UserService implements UserDetailsManager {
 //    }
 
     @Transactional
-    public void AddAttribute(User user, String attribute, String value){
+    public void AddAttribute(User user, String attribute, String value) {
         UserAttribute userAttribute = new UserAttribute();
         userAttribute.setUser(user);
         userAttribute.setValue(value);
@@ -312,22 +321,54 @@ public class UserService implements UserDetailsManager {
     }
 
     @Transactional
-    public List<UserProfileDTO> getUserChats(String username) {
+    public List<ChatInfoDTO> getUserChats(String username) {
         List<ChatRoom> chatRooms = chatRoomDAO.findById(username);
-        List<String> userNames = new ArrayList<>();
+        List<GroupChat> groupChats = userGroupChatDAO.findAllByUserId(userDAO.findByUsername(username).getId());
+        List<ChatInfoDTO> chats = new ArrayList<>();
         for (ChatRoom chatRoom : chatRooms) {
-            if (chatRoom.getRecipientId().equals(username))
-                userNames.add(chatRoom.getSenderId());
-            else if (chatRoom.getSenderId().equals(username))
-                userNames.add(chatRoom.getRecipientId());
-        }
+            if (chatRoom.getRecipientId().equals(username)) {
+                String otherUser = chatRoom.getSenderId();
+                List<ChatMessage> messages = chatMessageService.findChatMessages(otherUser, username);
+                ChatMessage lastMessage = messages.stream()
+                        .max(Comparator.comparing(ChatMessage::getTimestamp))
+                        .orElse(null);
 
-        List<UserProfileDTO> users = new ArrayList<>();
-        for (String userName : userNames) {
-            users.add(mapper.convertValue(userDAO.findByUsername(userName), UserProfileDTO.class));
+                ChatInfoDTO chat = ChatInfoDTO.builder()
+                        .isGroup(false)
+                        .username(otherUser)
+                        .lastMessage(lastMessage != null ? lastMessage.getContent() : null)
+                        .lastMessageTime(lastMessage != null ? lastMessage.getTimestamp() : null)
+                        .build();
+
+                chats.add(chat);
+            } else if (chatRoom.getSenderId().equals(username)) {
+                String otherUser = chatRoom.getRecipientId();
+                List<ChatMessage> messages = chatMessageService.findChatMessages(username, otherUser);
+                ChatMessage lastMessage = messages.stream()
+                        .max(Comparator.comparing(ChatMessage::getTimestamp))
+                        .orElse(null);
+
+                ChatInfoDTO chat = ChatInfoDTO.builder()
+                        .isGroup(false)
+                        .username(otherUser)
+                        .lastMessage(lastMessage != null ? lastMessage.getContent() : null)
+                        .lastMessageTime(lastMessage != null ? lastMessage.getTimestamp() : null)
+                        .build();
+
+                chats.add(chat);
+            }
         }
-        return users;
+        for (GroupChat groupChat : groupChats) {
+            List<GroupMessage> messages = groupChatDao.findAllByChatId(groupChat.getId());
+            GroupMessage lastMessage = messages.stream()
+                    .max(Comparator.comparing(GroupMessage::getTimestamp))
+                    .orElse(null);
+            ChatInfoDTO chat = ChatInfoDTO.builder().isGroup(true).id(groupChat.getId()).username(groupChat.getName()).lastMessage(lastMessage != null ? lastMessage.getContent() : null).lastMessageTime(lastMessage != null ? lastMessage.getTimestamp() : null).build();
+            chats.add(chat);
+        }
+        return chats;
     }
+
 
     @Transactional
     public void addBlocked(User currentUser, User blocked) {
@@ -345,7 +386,7 @@ public class UserService implements UserDetailsManager {
         userDAO.save(user);
     }
 
-    public FullUserProfileDTO getFullUserInfo(User user){
+    public FullUserProfileDTO getFullUserInfo(User user) {
         return mapper.convertValue(user, FullUserProfileDTO.class);
     }
 
@@ -372,6 +413,7 @@ public class UserService implements UserDetailsManager {
             delete(user);
         }
     }
+
     public List<User> findConnectedUsers() {
         return userDAO.findALLByStatus(Status.ONLINE);
     }

@@ -18,4 +18,6 @@ public class ChatRoom {
     private String chatId;
     private String senderId;
     private String recipientId;
+    @Column(name = "avatar_path")
+    private String avatarPath;
 }

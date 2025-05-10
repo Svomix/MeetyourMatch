@@ -1,10 +1,12 @@
 package com.javanostra.spring.core.controllers;
 
+import com.javanostra.spring.core.dto.ChatInfoDTO;
 import com.javanostra.spring.core.dto.ChatNotificationDTO;
-import com.javanostra.spring.core.dto.UserProfileDTO;
 import com.javanostra.spring.core.entities.ChatMessage;
+import com.javanostra.spring.core.entities.GroupMessage;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.services.ChatMessageService;
+import com.javanostra.spring.core.services.GroupChatService;
 import com.javanostra.spring.core.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +14,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -27,20 +27,22 @@ public class ChatController {
     private final ChatMessageService chatMessageService;
     private final UserService userService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final GroupChatService groupChatService;
 
-    @GetMapping("/messages/{recipientId}")
+    @GetMapping("/messagesHistory/{recipientId}")
     public ResponseEntity<List<ChatMessage>> findChatMessages(@PathVariable("recipientId") String recipientId) {
         User user = userService.getCurrentUser();
         return ResponseEntity.ok(chatMessageService.findChatMessages(user.getUsername(), recipientId));
     }
 
     @GetMapping("/chatRooms")
-    public ResponseEntity<List<UserProfileDTO>> findChatMessages() {
+    public ResponseEntity<List<ChatInfoDTO>> findChatMessages() {
         User user = userService.getCurrentUser();
         if (user == null)
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(userService.getUserChats(user.getUsername()));
     }
+
 
     @MessageMapping("/chat")
     public ChatMessage processMessages(@Payload ChatMessage chatMessage) {
@@ -66,7 +68,21 @@ public class ChatController {
                     chatNotification
             );
         }
-
         return savedMsg;
+    }
+
+    @PostMapping("/groupChatCreate")
+    public ResponseEntity<Long> createGroupChat(@RequestParam List<Long> memberIds, @RequestParam String groupName, @RequestParam(required = false) String avatar) {
+        return ResponseEntity.ok(groupChatService.createGroupChat(memberIds, groupName, avatar));
+    }
+
+    @MessageMapping("/groupChat")
+    public ResponseEntity<GroupMessage> processGroupChat(@Payload Long groupChatId, @Payload Integer userId, @Payload String content) {
+        return ResponseEntity.ok(groupChatService.saveGroupMessage(groupChatId, userId, content));
+    }
+
+    @GetMapping("/groupChatHistory")
+    public ResponseEntity<List<GroupMessage>> findGroupChatHistory(@RequestParam Long groupChatId) {
+        return ResponseEntity.ok(groupChatService.getGroupMessages(groupChatId));
     }
 }
