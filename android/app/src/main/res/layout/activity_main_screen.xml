@@ -17,8 +17,11 @@
         <ImageButton
             android:id="@+id/notificationsButton"
             style="@style/HeaderButton"
+            android:layout_width="24dp"
+            android:layout_weight="1"
             android:onClick="openNotifications"
-            android:src="@drawable/bell" />
+            android:src="@drawable/baseline_create_24"
+            android:tint="@color/icons" />
 
 
         <TextView
@@ -27,19 +30,23 @@
             android:layout_gravity="center"
             android:layout_marginHorizontal="50dp"
             android:layout_weight="1"
-            android:fontFamily="@font/fira_sans"
+            android:fontFamily="@font/sansation_bold"
+            android:singleLine="true"
             android:text="@string/app_name"
             android:textAlignment="center"
             android:textColor="#FDC31A"
-            android:textSize="20sp"
+            android:textSize="18dp"
             android:textStyle="bold" />
 
 
         <ImageButton
             android:id="@+id/accountButton"
             style="@style/HeaderButton"
+            android:layout_width="24dp"
+            android:layout_weight="1"
             android:onClick="openAccount"
-            android:src="@drawable/avatar" />
+            android:src="@drawable/avatar"
+            android:tint="@color/icons" />
     </LinearLayout>
 
 

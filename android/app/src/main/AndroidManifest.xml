@@ -4,9 +4,11 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:networkSecurityConfig="@xml/network_security_config"
@@ -21,6 +23,18 @@
         android:supportsRtl="true"
         android:theme="@style/MeetYourMatch"
         tools:targetApi="31">
+        <activity
+            android:name=".activity.GroupChatMessagesActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+        <activity
+            android:name=".activity.CreateGroupActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+        <activity
+            android:name=".activity.CreateEventActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
         <activity
             android:name=".activity.AccountDetailsActivity"
             android:screenOrientation="portrait"

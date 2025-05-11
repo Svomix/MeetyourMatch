@@ -197,7 +197,7 @@ public class EventSearchFragment extends Fragment
 
         EventApiService apiService = RetrofitClient.getRetrofit(getContext()).create(EventApiService.class);
 
-        apiService.findAllEvents(1, Integer.MAX_VALUE)
+        apiService.findAllEvents(1, Integer.MAX_VALUE, "")
                 .enqueue(new Callback<PagedResponse<Event>>() {
                     @Override
                     public void onResponse(@NonNull Call<PagedResponse<Event>> call, @NonNull Response<PagedResponse<Event>> response) {
@@ -456,7 +456,7 @@ public class EventSearchFragment extends Fragment
 
             eventTitle.setText(event.getTitle());
 
-
+            eventTagsText.setText("");
 
 
 

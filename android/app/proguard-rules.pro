@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class ua.naiksoftware.stomp.** { *; }
+-keep interface ua.naiksoftware.stomp.** { *; }
+# Добавьте правила для OkHttp, Gson, RxJava, если их нет
+# Сохраните ваши DTO
+-keep class com.javanostra.meetyourmatch.persistance.entity.** { *; }

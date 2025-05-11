@@ -1,6 +1,8 @@
 package com.javanostra.meetyourmatch.persistance.cookie;
 
 import android.util.Base64;
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
@@ -43,6 +45,49 @@ public class TokenHelper {
             e.printStackTrace();
             return null;
         } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Long extractUserLongIdFromToken(String token) {
+        if (token == null || !token.contains(".")) {
+            return null;
+        }
+
+        String[] parts = token.split("\\.");
+        if (parts.length < 2) {
+            return null;
+        }
+
+        String payloadBase64 = parts[1];
+
+        try {
+            byte[] decodedBytes = Base64.decode(payloadBase64, Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING);
+            String decodedPayload = new String(decodedBytes, "UTF-8");
+
+            Gson gson = new Gson();
+            JsonObject payloadJson = gson.fromJson(decodedPayload, JsonObject.class);
+
+            if (payloadJson.has("id") && !payloadJson.get("id").isJsonNull()) {
+                return payloadJson.get("id").getAsLong();
+            }
+            return null;
+
+        } catch (IllegalArgumentException e) {
+            Log.e("TokenHelper", "Base64 decoding error for user ID", e);
+            e.printStackTrace();
+            return null;
+        } catch (JsonSyntaxException e) {
+            Log.e("TokenHelper", "JSON parsing error for user ID", e);
+            e.printStackTrace();
+            return null;
+        } catch (UnsupportedOperationException | ClassCastException e) {
+            Log.e("TokenHelper", "Error casting 'id' to Long", e);
+            e.printStackTrace();
+            return null;
+        } catch (Exception e) {
+            Log.e("TokenHelper", "Generic error decoding token payload for user ID", e);
             e.printStackTrace();
             return null;
         }

@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,6 +25,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.javanostra.meetyourmatch.R;
 import com.javanostra.meetyourmatch.adapter.MessageAdapter;
 import com.javanostra.meetyourmatch.adapter.DateHeaderItem;
+import com.javanostra.meetyourmatch.fragment.ChatFragment;
 import com.javanostra.meetyourmatch.persistance.ChatWebSocketManager;
 import com.javanostra.meetyourmatch.persistance.RetrofitClient;
 import com.javanostra.meetyourmatch.persistance.api_service.ChatApiService;
@@ -254,14 +256,14 @@ public class ChatMessagesActivity extends AppCompatActivity {
                         rawMessageList.add(chatMessage);
                         Collections.sort(rawMessageList, (m1, m2) -> Long.compare(m1.getTimestamp().getTime(), m2.getTimestamp().getTime()));
                         processMessagesWithDateHeaders(rawMessageList);
-                        messageAdapter.submitList(new ArrayList<>(displayList), this::scrollToBottomIfNeeded);
 
-         /*
-         List<Object> listCopy = new ArrayList<>(displayList);
-         new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
-              messageAdapter.submitList(listCopy, this::scrollToBottomIfNeeded);
-         });
-         */
+                        Intent intent = new Intent(ChatFragment.ACTION_UPDATE_CHAT_ITEM);
+                        intent.putExtra(ChatFragment.EXTRA_USER_ID_FOR_UPDATE, recipientLongId);
+                        intent.putExtra(ChatFragment.EXTRA_LAST_MESSAGE, chatMessage.getContent());
+                        intent.putExtra(ChatFragment.EXTRA_LAST_MESSAGE_TIME, chatMessage.getTimestamp().getTime());
+                        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+
+                        messageAdapter.submitList(new ArrayList<>(displayList), this::scrollToBottomIfNeeded);
                         messagesRecyclerView.requestLayout();
                     } else {
                         Log.w(TAG,"Duplicate message detected, ignoring: " + chatMessage.getContent());
@@ -274,7 +276,6 @@ public class ChatMessagesActivity extends AppCompatActivity {
         });
     }
 
-    
     private void scrollToBottomIfNeeded() {
         int itemCount = messageAdapter.getItemCount();
         if (itemCount > 0) {
@@ -282,7 +283,6 @@ public class ChatMessagesActivity extends AppCompatActivity {
             
         }
     }
-
     
     private void updateStatusUI(ChatWebSocketManager.ConnectionState state) {
         if (isFinishing()) return;
@@ -295,7 +295,6 @@ public class ChatMessagesActivity extends AppCompatActivity {
         }
         updateUIForBlockStatus(); 
     }
-
     
     private void updateConnectionStatusOnly(ChatWebSocketManager.ConnectionState state) {
         if (isFinishing()) return;
@@ -307,7 +306,6 @@ public class ChatMessagesActivity extends AppCompatActivity {
             case INITIAL: setLoadingState(true, getString(R.string.status_initializing)); break;
         }
     }
-
     
     private void fetchMessageHistory() {
         setLoadingState(true, getString(R.string.status_loading_history));
@@ -318,7 +316,6 @@ public class ChatMessagesActivity extends AppCompatActivity {
             setLoadingState(false, getString(R.string.error_generic));
             return;
         }
-
 
         chatApiService.getChatMessages(recipientApiId).enqueue(new Callback<List<ChatMessage>>() {
             @Override
@@ -364,7 +361,6 @@ public class ChatMessagesActivity extends AppCompatActivity {
             }
         });
     }
-
     
     private void processMessagesWithDateHeaders(List<ChatMessage> messages) {
         displayList.clear();
@@ -381,12 +377,16 @@ public class ChatMessagesActivity extends AppCompatActivity {
         Log.d(TAG, "Processed message list size (with headers): " + displayList.size());
     }
 
-
-    
     private void connectWebSocketIfNeeded() {
         if (isBlocked) {
             Log.w(TAG, "WebSocket connection skipped because chat is blocked.");
             updateUIForBlockStatus(); 
+            return;
+        }
+
+        if (currentUserId == null) {
+            Log.e(TAG, "Cannot connect WebSocket: currentUserId is null!");
+            updateStatusUI(ChatWebSocketManager.ConnectionState.ERROR);
             return;
         }
         
@@ -403,7 +403,6 @@ public class ChatMessagesActivity extends AppCompatActivity {
         }
     }
 
-    
     private void attemptSendMessage() {
         if (isBlocked) {
             Toast.makeText(this, R.string.error_cant_send_blocked, Toast.LENGTH_SHORT).show();
@@ -417,24 +416,15 @@ public class ChatMessagesActivity extends AppCompatActivity {
             
             return;
         }
-
         
         long timestamp = System.currentTimeMillis();
         ChatMessage messageToSend = new ChatMessage(currentUserId, recipientApiId, messageContent, new Timestamp(timestamp));
 
         Log.d(TAG, "Attempting to send message via WebSocket: [" + timestamp + "] " + messageContent);
         webSocketManager.sendMessage(messageToSend);
-        messageEditText.setText(""); 
-
-        
-        
-        
-        
-        
-        
+        messageEditText.setText("");
     }
 
-    
     private void setLoadingState(boolean isLoading, String status) {
         if (isFinishing()) return;
         progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
@@ -446,21 +436,14 @@ public class ChatMessagesActivity extends AppCompatActivity {
             statusTextView.setVisibility(View.GONE);
         }
     }
-
     
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: Disconnecting WebSocket if connected.");
-        
-        
+
         if (webSocketManager != null && webSocketManager.isConnected()) {
             webSocketManager.disconnect();
         }
-        
-        
-        
     }
-
-    
 }

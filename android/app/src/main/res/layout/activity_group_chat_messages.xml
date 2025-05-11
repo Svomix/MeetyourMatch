@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    tools:context=".activity.GroupChatMessagesActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_group_chat"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/bars"
+        app:contentInsetStartWithNavigation="0dp"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <LinearLayout
+            android:id="@+id/group_profile_clickable_area"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="start|center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/group_chat_back_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/back_button_desc"
+                android:src="@drawable/ic_baseline_keyboard_arrow_left_24"
+                app:tint="@color/icons" />
+
+            <ImageView
+                android:id="@+id/group_chat_avatar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="0dp"
+                tools:src="@drawable/baseline_insert_photo_24" />
+
+            <TextView
+                android:id="@+id/group_chat_name_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/open_sans"
+                android:maxLines="1"
+                android:textColor="@color/textColorPrimaryModern"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:text="Название Группы" />
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <ProgressBar
+        android:id="@+id/group_chat_progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/group_chat_status_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textColor="@color/textColorSecondaryModern"
+        android:textSize="16sp"
+        android:visibility="gone"
+        tools:text="Загрузка истории..." />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/group_messages_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/group_input_layout"
+        android:layout_below="@id/toolbar_group_chat"
+        android:clipToPadding="false"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="8dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    <LinearLayout
+        android:id="@+id/group_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/bars"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="8dp">
+
+        <EditText
+            android:id="@+id/group_message_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/round_border_background"
+            android:fontFamily="@font/open_sans"
+            android:hint="@string/type_a_message"
+            android:inputType="textMultiLine|textCapSentences"
+            android:maxLines="5"
+            android:minHeight="48dp"
+            android:paddingStart="12dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="10dp"
+            android:textColor="@color/message"
+            android:textColorHint="@color/textColorSecondaryModern" />
+
+        <ImageButton
+            android:id="@+id/group_send_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:background="@drawable/baseline_send_24"
+            android:backgroundTint="@color/actionIconColor"
+            android:contentDescription="@string/send_button_desc"
+            android:padding="12dp"
+            android:scaleType="centerInside" />
+    </LinearLayout>
+
+</RelativeLayout>

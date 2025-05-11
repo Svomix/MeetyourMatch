@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+
     <style name="CircleImageViewStyle" parent="Widget.MaterialComponents.ShapeableImageView">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
@@ -140,11 +141,48 @@
     </style>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        
+
+        <item name="colorPrimary">@color/bars</item>
+        <item name="colorPrimaryDark">@color/startColor</item>
+        <item name="colorAccent">@color/colorPrimaryAction</item>
+        <item name="android:windowBackground">@drawable/gradient_background</item>
+        <item name="android:textColorPrimary">@color/textColorPrimaryModern</item>
+        <item name="android:textColorSecondary">@color/textColorSecondaryModern</item>
+        <item name="android:textColorHint">@color/textColorTertiaryModern</item>
+        <item name="editTextStyle">@style/AppEditTextStyle</item>
+        <item name="buttonStyle">@style/ModernButtonStyle</item>
+        <item name="android:textViewStyle">@style/AppTextViewStyle</item>
+        <item name="autoCompleteTextViewStyle">@style/AppAutoCompleteTextViewStyle</item>
+        <item name="android:checkboxStyle">@style/AppTagCheckBoxStyle</item>
         
         <item name="alertDialogTheme">@style/AppAlertDialogStyle</item>
     </style>
 
+    <style name="AppTextViewStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/textColorPrimaryModern</item>
+    </style>
+
+    <style name="AppEditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/round_border_background</item>
+        <item name="android:textColor">@color/textColorPrimaryModern</item>
+        <item name="android:textColorHint">@color/textColorSecondaryModern</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+    </style>
+
+    <style name="AppAutoCompleteTextViewStyle" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:background">@drawable/round_border_background</item>
+        <item name="android:textColor">@color/textColorPrimaryModern</item>
+        <item name="android:textColorHint">@color/textColorSecondaryModern</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">40dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:dropDownSelector">?attr/selectableItemBackground</item>
+        <item name="android:popupBackground">@color/messageAndButtonBackground</item>
+    </style>
     
     <style name="AppAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         
@@ -216,6 +254,18 @@
     <style name="ModernSecondaryButtonStyle" parent="ModernButtonStyle">
         <item name="android:textColor">@color/white</item>
         <item name="android:drawableTint" tools:targetApi="m">@color/white</item>
+    </style>
+
+    <style name="AppTagCheckBoxStyle" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:background">@drawable/tag_background_selector</item>
+        <item name="android:button">@null</item>
+        <item name="android:textColor">@drawable/tag_text_selector</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:minHeight">32dp</item>
+        <item name="android:gravity">center</item>
     </style>
 
 </resources>

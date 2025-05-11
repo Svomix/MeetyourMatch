@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Используем ConstraintLayout как корень вместо CoordinatorLayout -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    tools:context=".activity.CreateEventActivity">
+
+    <!-- Стандартный Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_create_event"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/bars"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:title="@string/title_create_event" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_create_event"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Обложка (без изменений) -->
+            <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/open_sans"
+                android:text="@string/label_event_cover"
+                android:textColor="@color/textColorSecondaryModern" />
+
+            <ImageView
+                android:id="@+id/image_event_cover_preview"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/round_border_background"
+                android:contentDescription="@string/desc_event_cover_preview"
+                android:padding="30dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/baseline_insert_photo_24"
+                app:tint="@color/textColorTertiaryModern" />
+
+            <Button
+                android:id="@+id/button_select_image"
+                style="@style/ModernButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/sansation_bold"
+                android:shadowColor="@color/bars"
+                android:shadowDx="4"
+                android:shadowDy="4"
+                android:text="@string/button_select_image"
+                android:textColor="@color/button_ripple_mask" />
+
+            <!-- Название (без изменений) -->
+            <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/open_sans"
+                android:text="@string/label_event_title"
+                android:textColor="@color/textColorSecondaryModern" />
+
+            <EditText
+                android:id="@+id/edit_text_event_title"
+                style="?attr/editTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/open_sans"
+                android:hint="@string/hint_event_title"
+                android:inputType="textCapSentences"
+                android:maxLength="50"
+                android:textColor="@color/textColorPrimaryModern"
+                android:textColorHint="@color/textColorTertiaryModern" />
+
+            <!-- Описание (без изменений) -->
+            <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/open_sans"
+                android:text="@string/label_event_description"
+                android:textColor="@color/textColorSecondaryModern" />
+
+            <EditText
+                android:id="@+id/edit_text_event_description"
+                style="?attr/editTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/open_sans"
+                android:gravity="top"
+                android:hint="@string/hint_event_description"
+                android:inputType="textMultiLine|textCapSentences"
+                android:maxLength="500"
+                android:minLines="4"
+                android:textColor="@color/textColorPrimaryModern"
+                android:textColorHint="@color/textColorTertiaryModern" />
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="@string/label_event_date_time"
+                android:fontFamily="@font/open_sans"
+                android:textColor="@color/textColorSecondaryModern" />
+
+            <TextView
+                android:id="@+id/text_view_event_date_time"
+                style="?attr/editTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:hint="@string/hint_select_event_date_time"
+                android:clickable="true"
+                android:focusable="true"
+                android:drawableEnd="@drawable/baseline_access_time_24"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/textColorTertiaryModern"
+                android:gravity="center_vertical"
+                android:textColor="@color/textColorPrimaryModern"
+                android:textColorHint="@color/textColorTertiaryModern"/>
+
+            <!-- Цена (без изменений) -->
+            <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/open_sans"
+                android:text="@string/label_event_price"
+                android:textColor="@color/textColorSecondaryModern" />
+
+            <EditText
+                android:id="@+id/edit_text_event_price"
+                style="?attr/editTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/open_sans"
+                android:hint="@string/hint_event_price"
+                android:inputType="number"
+                android:maxLength="5"
+                android:textColor="@color/textColorPrimaryModern"
+                android:textColorHint="@color/textColorTertiaryModern" />
+
+            <!-- Ссылка на источник (без изменений) -->
+            <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/open_sans"
+                android:text="@string/label_event_source_url"
+                android:textColor="@color/textColorSecondaryModern" />
+
+            <EditText
+                android:id="@+id/edit_text_event_source_url"
+                style="?attr/editTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/open_sans"
+                android:hint="@string/hint_event_source_url"
+                android:inputType="textUri"
+                android:maxLength="100"
+                android:textColor="@color/textColorPrimaryModern"
+                android:textColorHint="@color/textColorTertiaryModern" />
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/open_sans"
+                android:text="@string/label_event_tags"
+                android:textColor="@color/textColorSecondaryModern" />
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/round_tag_field"
+                android:padding="4dp"
+                android:scrollbars="vertical"
+                android:fillViewport="true">
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/flexbox_layout_tags"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:flexWrap="wrap"
+                    app:alignItems="flex_start"
+                    app:alignContent="flex_start">
+                </com.google.android.flexbox.FlexboxLayout>
+
+            </androidx.core.widget.NestedScrollView>
+
+            <TextView
+                android:id="@+id/text_view_tag_limit_error"
+                style="@style/TextAppearance.AppCompat.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/open_sans"
+                android:text="@string/error_tag_limit_reached"
+                android:textColor="@color/red"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/open_sans"
+                android:text="@string/label_event_location"
+                android:textColor="@color/textColorSecondaryModern" />
+
+            <AutoCompleteTextView
+                android:id="@+id/autocomplete_location"
+                style="?attr/autoCompleteTextViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:completionThreshold="1"
+                android:fontFamily="@font/open_sans"
+                android:hint="@string/hint_event_location"
+                android:textColor="@color/textColorPrimaryModern"
+                android:textColorHint="@color/textColorTertiaryModern" />
+
+            <Button
+                android:id="@+id/button_create_event"
+                style="@style/ModernButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/sansation_bold"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="@string/button_create_event"
+                android:textColor="@color/button_ripple_mask" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <ProgressBar
+        android:id="@+id/progress_bar_create_event"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/buttonColorDefault"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

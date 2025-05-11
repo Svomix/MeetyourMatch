@@ -1,6 +1,6 @@
 package com.javanostra.meetyourmatch.persistance.api_service;
 
-import com.javanostra.meetyourmatch.persistance.entity.Tag;
+import com.javanostra.meetyourmatch.persistance.entity.Tag; // Ваш клиентский класс Tag
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public interface TagApiService {
     Call<List<Tag>> getAllTags();
 
     @GET("/api/v1/tags/{id}")
-    Call<Tag> getTag(@Path("id") Long id);
+    Call<Tag> getTagById(@Path("id") long tagId);
 
     @POST("/api/v1/tags")
     Call<Void> createTag(@Body Tag tag);
@@ -27,5 +27,6 @@ public interface TagApiService {
     Call<Void> updateTag(@Body Tag tag);
 
     @DELETE("/api/v1/tags/{id}")
-    Call<Void> deleteTag(@Path("id") Long id);
+    Call<Void> deleteTag(@Path("id") long tagId);
+
 }

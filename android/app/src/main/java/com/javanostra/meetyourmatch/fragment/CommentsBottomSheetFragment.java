@@ -167,7 +167,7 @@ public class CommentsBottomSheetFragment extends BottomSheetDialogFragment {
         textViewNoComments.setVisibility(View.GONE);
 
         EventApiService apiService = RetrofitClient.getRetrofit(requireContext()).create(EventApiService.class);
-        apiService.getFullEventDTO(eventId).enqueue(new Callback<FullEventDTO>() {
+        apiService.findEventById(eventId).enqueue(new Callback<FullEventDTO>() {
             @Override
             public void onResponse(@NonNull Call<FullEventDTO> call, @NonNull Response<FullEventDTO> response) {
                 showLoading(false);

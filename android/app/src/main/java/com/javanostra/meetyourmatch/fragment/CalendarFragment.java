@@ -36,6 +36,7 @@ import com.javanostra.meetyourmatch.persistance.api_service.EventApiService;
 import com.javanostra.meetyourmatch.persistance.api_service.UserApiService;
 import com.javanostra.meetyourmatch.persistance.entity.Day;
 import com.javanostra.meetyourmatch.persistance.entity.Event;
+import com.javanostra.meetyourmatch.persistance.entity.FullEventDTO;
 import com.javanostra.meetyourmatch.persistance.entity.UserActionDTO;
 import com.javanostra.meetyourmatch.persistance.entity.UserEventDTO;
 import com.javanostra.meetyourmatch.persistance.entity.UserProfileDTO;
@@ -398,9 +399,9 @@ public class CalendarFragment extends Fragment implements GestureDetector.OnGest
     public void fetchEventById(Long eventId) {
         EventApiService apiService = RetrofitClient.getRetrofit(requireActivity().getApplicationContext()).create(EventApiService.class);
 
-        apiService.findEventById(eventId).enqueue(new Callback<Event>() {
+        apiService.findEventById(eventId).enqueue(new Callback<FullEventDTO>() {
             @Override
-            public void onResponse(Call<Event> call, Response<Event> response) {
+            public void onResponse(Call<FullEventDTO> call, Response<FullEventDTO> response) {
                 if (response.isSuccessful()) {
                     userEventsItem.add(response.body());
                 } else {
@@ -408,7 +409,7 @@ public class CalendarFragment extends Fragment implements GestureDetector.OnGest
             }
 
             @Override
-            public void onFailure(Call<Event> call, Throwable t) {
+            public void onFailure(Call<FullEventDTO> call, Throwable t) {
                 t.printStackTrace();
             }
         });

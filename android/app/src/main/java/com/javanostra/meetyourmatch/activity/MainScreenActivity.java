@@ -134,7 +134,7 @@ public class MainScreenActivity extends AppCompatActivity implements Recomendati
     }
 
     public void openNotifications(View view) {
-        startActivity(new Intent(this, NotificationsActivity.class));
+        startActivity(new Intent(this, CreateEventActivity.class));
     }
 
     @Override

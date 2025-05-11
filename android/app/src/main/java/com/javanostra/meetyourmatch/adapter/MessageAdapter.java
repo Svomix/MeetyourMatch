@@ -1,6 +1,5 @@
 package com.javanostra.meetyourmatch.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,16 +52,16 @@ public class MessageAdapter extends ListAdapter<Object, RecyclerView.ViewHolder>
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch (viewType) {
             case VIEW_TYPE_SENT:
-                View sentView = inflater.inflate(R.layout.message_item_sent, parent, false);
+                View sentView = inflater.inflate(R.layout.item_message_sent, parent, false);
                 return new SentMessageViewHolder(sentView);
             case VIEW_TYPE_RECEIVED:
-                View receivedView = inflater.inflate(R.layout.message_item_received, parent, false);
+                View receivedView = inflater.inflate(R.layout.item_message_received, parent, false);
                 return new ReceivedMessageViewHolder(receivedView);
             case VIEW_TYPE_DATE_HEADER:
-                View headerView = inflater.inflate(R.layout.date_header_item, parent, false);
+                View headerView = inflater.inflate(R.layout.item_date_header, parent, false);
                 return new DateHeaderViewHolder(headerView);
             default:
-                View defaultView = inflater.inflate(R.layout.message_item_received, parent, false);
+                View defaultView = inflater.inflate(R.layout.item_message_received, parent, false);
                 return new ReceivedMessageViewHolder(defaultView);
         }
     }
@@ -126,7 +125,7 @@ public class MessageAdapter extends ListAdapter<Object, RecyclerView.ViewHolder>
         }
 
         void bind(DateHeaderItem header) {
-            dateHeaderText.setText(DateUtils.formatDateHeader(itemView.getContext(), header.getTimestamp()));
+            dateHeaderText.setText(DateUtils.formatDateForHeader(itemView.getContext(), header.getTimestamp()));
         }
     }
 

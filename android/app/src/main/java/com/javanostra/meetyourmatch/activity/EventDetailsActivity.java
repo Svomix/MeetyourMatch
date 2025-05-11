@@ -264,7 +264,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     public void fetchEventLikes(Long eventId) {
         EventApiService apiService = RetrofitClient.getRetrofit(this).create(EventApiService.class);
 
-        apiService.getFullEventDTO(eventId).enqueue(new retrofit2.Callback<FullEventDTO>() {
+        apiService.findEventById(eventId).enqueue(new retrofit2.Callback<FullEventDTO>() {
             @Override
             public void onResponse(Call<FullEventDTO> call, Response<FullEventDTO> response) {
                 if (response.isSuccessful()) {
@@ -283,11 +283,11 @@ public class EventDetailsActivity extends AppCompatActivity {
     public void fetchEventTags(Long eventId) {
         EventApiService apiService = RetrofitClient.getRetrofit(this).create(EventApiService.class);
 
-        apiService.findEventTags(eventId).enqueue(new Callback<List<Tag>>() {
+        apiService.findEventById(eventId).enqueue(new Callback<FullEventDTO>() {
             @Override
-            public void onResponse(Call<List<Tag>> call, Response<List<Tag>> response) {
+            public void onResponse(Call<FullEventDTO> call, Response<FullEventDTO> response) {
                 if (response.isSuccessful()) {
-                    eventTagsList = response.body();
+                    eventTagsList = response.body().getTags();
 
                     StringBuilder builder = new StringBuilder();
                     for (Tag tag : eventTagsList) {
@@ -299,7 +299,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<Tag>> call, Throwable t) {
+            public void onFailure(Call<FullEventDTO> call, Throwable t) {
             }
         });
     }

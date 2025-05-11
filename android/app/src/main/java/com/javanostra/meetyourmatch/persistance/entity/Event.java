@@ -3,7 +3,10 @@ package com.javanostra.meetyourmatch.persistance.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 import androidx.annotation.NonNull;
+
 import java.sql.Timestamp;
+import java.util.List;         
+import java.util.ArrayList;    
 
 public class Event implements Parcelable {
     private Long id;
@@ -11,15 +14,17 @@ public class Event implements Parcelable {
     private String description;
     private String price;
     private Timestamp date;
-    private Location location;
+    private Location location; 
     private String coverImgUrl;
     private String sourceUrl;
-    private UserActionEDTO userAction;
-    private UserActionCountersDTO userActionCounters;
+    private List<Tag> tags; 
+    private UserActionEDTO userAction; 
+    private UserActionCountersDTO userActionCounters; 
 
     public Event() {}
 
-    public Event(Long id, String title, String description, String price, Timestamp date, Location location, String coverImgUrl, String sourceUrl, UserActionEDTO userAction, UserActionCountersDTO userActionCounters) {
+    
+    public Event(Long id, String title, String description, String price, Timestamp date, Location location, String coverImgUrl, String sourceUrl, List<Tag> tags, UserActionEDTO userAction, UserActionCountersDTO userActionCounters) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -28,11 +33,16 @@ public class Event implements Parcelable {
         this.location = location;
         this.coverImgUrl = coverImgUrl;
         this.sourceUrl = sourceUrl;
+        this.tags = tags; 
         this.userAction = userAction;
         this.userActionCounters = userActionCounters;
     }
 
+    
+
+    
     protected Event(Parcel in) {
+        
         if (in.readByte() == 0) { id = null; } else { id = in.readLong(); }
         title = in.readString();
         description = in.readString();
@@ -40,17 +50,23 @@ public class Event implements Parcelable {
         long tmpDate = in.readLong();
         date = (tmpDate == -1) ? null : new Timestamp(tmpDate);
 
+        
         location = in.readParcelable(Location.class.getClassLoader());
 
         coverImgUrl = in.readString();
         sourceUrl = in.readString();
 
+        
+        tags = in.createTypedArrayList(Tag.CREATOR); 
+
+        
         if (in.readByte() == 1) {
             userAction = in.readParcelable(UserActionEDTO.class.getClassLoader());
         } else {
             userAction = null;
         }
 
+        
         if (in.readByte() == 1) {
             userActionCounters = in.readParcelable(UserActionCountersDTO.class.getClassLoader());
         } else {
@@ -58,6 +74,7 @@ public class Event implements Parcelable {
         }
     }
 
+    
     public static final Creator<Event> CREATOR = new Creator<Event>() {
         @Override
         public Event createFromParcel(Parcel in) {
@@ -75,19 +92,26 @@ public class Event implements Parcelable {
         return 0;
     }
 
+    
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
+        
         if (id == null) { dest.writeByte((byte) 0); } else { dest.writeByte((byte) 1); dest.writeLong(id); }
         dest.writeString(title);
         dest.writeString(description);
         dest.writeString(price);
         dest.writeLong(date == null ? -1 : date.getTime());
 
+        
         dest.writeParcelable(location, flags);
 
         dest.writeString(coverImgUrl);
         dest.writeString(sourceUrl);
 
+        
+        dest.writeTypedList(tags); 
+
+        
         if (userAction == null) {
             dest.writeByte((byte) 0);
         } else {
@@ -95,6 +119,7 @@ public class Event implements Parcelable {
             dest.writeParcelable(userAction, flags);
         }
 
+        
         if (userActionCounters == null) {
             dest.writeByte((byte) 0);
         } else {
@@ -103,6 +128,9 @@ public class Event implements Parcelable {
         }
     }
 
+    
+
+    
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getTitle() { return title; }
@@ -119,6 +147,11 @@ public class Event implements Parcelable {
     public void setCoverImgUrl(String coverImgUrl) { this.coverImgUrl = coverImgUrl; }
     public String getSourceUrl() { return sourceUrl; }
     public void setSourceUrl(String sourceUrl) { this.sourceUrl = sourceUrl; }
+
+    
+    public List<Tag> getTags() { return tags; }
+    public void setTags(List<Tag> tags) { this.tags = tags; }
+
     public UserActionEDTO getUserAction() { return userAction; }
     public void setUserAction(UserActionEDTO userAction) { this.userAction = userAction; }
     public UserActionCountersDTO getUserActionCounters() { return userActionCounters; }

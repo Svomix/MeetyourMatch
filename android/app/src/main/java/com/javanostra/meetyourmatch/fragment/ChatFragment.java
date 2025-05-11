@@ -1,7 +1,9 @@
 package com.javanostra.meetyourmatch.fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,17 +29,21 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.javanostra.meetyourmatch.R;
 import com.javanostra.meetyourmatch.activity.AccountDetailsActivity;
 import com.javanostra.meetyourmatch.activity.ChatMessagesActivity;
+import com.javanostra.meetyourmatch.activity.CreateGroupActivity;
+import com.javanostra.meetyourmatch.activity.GroupChatMessagesActivity;
 import com.javanostra.meetyourmatch.adapter.ChatAdapter;
 import com.javanostra.meetyourmatch.persistance.RetrofitClient;
 import com.javanostra.meetyourmatch.persistance.api_service.AccountApiService;
 import com.javanostra.meetyourmatch.persistance.api_service.ChatApiService;
 import com.javanostra.meetyourmatch.persistance.cookie.CookieManager;
 import com.javanostra.meetyourmatch.persistance.cookie.TokenHelper;
+import com.javanostra.meetyourmatch.persistance.entity.ChatInfoDTO;
 import com.javanostra.meetyourmatch.persistance.entity.ChatUserDTO;
 import com.javanostra.meetyourmatch.persistance.entity.Relation; 
 import com.javanostra.meetyourmatch.persistance.entity.UserProfileDTO;
 import com.javanostra.meetyourmatch.persistance.entity.UserRelationDTO;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -52,28 +59,93 @@ public class ChatFragment extends Fragment implements ChatAdapter.OnChatItemClic
 
     private RecyclerView recyclerView;
     private ChatAdapter chatAdapter;
-    private ImageButton fabNewChat;
+    private ImageButton fabNewChat, fabNewGroupChat;
     private ProgressBar progressBar;
     private TextView emptyView;
     private FrameLayout searchContainer;
     private EditText searchEditText;
     private ImageButton clearSearchButton;
 
+    private Long currentAppUserLongId;
     private String currentAppUserId;
     private List<ChatUserDTO> fullChatList = new ArrayList<>();
     private ChatApiService chatApiService;
     private AccountApiService accountApiService;
-    private AtomicInteger pendingRelationRequests = new AtomicInteger(0); 
+    private AtomicInteger pendingRelationRequests = new AtomicInteger(0);
+
+    private LocalBroadcastManager localBroadcastManager;
+    public static final String ACTION_UPDATE_CHAT_ITEM = "com.javanostra.meetyourmatch.UPDATE_CHAT_ITEM";
+    public static final String EXTRA_USER_ID_FOR_UPDATE = "extra_user_id_for_update";
+    public static final String EXTRA_LAST_MESSAGE = "extra_last_message";
+    public static final String EXTRA_LAST_MESSAGE_TIME = "extra_last_message_time";
+    public static final String ACTION_UPDATE_GROUP_CHAT_ITEM = "com.javanostra.meetyourmatch.UPDATE_GROUP_CHAT_ITEM";
+    public static final String EXTRA_GROUP_ID_FOR_UPDATE = "extra_group_id_for_update";
+    public static final String ACTION_UPDATE_CHAT_LIST_REQUEST = "com.javanostra.meetyourmatch.UPDATE_CHAT_LIST_REQUEST";
+
+    private final BroadcastReceiver chatUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null && intent.getAction() != null) {
+                String action = intent.getAction();
+                if (ACTION_UPDATE_CHAT_ITEM.equals(action)) {
+                    long userIdToUpdate = intent.getLongExtra(EXTRA_USER_ID_FOR_UPDATE, -1L);
+                    String lastMessage = intent.getStringExtra(EXTRA_LAST_MESSAGE);
+                    long lastMessageTimeMillis = intent.getLongExtra(EXTRA_LAST_MESSAGE_TIME, 0);
+
+                    if (userIdToUpdate != -1L && lastMessage != null && lastMessageTimeMillis > 0) {
+                        Log.d(TAG, "Received broadcast to update PERSONAL chat for user ID: " + userIdToUpdate);
+                        updateChatItemInMemory(userIdToUpdate, lastMessage, new Timestamp(lastMessageTimeMillis), false);
+                    }
+                } else if (ACTION_UPDATE_GROUP_CHAT_ITEM.equals(action)) {
+                    long groupIdToUpdate = intent.getLongExtra(EXTRA_GROUP_ID_FOR_UPDATE, -1L);
+                    String lastMessage = intent.getStringExtra(EXTRA_LAST_MESSAGE);
+                    long lastMessageTimeMillis = intent.getLongExtra(EXTRA_LAST_MESSAGE_TIME, 0);
+
+                    if (groupIdToUpdate != -1L && lastMessage != null && lastMessageTimeMillis > 0) {
+                        Log.d(TAG, "Received broadcast to update GROUP chat for group ID: " + groupIdToUpdate);
+                        updateChatItemInMemory(groupIdToUpdate, lastMessage, new Timestamp(lastMessageTimeMillis), true);
+                    }
+                } else if (ACTION_UPDATE_CHAT_LIST_REQUEST.equals(action)) {
+                    Log.d(TAG, "Received request to refresh chat list.");
+                    fetchChatData();
+                }
+            }
+        }
+    };
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        currentAppUserId = TokenHelper.extractUsernameFromToken(new CookieManager(context).getCookie());
+        String token = new CookieManager(context).getCookie();
+        currentAppUserLongId = TokenHelper.extractUserLongIdFromToken(token);
+        if (currentAppUserLongId == null) {
+            Log.e(TAG, "Failed to get current user LongID in onAttach");
+        }
+        currentAppUserId = TokenHelper.extractUsernameFromToken(token);
         if (currentAppUserId == null) {
             Log.e(TAG, "Failed to get current user ID in onAttach");
         }
         chatApiService = RetrofitClient.getRetrofit(context).create(ChatApiService.class);
         accountApiService = RetrofitClient.getRetrofit(context).create(AccountApiService.class);
+        localBroadcastManager = LocalBroadcastManager.getInstance(requireContext());
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_UPDATE_CHAT_ITEM);
+        filter.addAction(ACTION_UPDATE_GROUP_CHAT_ITEM);
+        filter.addAction(ACTION_UPDATE_CHAT_LIST_REQUEST);
+        localBroadcastManager.registerReceiver(chatUpdateReceiver, filter);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (localBroadcastManager != null) {
+            localBroadcastManager.unregisterReceiver(chatUpdateReceiver);
+        }
     }
 
     @Nullable
@@ -84,6 +156,7 @@ public class ChatFragment extends Fragment implements ChatAdapter.OnChatItemClic
 
         recyclerView = view.findViewById(R.id.chatRecyclerView);
         fabNewChat = view.findViewById(R.id.fab_new_chat);
+        fabNewGroupChat = view.findViewById(R.id.fab_new_group_chat);
         progressBar = view.findViewById(R.id.progressBar_chat_list);
         emptyView = view.findViewById(R.id.empty_view_chat_list);
         searchContainer = view.findViewById(R.id.search_container);
@@ -91,8 +164,12 @@ public class ChatFragment extends Fragment implements ChatAdapter.OnChatItemClic
         clearSearchButton = view.findViewById(R.id.ib_clear_search); 
 
         setupRecyclerView();
-        setupSearch(); 
+        setupSearch();
 
+        fabNewGroupChat.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), CreateGroupActivity.class);
+            startActivity(intent);
+        });
         fabNewChat.setOnClickListener(v -> openNewChatDialog());
 
         return view;
@@ -107,6 +184,50 @@ public class ChatFragment extends Fragment implements ChatAdapter.OnChatItemClic
         } else {
             showErrorState(getString(R.string.error_cannot_determine_user));
             Log.e(TAG, "Cannot fetch chats in onResume because current user ID is null");
+        }
+    }
+
+    private void updateChatItemInMemory(long idToUpdate, String newLastMessage, Timestamp newLastMessageTime, boolean isGroupChat) {
+        if (!isAdded()) return;
+
+        boolean foundAndUpdated = false;
+        List<ChatUserDTO> updatedList = new ArrayList<>();
+
+        synchronized (fullChatList) {
+            for (ChatUserDTO chatUser : fullChatList) {
+                ChatInfoDTO profile = chatUser.getUserProfile();
+                if (profile != null && profile.getId() != null && profile.getId().equals(idToUpdate) && profile.getIsGroup() == isGroupChat) {
+                    ChatInfoDTO newProfile = new ChatInfoDTO(
+                            profile.getId(),
+                            profile.getUsername(),
+                            profile.getAvatarPath(),
+                            profile.getIsGroup(),
+                            newLastMessage,
+                            newLastMessageTime
+                    );
+                    ChatUserDTO updatedChatUser = new ChatUserDTO(newProfile, isGroupChat ? ChatUserDTO.RelationStatus.NONE : chatUser.getRelationStatus());
+                    updatedList.add(updatedChatUser);
+                    foundAndUpdated = true;
+                } else {
+                    updatedList.add(chatUser);
+                }
+            }
+
+            if (foundAndUpdated) {
+                fullChatList.clear();
+                fullChatList.addAll(updatedList);
+                Log.d(TAG, (isGroupChat ? "Group" : "Personal") + " chat item updated in memory. Triggering adapter update.");
+
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        filterAndSortChats(searchEditText.getText().toString());
+                    });
+                }
+            } else {
+                Log.d(TAG, (isGroupChat ? "Group" : "Personal") + " ID " + idToUpdate + " not found in current chat list for update via broadcast.");
+
+                fetchChatData(); // TODO: may produce infinite recursion
+            }
         }
     }
 
@@ -132,13 +253,8 @@ public class ChatFragment extends Fragment implements ChatAdapter.OnChatItemClic
             @Override public void afterTextChanged(Editable s) { }
         });
 
-        
         clearSearchButton.setOnClickListener(v -> {
             searchEditText.setText("");
-            
-            
-            
-            
         });
     }
 
@@ -186,35 +302,102 @@ public class ChatFragment extends Fragment implements ChatAdapter.OnChatItemClic
         recyclerView.setVisibility(View.GONE);
     }
 
-    
+
     private void fetchChatData() {
         if (chatApiService == null || accountApiService == null || !isAdded()) return;
-        Log.d(TAG, "Fetching chats (UserProfileDTO) and relations separately...");
+        Log.d(TAG, "Fetching chats (ChatInfoDTO)...");
         showLoadingState();
-        fullChatList.clear(); 
-        pendingRelationRequests.set(0); 
+        // fullChatList.clear();
+        pendingRelationRequests.set(0);
 
-        chatApiService.getUserChats().enqueue(new Callback<List<UserProfileDTO>>() {
+        chatApiService.getUserChats().enqueue(new Callback<List<ChatInfoDTO>>() {
             @Override
-            public void onResponse(@NonNull Call<List<UserProfileDTO>> call, @NonNull Response<List<UserProfileDTO>> response) {
+            public void onResponse(@NonNull Call<List<ChatInfoDTO>> call, @NonNull Response<List<ChatInfoDTO>> response) {
                 if (!isAdded() || getContext() == null) return;
 
                 if (response.isSuccessful() && response.body() != null) {
-                    List<UserProfileDTO> profiles = response.body();
-                    Log.d(TAG, "Fetched " + profiles.size() + " UserProfileDTOs. Now fetching relations...");
-                    if (profiles.isEmpty()) {
-                        filterAndSortChats(searchEditText.getText().toString()); 
-                        return;
+                    List<ChatInfoDTO> fetchedChats = response.body();
+                    Log.d(TAG, "Fetched " + fetchedChats.size() + " ChatInfoDTOs.");
+
+                    List<ChatUserDTO> newOrUpdatedChatUsers = new ArrayList<>();
+                    int pendingPersonalChats = 0;
+
+                    for (ChatInfoDTO chatInfo : fetchedChats) {
+                        if (chatInfo.getIsGroup()) {
+                            newOrUpdatedChatUsers.add(new ChatUserDTO(chatInfo, ChatUserDTO.RelationStatus.NONE));
+                        } else {
+                            newOrUpdatedChatUsers.add(new ChatUserDTO(chatInfo, ChatUserDTO.RelationStatus.NONE));
+                            pendingPersonalChats++;
+                        }
                     }
 
-                    pendingRelationRequests.set(profiles.size()); 
-                    for (UserProfileDTO profile : profiles) {
-                        fetchRelationForUser(profile); 
+                    synchronized (fullChatList) {
+                        List<ChatUserDTO> tempList = new ArrayList<>(newOrUpdatedChatUsers.size());
+                        for (ChatUserDTO newChatUser : newOrUpdatedChatUsers) {
+                            boolean existingFound = false;
+                            for (int i = 0; i < fullChatList.size(); i++) {
+                                ChatUserDTO oldChatUser = fullChatList.get(i);
+                                if (oldChatUser.getUserProfile() != null && newChatUser.getUserProfile() != null &&
+                                        oldChatUser.getUserProfile().getId().equals(newChatUser.getUserProfile().getId()) &&
+                                        oldChatUser.getUserProfile().getIsGroup() == newChatUser.getUserProfile().getIsGroup()) {
+
+                                    ChatInfoDTO updatedProfile = newChatUser.getUserProfile();
+                                    ChatUserDTO.RelationStatus statusToKeep = newChatUser.getUserProfile().getIsGroup() ?
+                                            ChatUserDTO.RelationStatus.NONE :
+                                            oldChatUser.getRelationStatus();
+                                    tempList.add(new ChatUserDTO(updatedProfile, statusToKeep));
+                                    existingFound = true;
+                                    break;
+                                }
+                            }
+                            if (!existingFound) {
+                                tempList.add(newChatUser);
+                            }
+                        }
+
+                        fullChatList.retainAll(tempList);
+
+                        List<ChatUserDTO> finalChatList = new ArrayList<>();
+                        for (ChatUserDTO newChat : tempList) {
+                            finalChatList.add(newChat);
+                        }
+                        for (ChatUserDTO oldChat : fullChatList) {
+                            boolean foundInNew = false;
+                            for(ChatUserDTO newChat : tempList) {
+                                if (newChat.getUserProfile().getId().equals(oldChat.getUserProfile().getId()) &&
+                                        newChat.getUserProfile().getIsGroup() == oldChat.getUserProfile().getIsGroup()) {
+                                    foundInNew = true;
+                                    break;
+                                }
+                            }
+                            if (!foundInNew) {
+                            }
+                        }
+                        fullChatList.clear();
+                        fullChatList.addAll(finalChatList);
                     }
+
+                    if (pendingPersonalChats == 0) {
+                        if (isAdded() && getActivity() != null) {
+                            getActivity().runOnUiThread(() -> filterAndSortChats(searchEditText.getText().toString()));
+                        }
+                    } else {
+                        pendingRelationRequests.set(pendingPersonalChats);
+                        for (ChatUserDTO chatUser : newOrUpdatedChatUsers) {
+                            if (chatUser.getUserProfile() != null && !chatUser.getUserProfile().getIsGroup()) {
+                                fetchRelationForUser(chatUser.getUserProfile());
+                            }
+                        }
+                    }
+                    if (fetchedChats.isEmpty()) {
+                        filterAndSortChats(searchEditText.getText().toString());
+                    }
+
                 } else {
-                    Log.e(TAG, "Error fetching UserProfileDTO list: " + response.code() + " - " + response.message());
+                    Log.e(TAG, "Error fetching ChatInfoDTO list: " + response.code() + " - " + response.message());
                     if (response.code() == 404) {
-                        filterAndSortChats(""); 
+                        fullChatList.clear();
+                        filterAndSortChats("");
                     } else {
                         showErrorState(getString(R.string.error_loading_chat_list) + " (" + response.code() + ")");
                     }
@@ -222,22 +405,22 @@ public class ChatFragment extends Fragment implements ChatAdapter.OnChatItemClic
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<UserProfileDTO>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<ChatInfoDTO>> call, @NonNull Throwable t) {
                 if (!isAdded() || getContext() == null) return;
-                Log.e(TAG, "Network error fetching UserProfileDTO list", t);
+                Log.e(TAG, "Network error fetching ChatInfoDTO list", t);
                 showErrorState(getString(R.string.error_network));
             }
         });
     }
 
     
-    private void fetchRelationForUser(UserProfileDTO profile) {
-        if (accountApiService == null || profile == null || profile.getId() == null || !isAdded()) {
+    private void fetchRelationForUser(ChatInfoDTO profileToFetchRelationFor) {
+        if (accountApiService == null || profileToFetchRelationFor == null || profileToFetchRelationFor.getId() == null || !isAdded()) {
             checkIfAllRelationsFetched(); 
             return;
         }
 
-        accountApiService.getUserRelation(profile.getId()).enqueue(new Callback<UserRelationDTO>() {
+        accountApiService.getUserRelation(profileToFetchRelationFor.getId()).enqueue(new Callback<UserRelationDTO>() {
             @Override
             public void onResponse(@NonNull Call<UserRelationDTO> call, @NonNull Response<UserRelationDTO> response) {
                 if (!isAdded()) return; 
@@ -245,34 +428,37 @@ public class ChatFragment extends Fragment implements ChatAdapter.OnChatItemClic
                 ChatUserDTO.RelationStatus status = ChatUserDTO.RelationStatus.NONE;
                 if (response.isSuccessful() && response.body() != null) {
                     UserRelationDTO relation = response.body();
-                    Relation myRelation = relation.getMyRelation();
-                    Relation userRelation = relation.getUserRelation();
 
-                    if (myRelation == Relation.FRIEND || userRelation == Relation.FRIEND) {
+                    if (relation.getMyRelation() == Relation.FRIEND || relation.getUserRelation() == Relation.FRIEND) {
                         status = ChatUserDTO.RelationStatus.FRIEND;
-                    } else if (myRelation == Relation.BLOCKED || userRelation == Relation.BLOCKED) {
+                    } else if (relation.getMyRelation() == Relation.BLOCKED || relation.getUserRelation() == Relation.BLOCKED) {
                         status = ChatUserDTO.RelationStatus.BLOCKED;
                     }
-                    Log.d(TAG, "Relation for " + profile.getUsername() + ": " + status);
+                    Log.d(TAG, "Relation for " + profileToFetchRelationFor.getUsername() + ": " + status);
                 } else {
-                    Log.w(TAG, "Failed to get relation for " + profile.getUsername() + ": " + response.code());
+                    Log.w(TAG, "Failed to get relation for " + profileToFetchRelationFor.getUsername() + ": " + response.code());
                 }
 
-                
-                
                 synchronized (fullChatList) {
-                    fullChatList.add(new ChatUserDTO(profile, status));
+                    for (int i = 0; i < fullChatList.size(); i++) {
+                        ChatUserDTO chatUser = fullChatList.get(i);
+                        if (chatUser.getUserProfile() != null &&
+                                chatUser.getUserProfile().getId().equals(profileToFetchRelationFor.getId()) &&
+                                !chatUser.getUserProfile().getIsGroup()) {
+
+                            fullChatList.set(i, new ChatUserDTO(chatUser.getUserProfile(), status));
+                            break;
+                        }
+                    }
                 }
                 checkIfAllRelationsFetched();
             }
 
             @Override
             public void onFailure(@NonNull Call<UserRelationDTO> call, @NonNull Throwable t) {
-                if (!isAdded()) return; 
-                Log.e(TAG, "Network error getting relation for " + profile.getUsername(), t);
-                synchronized (fullChatList) {
-                    fullChatList.add(new ChatUserDTO(profile, ChatUserDTO.RelationStatus.NONE));
-                }
+                if (!isAdded()) return;
+                Log.e(TAG, "Network error getting relation for " + profileToFetchRelationFor.getUsername(), t);
+
                 checkIfAllRelationsFetched();
             }
         });
@@ -321,13 +507,28 @@ public class ChatFragment extends Fragment implements ChatAdapter.OnChatItemClic
         Collections.sort(filteredList, (o1, o2) -> {
             ChatUserDTO.RelationStatus status1 = o1.getRelationStatus();
             ChatUserDTO.RelationStatus status2 = o2.getRelationStatus();
-            UserProfileDTO p1 = o1.getUserProfile();
-            UserProfileDTO p2 = o2.getUserProfile();
-            String name1 = (p1 != null && p1.getUsername() != null) ? p1.getUsername() : "";
-            String name2 = (p2 != null && p2.getUsername() != null) ? p2.getUsername() : "";
+            ChatInfoDTO p1 = o1.getUserProfile();
+            ChatInfoDTO p2 = o2.getUserProfile();
 
             if (status1 == ChatUserDTO.RelationStatus.FRIEND && status2 != ChatUserDTO.RelationStatus.FRIEND) return -1;
             if (status1 != ChatUserDTO.RelationStatus.FRIEND && status2 == ChatUserDTO.RelationStatus.FRIEND) return 1;
+
+            if (status1 != ChatUserDTO.RelationStatus.BLOCKED && status2 != ChatUserDTO.RelationStatus.BLOCKED) {
+                Timestamp time1 = (p1 != null) ? p1.getLastMessageTime() : null;
+                Timestamp time2 = (p2 != null) ? p2.getLastMessageTime() : null;
+
+                if (time1 != null && time2 != null) {
+                    int timeCompare = time2.compareTo(time1);
+                    if (timeCompare != 0) return timeCompare;
+                } else if (time1 != null) {
+                    return -1;
+                } else if (time2 != null) {
+                    return 1;
+                }
+            }
+
+            String name1 = (p1 != null && p1.getUsername() != null) ? p1.getUsername() : "";
+            String name2 = (p2 != null && p2.getUsername() != null) ? p2.getUsername() : "";
             return name1.compareToIgnoreCase(name2);
         });
         Log.d(TAG, "List sorted. Submitting to adapter.");
@@ -340,40 +541,56 @@ public class ChatFragment extends Fragment implements ChatAdapter.OnChatItemClic
     public void onItemClick(@NonNull ChatUserDTO chatUser) {
         if (chatUser.getUserProfile() == null) return;
 
-        UserProfileDTO selectedUser = chatUser.getUserProfile();
-        Log.d(TAG, "Chat item clicked: " + selectedUser.getUsername() + ", Status: " + chatUser.getRelationStatus());
+        ChatInfoDTO selectedChatInfo = chatUser.getUserProfile();
+        Log.d(TAG, "Chat item clicked: " + selectedChatInfo.getUsername() +
+                ", IsGroup: " + selectedChatInfo.getIsGroup() +
+                ", Status (if personal): " + chatUser.getRelationStatus());
 
-        if (getActivity() == null || currentAppUserId == null || !isAdded()) { return; }
+        if (getActivity() == null || !isAdded()) { return; }
 
-        if (chatUser.getRelationStatus() == ChatUserDTO.RelationStatus.BLOCKED) {
-            Log.d(TAG, "User is blocked, opening AccountDetailsActivity");
-            Intent intent = new Intent(getActivity(), AccountDetailsActivity.class);
-            if (selectedUser.getId() == null) {
-                Log.e(TAG, "Cannot open profile, user ID is null for " + selectedUser.getUsername());
-                Toast.makeText(getContext(), R.string.error_missing_user_id, Toast.LENGTH_SHORT).show();
-                return;
-            }
-            intent.putExtra(AccountDetailsActivity.EXTRA_USER_ID, selectedUser.getId());
-            intent.putExtra(AccountDetailsActivity.EXTRA_USERNAME, selectedUser.getUsername());
+        if (selectedChatInfo.getIsGroup()) {
+            Log.d(TAG, "Opening GroupChatMessagesActivity for group: " + selectedChatInfo.getUsername());
+            Intent intent = new Intent(getActivity(), GroupChatMessagesActivity.class);
+            intent.putExtra(GroupChatMessagesActivity.EXTRA_GROUP_ID, selectedChatInfo.getId());
+            intent.putExtra(GroupChatMessagesActivity.EXTRA_GROUP_NAME, selectedChatInfo.getUsername());
+            intent.putExtra(GroupChatMessagesActivity.EXTRA_GROUP_AVATAR_URL, selectedChatInfo.getAvatarPath());
+
             startActivity(intent);
         } else {
-            Log.d(TAG, "User is not blocked, opening ChatMessagesActivity");
-            Intent intent = new Intent(getActivity(), ChatMessagesActivity.class);
-            if (selectedUser.getUsername() == null) {
-                Log.e(TAG, "Cannot open chat, recipient username is null");
-                Toast.makeText(getContext(), R.string.error_missing_username, Toast.LENGTH_SHORT).show();
+            if (currentAppUserId == null) {
+                Log.e(TAG, "Current user ID (username) is null. Cannot open personal chat.");
+                Toast.makeText(getContext(), R.string.error_cannot_determine_user, Toast.LENGTH_SHORT).show();
                 return;
             }
-            intent.putExtra(ChatMessagesActivity.EXTRA_SENDER_ID, currentAppUserId);
-            intent.putExtra(ChatMessagesActivity.EXTRA_RECIPIENT_ID, selectedUser.getUsername());
-            intent.putExtra(ChatMessagesActivity.EXTRA_RECIPIENT_LONG_ID, selectedUser.getId());
-            intent.putExtra(ChatMessagesActivity.EXTRA_RECIPIENT_USERNAME, selectedUser.getUsername());
-            intent.putExtra(ChatMessagesActivity.EXTRA_RECIPIENT_IMAGE_URL, selectedUser.getAvatarPath());
-            intent.putExtra(ChatMessagesActivity.EXTRA_IS_BLOCKED, chatUser.getRelationStatus() == ChatUserDTO.RelationStatus.BLOCKED);
-            startActivity(intent);
+            if (chatUser.getRelationStatus() == ChatUserDTO.RelationStatus.BLOCKED) {
+                Log.d(TAG, "User is blocked, opening AccountDetailsActivity");
+                Intent intent = new Intent(getActivity(), AccountDetailsActivity.class);
+                if (selectedChatInfo.getId() == null) {
+                    Log.e(TAG, "Cannot open profile, user ID is null for " + selectedChatInfo.getUsername());
+                    Toast.makeText(getContext(), R.string.error_missing_user_id, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                intent.putExtra(AccountDetailsActivity.EXTRA_USER_ID, selectedChatInfo.getId());
+                intent.putExtra(AccountDetailsActivity.EXTRA_USERNAME, selectedChatInfo.getUsername());
+                startActivity(intent);
+            } else {
+                Log.d(TAG, "User is not blocked, opening ChatMessagesActivity");
+                Intent intent = new Intent(getActivity(), ChatMessagesActivity.class);
+                if (selectedChatInfo.getUsername() == null) {
+                    Log.e(TAG, "Cannot open chat, recipient username is null");
+                    Toast.makeText(getContext(), R.string.error_missing_username, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                intent.putExtra(ChatMessagesActivity.EXTRA_SENDER_ID, currentAppUserId);
+                intent.putExtra(ChatMessagesActivity.EXTRA_RECIPIENT_ID, selectedChatInfo.getUsername());
+                intent.putExtra(ChatMessagesActivity.EXTRA_RECIPIENT_LONG_ID, selectedChatInfo.getId());
+                intent.putExtra(ChatMessagesActivity.EXTRA_RECIPIENT_USERNAME, selectedChatInfo.getUsername());
+                intent.putExtra(ChatMessagesActivity.EXTRA_RECIPIENT_IMAGE_URL, selectedChatInfo.getAvatarPath());
+                intent.putExtra(ChatMessagesActivity.EXTRA_IS_BLOCKED, chatUser.getRelationStatus() == ChatUserDTO.RelationStatus.BLOCKED);
+                startActivity(intent);
+            }
         }
     }
-
     
     @Override
     public void onUserSelectedForDetails(UserProfileDTO selectedUser) {

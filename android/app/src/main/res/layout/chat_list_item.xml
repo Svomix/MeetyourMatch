@@ -40,6 +40,16 @@
             tools:visibility="visible" />
 
         <ImageView
+            android:id="@+id/chat_list_icon_group"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:contentDescription="string/desc_friend_icon"
+            android:src="@drawable/baseline_group_24"
+            android:visibility="gone"
+            app:tint="@color/white"
+            tools:visibility="visible" />
+
+        <ImageView
             android:id="@+id/chat_list_icon_blocked"
             android:layout_width="18dp"
             android:layout_height="18dp"
