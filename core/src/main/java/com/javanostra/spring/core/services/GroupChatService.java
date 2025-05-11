@@ -29,7 +29,7 @@ public class GroupChatService {
             members.add(userService.findUserById(memberId));
         }
         GroupChat groupChat = GroupChat.builder().members(members).name(name).build();
-        if (!avatar.isEmpty())
+        if (avatar != null && !avatar.isEmpty())
             groupChat.setAvatarPath(avatar);
         groupChatDao.save(groupChat);
         return groupChat.getId();
@@ -39,9 +39,9 @@ public class GroupChatService {
         return groupChatDao.findAllByChatId(id);
     }
 
-    public GroupMessage saveGroupMessage(Long groupChatId, Integer userId, String content) {
-        User user = userDAO.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+    public GroupMessage saveGroupMessage(Long groupChatId, Long userId, String content) {
+        User user = userDAO.findUserById(userId);
+        if (user == null) throw new EntityNotFoundException("User not found with id: " + userId);
         GroupChat chat = groupChatDao.findById(groupChatId).orElseThrow(() -> new EntityNotFoundException("GroupChat not found with id: " + groupChatId));
         if (!chat.getMembers().contains(user)) {
             throw new IllegalStateException("User is not a member of this group chat");

@@ -13,7 +13,7 @@ public class ChatInfoDTO {
     private Long id;
     private String username;
     private String avatarPath;
-    private boolean isGroup;
+    private Boolean isGroup;
     private String lastMessage;
     private Timestamp lastMessageTime;
 }

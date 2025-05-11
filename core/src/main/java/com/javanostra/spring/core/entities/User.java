@@ -1,5 +1,6 @@
 package com.javanostra.spring.core.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.javanostra.spring.core.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
@@ -78,6 +79,7 @@ public class User implements UserDetails {
     private Status status;
 
     @ManyToMany(mappedBy = "members")
+    @JsonIgnore
     private List<GroupChat> chats = new ArrayList<>();
 }
 

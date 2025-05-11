@@ -2,6 +2,8 @@ package com.javanostra.spring.core.controllers;
 
 import com.javanostra.spring.core.dto.ChatInfoDTO;
 import com.javanostra.spring.core.dto.ChatNotificationDTO;
+import com.javanostra.spring.core.dto.GroupChatMessageNotificationDTO;
+import com.javanostra.spring.core.dto.GroupMessageRequestDTO;
 import com.javanostra.spring.core.entities.ChatMessage;
 import com.javanostra.spring.core.entities.GroupMessage;
 import com.javanostra.spring.core.entities.User;
@@ -36,13 +38,12 @@ public class ChatController {
     }
 
     @GetMapping("/chatRooms")
-    public ResponseEntity<List<ChatInfoDTO>> findChatMessages() {
+    public ResponseEntity<List<ChatInfoDTO>> findChatRooms() {
         User user = userService.getCurrentUser();
         if (user == null)
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(userService.getUserChats(user.getUsername()));
     }
-
 
     @MessageMapping("/chat")
     public ChatMessage processMessages(@Payload ChatMessage chatMessage) {
@@ -77,12 +78,36 @@ public class ChatController {
     }
 
     @MessageMapping("/groupChat")
-    public ResponseEntity<GroupMessage> processGroupChat(@Payload Long groupChatId, @Payload Integer userId, @Payload String content) {
-        return ResponseEntity.ok(groupChatService.saveGroupMessage(groupChatId, userId, content));
+    public void processGroupChatMessage(@Payload GroupMessageRequestDTO messageRequest) {
+        GroupMessage savedMessage = groupChatService.saveGroupMessage(
+                messageRequest.getGroupChatId(),
+                messageRequest.getSenderId(),
+                messageRequest.getContent()
+        );
+
+        GroupChatMessageNotificationDTO notification = GroupChatMessageNotificationDTO.builder()
+                .id(savedMessage.getId())
+                .groupChatId(savedMessage.getChat().getId())
+                .senderId(savedMessage.getUser().getId())
+                .senderUsername(savedMessage.getUser().getUsername())
+                .senderAvatarPath(savedMessage.getUser().getAvatarPath())
+                .content(savedMessage.getContent())
+                .timestamp(savedMessage.getTimestamp())
+                .build();
+
+        String destination = "/topic/group/" + messageRequest.getGroupChatId();
+        messagingTemplate.convertAndSend(destination, notification);
+
+        messagingTemplate.convertAndSendToUser(
+                savedMessage.getUser().getUsername(),
+                "/queue/groupMessageReceipt",
+                "Message sent to group " + messageRequest.getGroupChatId()
+        );
     }
 
     @GetMapping("/groupChatHistory")
     public ResponseEntity<List<GroupMessage>> findGroupChatHistory(@RequestParam Long groupChatId) {
-        return ResponseEntity.ok(groupChatService.getGroupMessages(groupChatId));
+        List<GroupMessage> middle = groupChatService.getGroupMessages(groupChatId);
+        return ResponseEntity.ok(middle);
     }
 }
