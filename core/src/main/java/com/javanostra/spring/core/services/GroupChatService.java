@@ -40,6 +40,10 @@ public class GroupChatService {
         return groupChatDao.findAllByChatId(id);
     }
 
+    public List<User> findAllGroupMembers(Long chatId) {
+        return groupChatDao.findMembersById(chatId);
+    }
+
     public GroupMessage saveGroupMessage(Long groupChatId, Long userId, String content) {
         User user = userDAO.findUserById(userId);
         if (user == null) throw new EntityNotFoundException("User not found with id: " + userId);

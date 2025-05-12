@@ -2,6 +2,7 @@ package com.javanostra.spring.core.dao;
 
 import com.javanostra.spring.core.entities.GroupChat;
 import com.javanostra.spring.core.entities.GroupMessage;
+import com.javanostra.spring.core.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,6 +19,8 @@ public interface GroupChatDao extends JpaRepository<GroupChat, Long>, PagingAndS
     @Query("SELECT gm FROM GroupMessage gm WHERE gm.chat.id = :chatId")
     List<GroupMessage> findAllByChatId(@Param("chatId") Long chatId);
 
+    @Query("SELECT gc.members FROM GroupChat gc WHERE gc.id = :chatId")
+    List<User> findMembersById(@Param("chatId") Long id);
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM user_group_chats WHERE group_chat_id = :chatId AND user_id = :userId", nativeQuery = true)
