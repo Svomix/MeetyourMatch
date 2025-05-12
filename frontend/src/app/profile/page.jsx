@@ -4,11 +4,11 @@ import LogoutButton from '@components/Buttons/LogoutButton';
 import InterestsContainer from '@components/InterestsContainer';
 import { fetchProfileInfo } from '@store/profileSlice';
 
+import ProfileEditModal from '@components/ProfileEditModal';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ProfileEditModal from '@components/ProfileEditModal';
 import styles from './page.module.css';
 
 export default function ProfilePage() {
@@ -62,7 +62,7 @@ export default function ProfilePage() {
             />
           </div>
           <div className={styles.name_container}>
-            <h1 className={styles.name}>Имя</h1>
+            <h1 className={styles.name}>{info?.username}</h1>
             <button className={styles.edit_profile} onClick={onEditProfile}>
               <svg height="32px" width="32px" viewBox="0 0 348.882 348.882">
                 <g>

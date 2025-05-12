@@ -30,6 +30,7 @@ export default ({ path, event }) => {
   ).length;
   const myId = useSelector((state) => state.profileInfo)?.id;
   const is_created_by_me = myId != null && myId == event?.createdBy?.id;
+  console.log(event?.createdBy);
 
   useEffect(() => {
     event.userAction && setLiked(event.userAction?.isLiked);
@@ -162,7 +163,18 @@ export default ({ path, event }) => {
               <p className={styles.tags}>{event.tags.map((t) => '#' + t.name).join(' ')}</p>
             )}
             {event?.createdBy?.username && (
-              <p className={styles.created_by}>Создано пользователем: {event.createdBy.username}</p>
+              <>
+                <p className={styles.created_by}>Создано пользователем:</p>
+                <Link className={styles.created_by_wrapper} href={'/user/' + event.createdBy.id}>
+                  <Image
+                    className={styles.created_by_img}
+                    src={event.createdBy.avatarPath}
+                    width={48}
+                    height={48}
+                  />
+                  <h3 className={styles.name}>{event.createdBy.username}</h3>
+                </Link>
+              </>
             )}
           </div>
           <div className={styles.comments}>

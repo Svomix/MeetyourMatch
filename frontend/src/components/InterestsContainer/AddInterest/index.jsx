@@ -1,7 +1,7 @@
 'use client';
+import classNames from '@/utils/classnames';
 import { useRef, useState } from 'react';
 import styles from './index.module.css';
-import classNames from '@/utils/classnames';
 
 export default ({ data, onSelect, className }) => {
   const [drop, setDrop] = useState(false);
@@ -39,8 +39,7 @@ export default ({ data, onSelect, className }) => {
     input.current?.blur();
     onSelect({ key: e.key, text: e.text });
   }
-  console.log(getFiltered(data));
-  console.log(data?.length);
+
   return (
     <div className={styles.wrapper}>
       <input

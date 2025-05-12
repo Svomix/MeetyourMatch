@@ -1,11 +1,10 @@
 'use client';
-import styles from './index.module.css';
-import mock_logo from '../../../public/user_logo.jpg';
-import Image from 'next/image';
-import Link from 'next/link';
-import { ModalPage, setModal } from '@store/modalSlice/index';
-import { useDispatch } from 'react-redux';
 import { getIsLoggedIn } from '@/services/authService';
+import { ModalPage, setModal } from '@store/modalSlice/index';
+import Image from 'next/image';
+import { useDispatch } from 'react-redux';
+import mock_logo from '../../../public/user_logo.jpg';
+import styles from './index.module.css';
 
 export default ({ person }) => {
   console.log(person);
@@ -30,7 +29,7 @@ export default ({ person }) => {
         />
         <h2 className={styles.name}>{person.username}</h2>
       </div>
-      <div className={styles.desc_wrapper}>
+      {/* <div className={styles.desc_wrapper}>
         <p className={styles.about}>
           <span className={styles.accent}>Про&nbsp;себя:&nbsp;</span>
           {person.description}
@@ -46,7 +45,7 @@ export default ({ person }) => {
       </div>
       <Link href={`/`} onClick={onClick} className={styles.write}>
         Написать
-      </Link>
+      </Link> */}
     </div>
   );
 };
