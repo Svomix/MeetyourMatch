@@ -166,6 +166,13 @@ public class EventController {
         return fullEventDTO;
     }
 
+    @GetMapping("/{event_id}/participants")
+    public ResponseEntity<List<UserProfileDTO>> findUsersByInCalendar(@PathVariable("event_id") Long eventId) throws BaseCoreException {
+        Event event = eventService.findEventById(eventId);
+        List<User> users = userActionsService.findUsersByEventInCalendar(event);
+        return ResponseEntity.ok(users.stream().map(u -> objectMapper.convertValue(u, UserProfileDTO.class)).toList());
+    }
+
     @PostMapping("/{event_id}/comments")
     public CommentDTO addComment(@PathVariable("event_id") Long eventId, @Valid @RequestBody CommentRequestDTO commentDTO) throws BaseCoreException {
         User currentUser = userService.getCurrentUser();
