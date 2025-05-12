@@ -18,9 +18,6 @@ import styles from './index.module.css';
 export default ({ path, event }) => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const is_admin = useSelector((state) => state.profileInfo)?.authorities.filter(
-    (el) => el.authority == 'ROLE_ADMIN'
-  ).length;
   let is_logged = getIsLoggedIn();
   let [liked, setLiked] = useState(false);
   let [disliked, setDisliked] = useState(false);
@@ -28,7 +25,11 @@ export default ({ path, event }) => {
   let [likeCount, setLikeCount] = useState();
   let [dislikeCount, setDislikeCount] = useState();
   let [calendarCount, setCalendarCount] = useState();
-  console.log(is_admin);
+  const is_admin = useSelector((state) => state.profileInfo)?.authorities.filter(
+    (el) => el.authority == 'ROLE_ADMIN'
+  ).length;
+  const myId = useSelector((state) => state.profileInfo)?.id;
+  const is_created_by_me = myId != null && myId == event?.createdBy?.id;
 
   useEffect(() => {
     event.userAction && setLiked(event.userAction?.isLiked);
@@ -63,7 +64,7 @@ export default ({ path, event }) => {
 
   const onDelete = () => {
     authed.delete(`v1/events/${event.id}`);
-    router.push('/search');
+    router.back();
   };
 
   const calendar_click = (e) => {
@@ -160,6 +161,9 @@ export default ({ path, event }) => {
             {event.tags && (
               <p className={styles.tags}>{event.tags.map((t) => '#' + t.name).join(' ')}</p>
             )}
+            {event?.createdBy?.username && (
+              <p className={styles.created_by}>Создано пользователем: {event.createdBy.username}</p>
+            )}
           </div>
           <div className={styles.comments}>
             <CommentBox
@@ -168,7 +172,7 @@ export default ({ path, event }) => {
               onDelete={onDeleteComment}
             />
           </div>
-          {!!is_admin && (
+          {(!!is_admin || is_created_by_me) && (
             <button className={styles.delete_event} onClick={onDelete}>
               Удалить событие
             </button>

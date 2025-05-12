@@ -25,10 +25,11 @@
 }
 
 .userLogo {
+  width: 48px;
+  height: 48px;
   margin-left: 0.5rem;
   border-radius: 24px;
   border: var(--black) solid 2px;
-  color: var(--white);
 }
 
 .profile_link {

@@ -1,19 +1,18 @@
 'use client';
-import { tokenType } from '@/services/authService';
+import { getIsLoggedIn, tokenType } from '@/services/authService';
 import { authed, unauthed } from '@/services/axiosInstance';
 import Card from '@components/Card';
 import CardNavigation from '@components/Pagination';
 import SDropdown from '@components/SDropdown';
 import Search from '@components/Search';
+import routes from '@routes';
+import { fetchAllTags } from '@store/tagStore';
 import Cookies from 'js-cookie';
+import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
-import styles from './page.module.css';
-import routes from '@routes';
-import Link from 'next/link';
-import { getIsLoggedIn } from '@/services/authService';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllTags } from '@store/tagStore';
+import styles from './page.module.css';
 
 const SearchSection = () => {
   let [events, setEvents] = useState([]);
@@ -39,25 +38,29 @@ const SearchSection = () => {
   const setPage = (page) => setParam('page', page);
 
   const dispatch = useDispatch();
-  const tags = useSelector(state => state.tagsInfo) || []
+  const tags = useSelector((state) => state.tagsInfo) || [];
 
   useEffect(() => {
     dispatch(fetchAllTags());
-    setSQuery(query)
-  }, [])
+    setSQuery(query);
+  }, []);
 
   const getSuggestions = (text) => {
-    const split = text.split(/\s/)
-    if(split.length == 0) return
-    const last = split[split.length-1]
-    const nolast = text.substr(0, text.length-last.length)
-    if(last.startsWith("#")){
-      const taglist = tags.map((t) => ({'name': '#' + t.name, 'query': '#' + t.name.toLowerCase(), 'rep': nolast + '#' + t.name}))
-      return taglist.filter((t) => t.query.startsWith(last))
+    const split = text.split(/\s/);
+    if (split.length == 0) return;
+    const last = split[split.length - 1];
+    const nolast = text.substr(0, text.length - last.length);
+    if (last.startsWith('#')) {
+      const taglist = tags.map((t) => ({
+        name: '#' + t.name,
+        query: '#' + t.name.toLowerCase(),
+        rep: nolast + '#' + t.name
+      }));
+      return taglist.filter((t) => t.query.startsWith(last));
     }
-  }
+  };
 
-  const suggestions = getSuggestions(squery) || []
+  const suggestions = getSuggestions(squery) || [];
 
   const onSearchChange = (e) => {
     e.preventDefault();

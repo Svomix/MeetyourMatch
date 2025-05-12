@@ -1,12 +1,8 @@
 'use client';
-import { unauthed } from '@/services/axiosInstance';
-import { setAuth } from '@store/authSlice';
 import { ModalPage, setModal, setModalData } from '@store/modalSlice/index';
-import { useRouter } from 'next/navigation';
+import { fetchAllLocations } from '@store/locationStore';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllLocations } from '@store/locationStore';
-import InputField from '../../InputField';
 import styles from './index.module.css';
 import Map from '@components/Map';
 import classNames from '@/utils/classnames';
@@ -14,13 +10,13 @@ import classNames from '@/utils/classnames';
 export default function PlaceEditor() {
   const dialog = useRef();
   const dispatch = useDispatch();
-  const locations = useSelector((state) => state.locationsInfo)
+  const locations = useSelector((state) => state.locationsInfo);
 
   useEffect(() => {
-    dispatch(fetchAllLocations())
-  }, [])
+    dispatch(fetchAllLocations());
+  }, []);
 
-  const [selected, setSelected] = useState(null)
+  const [selected, setSelected] = useState(null);
 
   const onSubmit = (e) => {
     e.preventDefault()

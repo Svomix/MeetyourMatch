@@ -1,18 +1,18 @@
 'use client';
-import { useState } from 'react';
-import Link from 'next/link';
-import styles from './page.module.css';
-import mock_event_img from '@public/mock_event_img.gif';
-import Image from 'next/image';
 import DateInput from '@components/Inputs/DateInput';
 import LabelInput from '@components/Inputs/LabelInput';
 import NumberInput from '@components/Inputs/NumberInput';
 import TextInput from '@components/Inputs/TextInput';
+import mock_event_img from '@public/mock_event_img.gif';
 import routes from '@routes';
 import { authed } from '@/services/axiosInstance';
 import { useRouter } from 'next/navigation';
 import { ModalPage, setModal, setModalData } from '@store/modalSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import styles from './page.module.css';
 
 export default () => {
   const router = useRouter();
@@ -81,8 +81,8 @@ export default () => {
     setDate(e.target.value);
   };
   const onChangePlace = (e) => {
-    e.preventDefault()
-    dispatch(setModal(ModalPage.PlaceEditor))
+    e.preventDefault();
+    dispatch(setModal(ModalPage.PlaceEditor));
   };
   const onChangePrice = (e) => {
     setPrice(e.target.value);
@@ -165,6 +165,7 @@ export default () => {
       <div className={styles.extra_info}>
         <h4 className={styles.desc_name}>Описание:</h4>
         <TextInput
+          required
           name="description"
           className={styles.desc_input}
           text={desc}

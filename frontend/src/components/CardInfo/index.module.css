@@ -176,6 +176,14 @@
   font-weight: 100;
 }
 
+.created_by {
+  margin-top: 0.3vh;
+  color: var(--white);
+  font-size: 24px;
+  font-variant: small-caps;
+  font-weight: 500;
+}
+
 .comments {
   padding: 0 40px;
 }
