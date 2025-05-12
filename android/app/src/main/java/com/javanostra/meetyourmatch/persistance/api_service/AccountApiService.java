@@ -1,5 +1,6 @@
 package com.javanostra.meetyourmatch.persistance.api_service;
 
+import com.javanostra.meetyourmatch.persistance.entity.UserFirebaseTokenDTO;
 import com.javanostra.meetyourmatch.persistance.entity.UserRelationDTO;
 import com.javanostra.meetyourmatch.persistance.entity.ResponseDTO;
 import com.javanostra.meetyourmatch.persistance.entity.UserActionDTO;
@@ -11,8 +12,10 @@ import java.util.Set;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -189,4 +192,17 @@ public interface AccountApiService {
     Call<ResponseDTO> deleteFriendRequest(
             @Query("user_id") Long userId
     );
+
+    @PUT("/api/account/firebase-token")
+    Call<ResponseDTO> updateFirebaseToken(
+            @Body UserFirebaseTokenDTO userFirebaseToken
+    );
+
+    @HTTP(method = "DELETE", path = "/api/account/firebase-token", hasBody = true)
+    Call<ResponseDTO> deleteFirebaseToken(
+            @Body UserFirebaseTokenDTO userFirebaseToken
+    );
+
+    @PUT("/api/account/online-status")
+    Call<ResponseDTO> updateOnlineStatus();
 }

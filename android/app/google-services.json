@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "96534709494",
+    "project_id": "meetyourmatch-37dfb",
+    "storage_bucket": "meetyourmatch-37dfb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:96534709494:android:bdec9af29aa78aadca98d7",
+        "android_client_info": {
+          "package_name": "com.javanostra.meetyourmatch"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYtpU0YCgGFSQohHbgvviq7-mpdI7RKIg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

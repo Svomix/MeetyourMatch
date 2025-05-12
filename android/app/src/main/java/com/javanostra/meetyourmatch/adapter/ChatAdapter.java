@@ -61,6 +61,7 @@ public class ChatAdapter extends ListAdapter<ChatUserDTO, ChatAdapter.ChatViewHo
         private final FrameLayout iconContainer;
         private final ImageView iconFriend;
         private final ImageView iconBlocked;
+        private final ImageView onlineStatus;
         private final ImageView iconGroup;
         private final TextView nameView;
         private final TextView lastMessageView;
@@ -80,6 +81,8 @@ public class ChatAdapter extends ListAdapter<ChatUserDTO, ChatAdapter.ChatViewHo
             lastMessageView = itemView.findViewById(R.id.chat_list_last_message);
             timeView = itemView.findViewById(R.id.chat_list_time);
             timeFormatter = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            onlineStatus = itemView.findViewById(R.id.online_status);
+
 
             itemView.setOnClickListener(v -> {
                 if (currentChatUser != null && getAdapterPosition() != RecyclerView.NO_POSITION) {
@@ -102,7 +105,7 @@ public class ChatAdapter extends ListAdapter<ChatUserDTO, ChatAdapter.ChatViewHo
                 iconFriend.setVisibility(View.GONE);
                 iconBlocked.setVisibility(View.GONE);
                 if (iconGroup != null) iconGroup.setVisibility(View.GONE);
-                itemView.setAlpha(1.0f); 
+                itemView.setAlpha(1.0f);
                 return;
             }
 
@@ -120,6 +123,15 @@ public class ChatAdapter extends ListAdapter<ChatUserDTO, ChatAdapter.ChatViewHo
             iconContainer.setVisibility(View.GONE);
             iconFriend.setVisibility(View.GONE);
             iconBlocked.setVisibility(View.GONE);
+            itemView.setAlpha(1.0f); 
+            nameView.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.textColorPrimaryModern)); 
+            lastMessageView.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.textColorSecondaryModern));
+            Log.d("Chat element", currentChatUser.getUserProfile().getUsername());
+            if (!currentChatUser.getUserProfile().getIsGroup() && currentChatUser.isOnline()) {
+                onlineStatus.setVisibility(View.VISIBLE);
+            } else {
+                onlineStatus.setVisibility(View.GONE);
+            }
             if (iconGroup != null) iconGroup.setVisibility(View.GONE);
 
             if (chatInfo.getIsGroup()) {

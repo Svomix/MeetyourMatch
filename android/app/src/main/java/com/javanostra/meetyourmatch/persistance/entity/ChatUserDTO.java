@@ -1,11 +1,14 @@
 package com.javanostra.meetyourmatch.persistance.entity;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Objects;
 
 public class ChatUserDTO {
 
     private ChatInfoDTO userProfile;
     private RelationStatus relationStatus;
+    private Timestamp lastSeenAt;
 
     public enum RelationStatus {
         NONE, FRIEND, BLOCKED
@@ -14,6 +17,7 @@ public class ChatUserDTO {
     public ChatUserDTO(ChatInfoDTO userProfile, RelationStatus relationStatus) {
         this.userProfile = userProfile;
         this.relationStatus = relationStatus;
+        this.lastSeenAt = null;
     }
 
     public ChatInfoDTO getUserProfile() {
@@ -30,6 +34,19 @@ public class ChatUserDTO {
 
     public void setRelationStatus(RelationStatus relationStatus) {
         this.relationStatus = relationStatus;
+    }
+
+    public Timestamp getLastSeenAt() {
+        return lastSeenAt;
+    }
+
+    public void setLastSeenAt(Timestamp lastSeenAt) {
+        this.lastSeenAt = lastSeenAt;
+    }
+
+    public boolean isOnline() {
+        long milliseconds = Timestamp.from(Instant.now()).getTime() - lastSeenAt.getTime();
+        return milliseconds < 35000;
     }
 
     @Override

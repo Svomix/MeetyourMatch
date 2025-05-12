@@ -10,14 +10,33 @@
     android:paddingBottom="12dp"
     android:background="?android:attr/selectableItemBackground">
 
-    <ImageView
-        android:id="@+id/chat_list_avatar"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
+    <FrameLayout
+        android:id="@+id/chat_avatar_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/avatar" />
+        app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:id="@+id/chat_list_avatar"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            tools:src="@drawable/avatar" />
+
+        <ImageView
+            android:id="@+id/online_status"
+            android:layout_gravity="bottom|end"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:visibility="invisible"
+            android:elevation="2dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="4dp"
+            android:src="@drawable/baseline_circle_24" />
+
+    </FrameLayout>
+
+
 
     <FrameLayout
         android:id="@+id/frameLayout"
@@ -25,9 +44,9 @@
         android:layout_height="18dp"
         android:layout_marginStart="4dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/chat_list_avatar"
-        app:layout_constraintStart_toEndOf="@+id/chat_list_avatar"
-        app:layout_constraintTop_toTopOf="@+id/chat_list_avatar">
+        app:layout_constraintBottom_toBottomOf="@+id/chat_avatar_status"
+        app:layout_constraintStart_toEndOf="@+id/chat_avatar_status"
+        app:layout_constraintTop_toTopOf="@+id/chat_avatar_status">
 
         <ImageView
             android:id="@+id/chat_list_icon_friend"
@@ -73,7 +92,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/chat_list_time"
         app:layout_constraintStart_toEndOf="@+id/frameLayout"
-        app:layout_constraintTop_toTopOf="@id/chat_list_avatar"
+        app:layout_constraintTop_toTopOf="@id/chat_avatar_status"
         tools:text="VeryLongUsernameHere" />
 
     <TextView
@@ -85,7 +104,7 @@
         android:maxLines="1"
         android:textAppearance="?android:attr/textAppearanceListItemSecondary"
         android:textColor="@color/textColorSecondaryModern"
-        app:layout_constraintBottom_toBottomOf="@id/chat_list_avatar"
+        app:layout_constraintBottom_toBottomOf="@id/chat_avatar_status"
         app:layout_constraintEnd_toEndOf="@id/chat_list_username"
         app:layout_constraintStart_toStartOf="@id/chat_list_username"
         app:layout_constraintTop_toBottomOf="@id/chat_list_username"

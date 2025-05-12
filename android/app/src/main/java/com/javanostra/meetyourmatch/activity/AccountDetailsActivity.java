@@ -50,7 +50,7 @@ public class AccountDetailsActivity extends AppCompatActivity {
     public static final String EXTRA_USERNAME = "USERNAME"; 
 
     private ImageView profileAvatarHeader;
-    private TextView usernameTextView, cityTextView, genderTextView, descriptionTextView, descriptionLabel;
+    private TextView usernameTextView, cityTextView, genderTextView, descriptionTextView, descriptionLabel, userOnline;
     private AppCompatButton friendActionButton, startChatButton, blockActionButton;
     private AppCompatButton acceptRequestButton, rejectRequestButton;
     private ProgressBar progressBar;
@@ -137,6 +137,7 @@ public class AccountDetailsActivity extends AppCompatActivity {
         metadataLayout = findViewById(R.id.metadataLayout);
         buttonsContainer = findViewById(R.id.buttons_container);
         friendRequestActionsLayout = findViewById(R.id.friend_request_actions);
+        userOnline = findViewById(R.id.user_online);
 
         
         setContentVisibility(false);
@@ -384,6 +385,11 @@ public class AccountDetailsActivity extends AppCompatActivity {
         }
 
         usernameTextView.setText(user.getUsername());
+
+        if (user.isOnline()) {
+            userOnline.setText("Online");
+            userOnline.setCompoundDrawablesWithIntrinsicBounds(R.drawable.baseline_circle_24, 0, 0, 0);
+        }
 
         Glide.with(this)
                 .load(user.getAvatarPath())

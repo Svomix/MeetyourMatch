@@ -51,9 +51,9 @@ import ua.naiksoftware.stomp.dto.StompMessage;
 public class ChatWebSocketManager {
 
     private static final String TAG = "ChatWebSocketManager";
-    // private static final String WEBSOCKET_URL = "ws://10.0.2.2:8080/ws";
+    private static final String WEBSOCKET_URL = "ws://10.0.2.2:8080/ws";
     // private static final String WEBSOCKET_URL = "ws://46.0.192.151:8000/ws";
-    private static final String WEBSOCKET_URL = "ws://192.168.1.65:8080/ws";
+    //private static final String WEBSOCKET_URL = "ws://192.168.1.65:8080/ws";
 
     private static volatile ChatWebSocketManager instance;
 

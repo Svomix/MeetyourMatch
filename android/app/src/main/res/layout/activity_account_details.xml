@@ -55,6 +55,25 @@
         app:layout_constraintTop_toBottomOf="@id/avatarContainer"
         tools:text="UsernameHere" />
 
+    <TextView
+        android:id="@+id/user_online"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Offline"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/sansation_bold"
+        android:textColor="@color/textColorSecondaryModern"
+        android:textSize="15sp"
+        android:shadowColor="#80000000"
+        android:shadowDx="1"
+        android:shadowDy="3"
+        android:shadowRadius="6"
+        app:drawableLeftCompat="@drawable/baseline_circle_24_2"
+        android:drawablePadding="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_username"/>
+
     <LinearLayout
         android:id="@+id/metadataLayout"
         android:layout_width="0dp"
@@ -67,7 +86,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_username"
+        app:layout_constraintTop_toBottomOf="@+id/user_online"
         tools:visibility="visible">
 
         <ImageView

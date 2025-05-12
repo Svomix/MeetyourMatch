@@ -7,6 +7,7 @@ import com.javanostra.meetyourmatch.persistance.entity.UserAuthority;
 import com.javanostra.meetyourmatch.persistance.entity.UserInterest;
 import com.javanostra.meetyourmatch.persistance.entity.UserProfileDTO;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
@@ -97,4 +98,7 @@ public interface UserApiService {
 
     @GET("/api/interests")
     Call<List<Interest>> getAllInterests();
+
+    @GET("/api/v1/users/{user_id}/online_status")
+    Call<Timestamp> getLastSeenForUser(@Path("user_id") Long userId);
 }

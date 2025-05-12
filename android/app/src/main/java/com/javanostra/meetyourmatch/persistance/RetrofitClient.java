@@ -59,7 +59,7 @@ public class RetrofitClient {
                             .writeTimeout(30, TimeUnit.SECONDS);
 
                     retrofit = new Retrofit.Builder()
-                            .baseUrl(BASE_URL_PHYSIC)
+                            .baseUrl(BASE_URL_EMULATOR)
                             .client(httpClientBuilder.build())
                             .addConverterFactory(GsonConverterFactory.create(getCustomGson()))
                             .build();

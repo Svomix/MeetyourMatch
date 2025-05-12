@@ -1,5 +1,8 @@
 package com.javanostra.meetyourmatch.persistance.entity;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 public class UserProfileDTO {
@@ -11,6 +14,7 @@ public class UserProfileDTO {
     private String gender;
     private String description;
     private String avatarPath;
+    private Timestamp lastSeenAt;
 
     public UserProfileDTO(String username, String email) {
         this.username = username;
@@ -79,5 +83,18 @@ public class UserProfileDTO {
 
     public void setAvatarPath(String avatarPath) {
         this.avatarPath = avatarPath;
+    }
+
+    public Timestamp getLastSeenAt() {
+        return lastSeenAt;
+    }
+
+    public void setLastSeenAt(Timestamp lastSeenAt) {
+        this.lastSeenAt = lastSeenAt;
+    }
+
+    public boolean isOnline() {
+        long milliseconds = Timestamp.from(Instant.now()).getTime() - lastSeenAt.getTime();
+        return milliseconds < 35000;
     }
 }

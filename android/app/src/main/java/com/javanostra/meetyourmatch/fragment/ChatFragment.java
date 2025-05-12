@@ -35,6 +35,7 @@ import com.javanostra.meetyourmatch.adapter.ChatAdapter;
 import com.javanostra.meetyourmatch.persistance.RetrofitClient;
 import com.javanostra.meetyourmatch.persistance.api_service.AccountApiService;
 import com.javanostra.meetyourmatch.persistance.api_service.ChatApiService;
+import com.javanostra.meetyourmatch.persistance.api_service.UserApiService;
 import com.javanostra.meetyourmatch.persistance.cookie.CookieManager;
 import com.javanostra.meetyourmatch.persistance.cookie.TokenHelper;
 import com.javanostra.meetyourmatch.persistance.entity.ChatInfoDTO;
@@ -71,7 +72,9 @@ public class ChatFragment extends Fragment implements ChatAdapter.OnChatItemClic
     private List<ChatUserDTO> fullChatList = new ArrayList<>();
     private ChatApiService chatApiService;
     private AccountApiService accountApiService;
+    private UserApiService userApiService;
     private AtomicInteger pendingRelationRequests = new AtomicInteger(0);
+    private AtomicInteger pendingOnlineStatusRequests = new AtomicInteger(0);
 
     private LocalBroadcastManager localBroadcastManager;
     public static final String ACTION_UPDATE_CHAT_ITEM = "com.javanostra.meetyourmatch.UPDATE_CHAT_ITEM";
@@ -126,6 +129,7 @@ public class ChatFragment extends Fragment implements ChatAdapter.OnChatItemClic
             Log.e(TAG, "Failed to get current user ID in onAttach");
         }
         chatApiService = RetrofitClient.getRetrofit(context).create(ChatApiService.class);
+        userApiService = RetrofitClient.getRetrofit(context).create(UserApiService.class);
         accountApiService = RetrofitClient.getRetrofit(context).create(AccountApiService.class);
         localBroadcastManager = LocalBroadcastManager.getInstance(requireContext());
     }
@@ -309,6 +313,7 @@ public class ChatFragment extends Fragment implements ChatAdapter.OnChatItemClic
         showLoadingState();
         // fullChatList.clear();
         pendingRelationRequests.set(0);
+        pendingOnlineStatusRequests.set(0);
 
         chatApiService.getUserChats().enqueue(new Callback<List<ChatInfoDTO>>() {
             @Override
@@ -383,9 +388,11 @@ public class ChatFragment extends Fragment implements ChatAdapter.OnChatItemClic
                         }
                     } else {
                         pendingRelationRequests.set(pendingPersonalChats);
+                        pendingOnlineStatusRequests.set(pendingPersonalChats);
                         for (ChatUserDTO chatUser : newOrUpdatedChatUsers) {
                             if (chatUser.getUserProfile() != null && !chatUser.getUserProfile().getIsGroup()) {
                                 fetchRelationForUser(chatUser.getUserProfile());
+                                fetchOnlineStatusForUser(chatUser.getUserProfile());
                             }
                         }
                     }
@@ -416,7 +423,7 @@ public class ChatFragment extends Fragment implements ChatAdapter.OnChatItemClic
     
     private void fetchRelationForUser(ChatInfoDTO profileToFetchRelationFor) {
         if (accountApiService == null || profileToFetchRelationFor == null || profileToFetchRelationFor.getId() == null || !isAdded()) {
-            checkIfAllRelationsFetched(); 
+            //checkIfAllRelationsFetched();
             return;
         }
 
@@ -446,12 +453,13 @@ public class ChatFragment extends Fragment implements ChatAdapter.OnChatItemClic
                                 chatUser.getUserProfile().getId().equals(profileToFetchRelationFor.getId()) &&
                                 !chatUser.getUserProfile().getIsGroup()) {
 
-                            fullChatList.set(i, new ChatUserDTO(chatUser.getUserProfile(), status));
+                            chatUser.setRelationStatus(status);
+                            fullChatList.set(i, chatUser);
                             break;
                         }
                     }
                 }
-                checkIfAllRelationsFetched();
+                //checkIfAllRelationsFetched();
             }
 
             @Override
@@ -459,11 +467,53 @@ public class ChatFragment extends Fragment implements ChatAdapter.OnChatItemClic
                 if (!isAdded()) return;
                 Log.e(TAG, "Network error getting relation for " + profileToFetchRelationFor.getUsername(), t);
 
-                checkIfAllRelationsFetched();
+                //checkIfAllRelationsFetched();
             }
         });
     }
+    private void fetchOnlineStatusForUser(ChatInfoDTO profileToFetchOnlineStatusFor) {
+        if (userApiService == null || profileToFetchOnlineStatusFor == null || profileToFetchOnlineStatusFor.getId() == null || !isAdded()) {
+            checkIfAllOnlineStatusFetched();
+            return;
+        }
 
+        userApiService.getLastSeenForUser(profileToFetchOnlineStatusFor.getId()).enqueue(
+                new Callback<Timestamp>() {
+                    @Override
+                    public void onResponse(Call<Timestamp> call, Response<Timestamp> response) {
+                        if (!isAdded()) return;
+                        if (response.isSuccessful() && response.body() != null) {
+                            synchronized (fullChatList) {
+                                for (int i = 0; i < fullChatList.size(); i++) {
+                                    ChatUserDTO chatUser = fullChatList.get(i);
+                                    if (chatUser.getUserProfile() != null &&
+                                            chatUser.getUserProfile().getId().equals(profileToFetchOnlineStatusFor.getId()) &&
+                                            !chatUser.getUserProfile().getIsGroup()) {
+
+                                        chatUser.setLastSeenAt(response.body());
+
+                                        break;
+                                    }
+                                }
+                            }
+                            Log.d(TAG, "Successful getting online status");
+                        } else {
+                            Log.d(TAG, "Failed to get online status for user");
+                        }
+
+                        checkIfAllOnlineStatusFetched();
+                    }
+
+                    @Override
+                    public void onFailure(Call<Timestamp> call, Throwable throwable) {
+                        if (!isAdded()) return;
+                        Log.e(TAG, "Network error getting online status for " + profileToFetchOnlineStatusFor.getUsername(), throwable);
+
+                        checkIfAllOnlineStatusFetched();
+                    }
+                }
+        );
+    }
     
     private void checkIfAllRelationsFetched() {
         int remaining = pendingRelationRequests.decrementAndGet(); 
@@ -478,6 +528,22 @@ public class ChatFragment extends Fragment implements ChatAdapter.OnChatItemClic
             }
         } else if (remaining < 0) {
             Log.w(TAG, "PendingRelationRequests count became negative!");
+        }
+    }
+
+    private void checkIfAllOnlineStatusFetched() {
+        int remaining = pendingOnlineStatusRequests.decrementAndGet();
+        Log.d(TAG, "Online status requests remaining: " + remaining);
+        if (remaining == 0 && isAdded()) {
+
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() -> {
+                    Log.d(TAG, "All online status fetched. Filtering and sorting...");
+                    filterAndSortChats(searchEditText.getText().toString());
+                });
+            }
+        } else if (remaining < 0) {
+            Log.w(TAG, "PendingOnlineStatusRequests count became negative!");
         }
     }
 

@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -23,16 +25,22 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.javanostra.meetyourmatch.R;
 import com.javanostra.meetyourmatch.fragment.InputDialogFragment;
 import com.javanostra.meetyourmatch.persistance.RetrofitClient;
+import com.javanostra.meetyourmatch.persistance.ServerPinger;
+import com.javanostra.meetyourmatch.persistance.UserSession;
 import com.javanostra.meetyourmatch.persistance.api_service.AccountApiService;
 import com.javanostra.meetyourmatch.persistance.api_service.ImageApiService;
 import com.javanostra.meetyourmatch.persistance.api_service.UserApiService;
 import com.javanostra.meetyourmatch.persistance.cookie.CookieManager;
 import com.javanostra.meetyourmatch.persistance.entity.ResponseDTO;
 import com.javanostra.meetyourmatch.persistance.entity.Tag;
+import com.javanostra.meetyourmatch.persistance.entity.UserFirebaseTokenDTO;
 import com.javanostra.meetyourmatch.persistance.entity.UserProfileDTO;
 
 import java.io.File;
@@ -178,13 +186,8 @@ public class  AccountActivity extends AppCompatActivity {
     }
 
     public void exitAccount(View view) {
-        CookieManager cookieManager = new CookieManager(this);
-        cookieManager.saveCookie("");
+        deleteFirebaseToken();
 
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
     }
 
     private void performGetAccountInfo(Runnable onComplete) {
@@ -322,4 +325,59 @@ public class  AccountActivity extends AppCompatActivity {
 //            }
 //        });
 //    }
+
+    private void deleteFirebaseToken() {
+        Long id = UserSession.currentUser.getId();
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(
+                new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w("Firebase token", "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        String token = task.getResult();
+                        sendDeleteFirebaseTokenRequest(token, id);
+                        Log.d("Firebase token", token);
+                    }
+                }
+        );
+    }
+
+    private void sendDeleteFirebaseTokenRequest(String token, Long id) {
+        AccountApiService apiService = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
+
+        UserFirebaseTokenDTO userFirebaseToken = new UserFirebaseTokenDTO(
+                id,
+                Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID),
+                token
+        );
+
+        Call<ResponseDTO> call = apiService.deleteFirebaseToken(userFirebaseToken);
+
+        call.enqueue(
+                new Callback<ResponseDTO>() {
+                    @Override
+                    public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+                        Log.d("Firebase delete success", response.message());
+                        CookieManager cookieManager = new CookieManager(AccountActivity.this);
+                        cookieManager.saveCookie("");
+
+                        UserSession.currentUser = null;
+                        ServerPinger.getInstance(AccountActivity.this).stopPinging();
+
+                        Intent intent = new Intent(AccountActivity.this, LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseDTO> call, Throwable throwable) {
+                        Log.e("Firebase delete failure", throwable.getMessage());
+                    }
+                }
+        );
+    }
 }

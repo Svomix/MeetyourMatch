@@ -2,6 +2,8 @@ package com.javanostra.meetyourmatch.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -12,6 +14,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.javanostra.meetyourmatch.R;
 import com.javanostra.meetyourmatch.fragment.CalendarFragment;
 import com.javanostra.meetyourmatch.fragment.ChatFragment;
@@ -19,8 +24,16 @@ import com.javanostra.meetyourmatch.fragment.EventSearchFragment;
 import com.javanostra.meetyourmatch.fragment.MapFragment;
 import com.javanostra.meetyourmatch.fragment.RecomendationsFragment;
 import com.javanostra.meetyourmatch.persistance.RetrofitClient;
+import com.javanostra.meetyourmatch.persistance.ServerPinger;
+import com.javanostra.meetyourmatch.persistance.UserSession;
 import com.javanostra.meetyourmatch.persistance.api_service.AccountApiService;
+import com.javanostra.meetyourmatch.persistance.entity.ResponseDTO;
+import com.javanostra.meetyourmatch.persistance.entity.UserFirebaseTokenDTO;
 import com.javanostra.meetyourmatch.persistance.entity.UserProfileDTO;
+
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -70,6 +83,7 @@ public class MainScreenActivity extends AppCompatActivity implements Recomendati
         mapFragment = new MapFragment();
         searchFragment = new EventSearchFragment();
 
+        getCurrentUser();
         loadFragment(recomendationsFragment);
         getSupportFragmentManager().addOnBackStackChangedListener(this);
     }
@@ -83,6 +97,9 @@ public class MainScreenActivity extends AppCompatActivity implements Recomendati
                 if (response.isSuccessful()) {
                     Toast.makeText(MainScreenActivity.this, "Удачно взят юзер", Toast.LENGTH_SHORT).show();
                     currentUser = response.body();
+                    UserSession.currentUser = currentUser;
+                    ServerPinger.getInstance(MainScreenActivity.this).startPinging();
+                    getFirebaseToken();
                 } else {
                     Toast.makeText(MainScreenActivity.this, response.message(), Toast.LENGTH_SHORT).show();
                 }
@@ -188,5 +205,51 @@ public class MainScreenActivity extends AppCompatActivity implements Recomendati
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.commit();
+    }
+
+    private void getFirebaseToken() {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(
+                new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w("Firebase token", "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        String token = task.getResult();
+                        sendFirebaseTokenToServer(token);
+                        Log.d("Firebase token", token);
+                    }
+                }
+        );
+    }
+
+    private void sendFirebaseTokenToServer(String token) {
+        AccountApiService apiService = RetrofitClient.getRetrofit(this).create(AccountApiService.class);
+
+        UserFirebaseTokenDTO userFirebaseToken = new UserFirebaseTokenDTO(
+                currentUser.getId(),
+                Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID),
+                token
+        );
+
+        Call<ResponseDTO> call = apiService.updateFirebaseToken(userFirebaseToken);
+
+        call.enqueue(
+                new Callback<ResponseDTO>() {
+                    @Override
+                    public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+                        Log.d("Firebase update success", response.message());
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseDTO> call, Throwable throwable) {
+                        Log.e("Firebase update failure", throwable.getMessage());
+                    }
+                }
+        );
+
+
     }
 }
