@@ -1,7 +1,7 @@
 'use client';
 import { unauthed } from '@/services/axiosInstance';
 import { setAuth } from '@store/authSlice';
-import { ModalPage, setModal } from '@store/modalSlice/index';
+import { ModalPage, setModal, setModalData } from '@store/modalSlice/index';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,6 +9,7 @@ import { fetchAllLocations } from '@store/locationStore';
 import InputField from '../../InputField';
 import styles from './index.module.css';
 import Map from '@components/Map';
+import classNames from '@/utils/classnames';
 
 export default function PlaceEditor() {
   const dialog = useRef();
@@ -20,6 +21,12 @@ export default function PlaceEditor() {
   }, [])
 
   const [selected, setSelected] = useState(null)
+
+  const onSubmit = (e) => {
+    e.preventDefault()
+    dispatch(setModalData({key: 'currentLocation', data: selected}))
+    dispatch(setModal(ModalPage.None))
+  }
 
   useEffect(() => {
     dialog.current?.showModal();
@@ -37,19 +44,15 @@ export default function PlaceEditor() {
 
   return (
     <dialog ref={dialog} className={styles.dialog}>
-      <div className={styles.dialog_wrap}>
+      <div className={classNames(styles.dialog_wrap, styles.gap_8)}>
         <h1 className={styles.title}>Выбрать место</h1>
+        <p className={styles.selected_place}>{selected && selected.title}</p>
         <div className={styles.map_container}>
-          <Map data={locations} selected={selected} onSelect={setSelected}/>
+          <Map editable data={locations} selected={selected} onSelect={setSelected}/>
         </div>
-        <p className={styles.register_desc}>{selected && selected.title}</p>
-        <button className={styles.button_submit}>
-          + Создать место
-        </button>
-        <button className={styles.button_submit}>
+        <button onClick={onSubmit} className={styles.button_submit}>
           Выбрать
         </button>
-
       </div>
     </dialog>
   );

@@ -11,36 +11,53 @@ import TextInput from '@components/Inputs/TextInput';
 import routes from '@routes';
 import { authed } from '@/services/axiosInstance';
 import { useRouter } from 'next/navigation';
-import { ModalPage, setModal } from '@store/modalSlice';
-import { useDispatch } from 'react-redux';
+import { ModalPage, setModal, setModalData } from '@store/modalSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default () => {
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
-  const [place, setPlace] = useState('');
+  const place = useSelector((state) => state.modal.data.currentLocation)
+  //const [place, setPlace] = useState('');
   const [price, setPrice] = useState('');
   const [desc, setDesc] = useState('');
   const [tags, setTags] = useState('');
   const [link, setLink] = useState('');
   const [img, setImg] = useState('');
   const [imgid, setImgid] = useState(null);
+  
 
   const dispatch = useDispatch();
 
-  const handleSubmit = (e) => {
-    console.log(e);
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    let loc = location;
+
+    if(place){
+      if(place.id === '?'){
+        const new_place = {
+          title: place.title,
+          address: place.address,
+          latitude: place.latitude,
+          longitude: place.longitude,
+        };
+
+        loc = (await authed.post('maps/locations', new_place)).data;
+      }
+    }
+
     const formData = new FormData(e.target);
     const body = Object.fromEntries(
       Array.from(formData.entries()).filter(([_, value]) => value !== '')
     );
     body['coverFileId'] = imgid;
+    body['locationId'] = loc?.id;
 
-    console.log(body);
-    authed
-      .post('v1/events/uploadEvent', body)
-      .then((resp) => router.push(`/events/${resp.data.id}`));
+    const resp = await authed.post('v1/events/uploadEvent', body);
+    dispatch(setModalData({key: 'currentLocation', data: undefined}))
+    router.push(`/events/${resp.data.id}`);
   };
 
   const handleFileChange = (e) => {
@@ -101,7 +118,7 @@ export default () => {
 
           <div className={styles.input_wrapper}>
             <label className={styles.meta}>Место: </label>
-            <button onClick={onChangePlace} className={styles.place_select}>Не указано</button>
+            <button onClick={onChangePlace} className={styles.place_select}>{place ? place.title : 'Не указано'}</button>
           </div>
 
           <div className={styles.input_wrapper}>
