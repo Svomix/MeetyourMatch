@@ -7,8 +7,10 @@ import com.javanostra.spring.core.dto.GroupMessageRequestDTO;
 import com.javanostra.spring.core.entities.ChatMessage;
 import com.javanostra.spring.core.entities.GroupMessage;
 import com.javanostra.spring.core.entities.User;
+import com.javanostra.spring.core.dto.NewMessageNotificationDTO;
 import com.javanostra.spring.core.services.ChatMessageService;
 import com.javanostra.spring.core.services.GroupChatService;
+import com.javanostra.spring.core.services.NotificationService;
 import com.javanostra.spring.core.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +31,7 @@ public class ChatController {
     private final ChatMessageService chatMessageService;
     private final UserService userService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final NotificationService notificationService;
     private final GroupChatService groupChatService;
 
     @GetMapping("/messagesHistory/{recipientId}")
@@ -61,6 +64,12 @@ public class ChatController {
         messagingTemplate.convertAndSendToUser(
                 chatNotification.getRecipientId(), "/queue/messages",
                 chatNotification
+        );
+
+        User recipient = userService.findUserByUsername(savedMsg.getRecipientId());
+        notificationService.sendNotification(
+                new NewMessageNotificationDTO(savedMsg.getSenderId(), savedMsg.getContent()),
+                recipient
         );
 
         if (!chatNotification.getSenderId().equals(chatNotification.getRecipientId())) {

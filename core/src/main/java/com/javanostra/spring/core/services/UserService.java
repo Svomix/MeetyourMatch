@@ -7,7 +7,6 @@ import com.javanostra.spring.core.dto.FullUserProfileDTO;
 import com.javanostra.spring.core.dto.UserProfileDTO;
 import com.javanostra.spring.core.entities.*;
 import com.javanostra.spring.core.enums.Relation;
-import com.javanostra.spring.core.enums.Status;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -142,6 +141,10 @@ public class UserService implements UserDetailsManager {
 
     public User findByEmail(String email) {
         return userDAO.findByEmail(email);
+    }
+
+    public User findUserByUsername(String username) {
+        return userDAO.findByUsername(username);
     }
 
     @Transactional
@@ -414,9 +417,5 @@ public class UserService implements UserDetailsManager {
         for (User user : unconfirmedUsers) {
             delete(user);
         }
-    }
-
-    public List<User> findConnectedUsers() {
-        return userDAO.findALLByStatus(Status.ONLINE);
     }
 }

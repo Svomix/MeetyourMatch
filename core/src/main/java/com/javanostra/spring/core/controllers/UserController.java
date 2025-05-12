@@ -26,6 +26,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -84,6 +85,12 @@ public class UserController {
     @GetMapping("/exists/{email}")
     public Boolean checkUserIfExistsByEmail(@PathVariable("email") String email) {
         return userService.userExistsByEmail(email);
+    }
+
+    @GetMapping("/{user_id}/online_status")
+    public Timestamp getLastSeenForUser(@PathVariable("user_id") Long userId) {
+        User user = userService.findUserById(userId);
+        return user.getLastSeenAt();
     }
 
     @PostMapping
@@ -185,11 +192,5 @@ public class UserController {
         else {
             throw new UserDoesNotExistException("Пользователя с данной электронной почтой не существует");
         }
-    }
-
-    @GetMapping("/users")
-    public ResponseEntity<List<User>> findConnectedUsers()
-    {
-        return ResponseEntity.ok(userService.findConnectedUsers());
     }
 }

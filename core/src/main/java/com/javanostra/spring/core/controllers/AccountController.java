@@ -2,11 +2,14 @@ package com.javanostra.spring.core.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
+import com.javanostra.spring.core.dao.UserFirebaseTokenDAO;
 import com.javanostra.spring.core.dto.*;
 import com.javanostra.spring.core.entities.*;
 import com.javanostra.spring.core.enums.Relation;
 import com.javanostra.spring.core.exceptions.*;
-import com.javanostra.spring.core.security.ContextRepository;
+import com.javanostra.spring.core.dto.FriendAcceptNotificationDTO;
+import com.javanostra.spring.core.dto.FriendRequestNotificationDTO;
+import com.javanostra.spring.core.services.NotificationService;
 import com.javanostra.spring.core.services.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,11 +20,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -42,8 +47,11 @@ public class AccountController {
     @NonNull
     private final UserActionsService userActionsService;
     private final EventService eventService;
+    private final NotificationService notificationService;
+    private final UserFirebaseTokenService userFirebaseTokenService;
     @NonNull
     private final UserRecInterestsService userRecInterestsService;
+    private final UserFirebaseTokenDAO userFirebaseTokenDAO;
     ObjectMapper mapper = new ObjectMapper();
 
     {
@@ -330,7 +338,12 @@ public class AccountController {
         }
 
         userService.sendFriendRequest(user.getId(), userId);
-        //TODO: Send notification to user about friend request
+
+        notificationService.sendNotification(
+                new FriendRequestNotificationDTO(user.getUsername()),
+                userService.findUserById(userId)
+        );
+
         return new ResponseDTO(HttpStatus.OK.value(), "Пользователю была отправлена заявка в друзья");
     }
 
@@ -351,6 +364,12 @@ public class AccountController {
         }
 
         userService.acceptFriendRequest(user.getId(), userId);
+
+        notificationService.sendNotification(
+                new FriendAcceptNotificationDTO(user.getUsername()),
+                userService.findUserById(userId)
+        );
+
         return new ResponseDTO(HttpStatus.OK.value(), "Вы приняли заявку в друзья");
     }
 
@@ -399,7 +418,6 @@ public class AccountController {
 
         userService.deleteFriend(currentUser, friend);
 
-        //TODO: Send notification to user about friend deleting
         return new ResponseDTO(HttpStatus.OK.value(), "Пользователь был удален из друзей");
     }
 
@@ -457,5 +475,53 @@ public class AccountController {
         userService.deleteBlocked(currentUser, blocked);
 
         return new ResponseDTO(HttpStatus.OK.value(), "Пользователь убран из черного списка");
+    }
+
+    @PutMapping("/firebase-token")
+    public ResponseDTO updateFirebaseToken(@RequestBody UserFirebaseTokenDTO userFirebaseTokenDTO) throws BaseCoreException {
+
+        User user = userService.getCurrentUser();
+        if (!Objects.equals(user.getId(), userFirebaseTokenDTO.getUserId())) {
+            throw new UserIsNotSameException();
+        }
+        System.out.println(userFirebaseTokenDTO);
+        UserFirebaseToken userFirebaseToken = new UserFirebaseToken(
+                user,
+                userFirebaseTokenDTO.getDeviceId(),
+                LocalDateTime.now(),
+                userFirebaseTokenDTO.getFirebaseToken()
+        );
+
+        userFirebaseTokenService.save(userFirebaseToken);
+
+        return new ResponseDTO(HttpStatus.OK.value(), "Firebase токен успешно обновлен");
+    }
+
+    @DeleteMapping("/firebase-token")
+    public ResponseDTO deleteFirebaseToken(@RequestBody UserFirebaseTokenDTO userFirebaseTokenDTO) throws BaseCoreException {
+        User user = userService.getCurrentUser();
+
+        if (!Objects.equals(user.getId(), userFirebaseTokenDTO.getUserId())) {
+            throw new UserIsNotSameException();
+        }
+
+        UserFirebaseToken userFirebaseToken = new UserFirebaseToken(
+                user,
+                userFirebaseTokenDTO.getDeviceId(),
+                LocalDateTime.now(),
+                userFirebaseTokenDTO.getFirebaseToken()
+        );
+
+        userFirebaseTokenService.delete(userFirebaseToken);
+
+        return new ResponseDTO(HttpStatus.OK.value(), "Firebase токен успешно удален");
+    }
+
+    @PutMapping("/online-status")
+    public ResponseDTO updateOnlineStatus() {
+        User user = userService.getCurrentUser();
+        user.setLastSeenAt(Timestamp.from(Instant.now()));
+        userService.updateUser(user);
+        return new ResponseDTO(HttpStatus.OK.value(), "Продлен онлайн статус");
     }
 }

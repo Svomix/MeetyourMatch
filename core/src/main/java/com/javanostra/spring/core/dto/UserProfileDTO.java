@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.sql.Timestamp;
 import java.util.Set;
 
 @Data
@@ -21,4 +22,5 @@ public class UserProfileDTO {
     private String gender;
     private String description;
     private String avatarPath;
+    private Timestamp lastSeenAt;
 }

@@ -27,6 +27,7 @@ public class RelationUserDTO extends UserProfileDTO {
                 .gender(user.getGender())
                 .description(user.getDescription())
                 .avatarPath(user.getAvatarPath())
+                .lastSeenAt(user.getLastSeenAt())
                 .myRelation(myRelation)
                 .userRelation(userRelation)
                 .build();

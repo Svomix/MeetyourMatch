@@ -58,6 +58,8 @@ dependencies {
 
     implementation "io.minio:minio:8.5.17"
 
+    implementation 'com.google.firebase:firebase-admin:9.4.3'
+
     compileOnly 'org.projectlombok:lombok'
     implementation 'org.postgresql:postgresql'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.4'
