@@ -55,7 +55,7 @@ public class EventController {
     }
 
     @GetMapping("/recAndroid")
-    public ResponseEntity<EventDTO> findRecAndroid() {
+    public ResponseEntity<List<EventDTO>> findRecAndroid() {
         User user = userService.getCurrentUser();
         if (Objects.nonNull(user)) {
             List<UserRecInterests> interests = userRecInterestsService.findAllById(user.getId());
@@ -64,12 +64,18 @@ public class EventController {
                     userRecInterestsService.save(UserRecInterests.builder().user_id(user.getId()).interest(tag.getName()).weight(0.1).build());
                 }
             }
-            UserRecInterests interest = WeightedRandomChoice.weightedChoice(interests);
-            Event event = eventService.getRandEvent(interest.getInterest());
-            EventDTO eventDTO = objectMapper.convertValue(event, EventDTO.class);
-            eventDTO.setUserAction(userActionsService.getUserEventActionsE(event, user));
-            eventDTO.setUserActionCounters(userActionsService.getEventCounters(event));
-            return ResponseEntity.ok(eventDTO);
+            List<Event> allEvents = eventService.findAllEvents();
+            List<EventDTO> recommendEvents = new ArrayList<>();
+            while (!allEvents.isEmpty()) {
+                UserRecInterests interest = WeightedRandomChoice.weightedChoice(interests);
+                Event event = eventService.getRandEvent(interest.getInterest(), (ArrayList<Event>) allEvents);
+                EventDTO eventDTO = objectMapper.convertValue(event, EventDTO.class);
+                recommendEvents.add(eventDTO);
+                allEvents.remove(event);
+                eventDTO.setUserAction(userActionsService.getUserEventActionsE(event, user));
+                eventDTO.setUserActionCounters(userActionsService.getEventCounters(event));
+            }
+            return ResponseEntity.ok(recommendEvents);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
@@ -79,6 +85,7 @@ public class EventController {
         User user = userService.getCurrentUser();
         if (Objects.nonNull(user)) {
             List<UserRecInterests> interests = userRecInterestsService.findAllById(user.getId());
+            List<Event> allEvents = eventService.findAllEvents();
             if (interests.isEmpty()) {
                 for (Tag tag : tagService.findAll()) {
                     userRecInterestsService.save(UserRecInterests.builder().user_id(user.getId()).interest(tag.getName()).weight(0.1).build());
@@ -92,7 +99,8 @@ public class EventController {
             }
             List<Event> events = new ArrayList<>();
             for (int i = 0; i < 10; i++) {
-                events.add(eventService.getRandEvent(recInterests.get(i).getInterest()));
+                events.add(eventService.getRandEvent(recInterests.get(i).getInterest(), (ArrayList<Event>) allEvents));
+                allEvents.remove(events.get(i));
             }
             return ResponseEntity.ok(userActionsService.populateUserActions(new PageImpl<>(events), user));
         }
@@ -213,7 +221,7 @@ public class EventController {
             @RequestParam(value = "limit", defaultValue = "30") @Min(1) Integer limit
     ) {
         User user = userService.getCurrentUser();
-        if(Objects.nonNull(user)) {
+        if (Objects.nonNull(user)) {
             Page<Event> events = eventService.findAllEventsByUserRaw(user, PageRequest.of(page - 1, limit));
             return userActionsService.populateUserActions(events, user);
         }

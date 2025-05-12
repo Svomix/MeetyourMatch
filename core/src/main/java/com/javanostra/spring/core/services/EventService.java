@@ -23,8 +23,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -37,11 +39,14 @@ public class EventService {
     private final TagDAO tagDAO;
 
     ObjectMapper mapper = new ObjectMapper();
+
     {
         mapper.registerModule(new Hibernate6Module()); //TODO: move to a bean / class
     }
 
-    public List<Event> findAllEvents() {return eventDAO.findAll();}
+    public List<Event> findAllEvents() {
+        return eventDAO.findAll();
+    }
 
     public Page<EventDTO> findAllEvents(Pageable pageable, Specification<Event> specification) {
         return eventDAO.findAll(specification, pageable).map(a -> mapper.convertValue(a, EventDTO.class));
@@ -50,11 +55,13 @@ public class EventService {
     public Page<Event> findAllEventsRaw(Pageable pageable, Specification<Event> specification) {
         return eventDAO.findAll(specification, pageable);
     }
+
     @Transactional
     public List<Event> findAllByTag(String tagName) {
         Tag t = tagDAO.findByName(tagName);
         return eventDAO.findAllByTagId(t.getId());
     }
+
     public Event findEventById(Long eventId) throws BaseCoreException {
         return eventDAO.findById(eventId).orElseThrow(NoSuchEventException::new);
     }
@@ -70,12 +77,16 @@ public class EventService {
         return result;
     }
 
-    public Event getRandEvent(String tagName)
-    {
-        List<Event> l = findAllByTag(tagName);
+    public Event getRandEvent(String tagName, ArrayList<Event> availableEvents) {
+        List<Event>filteredEvents = availableEvents.stream()
+                .filter(event -> event.getTags().stream()
+                        .anyMatch(tag -> tag.getName().equals(tagName)))
+                .collect(Collectors.toList());
+        if (filteredEvents.isEmpty())
+            filteredEvents = availableEvents;
         Random rand = new Random();
-        int r = rand.nextInt(l.size());
-        return l.get(r);
+        int r = rand.nextInt(filteredEvents.size());
+        return filteredEvents.get(r);
     }
 
     @Transactional
@@ -83,6 +94,7 @@ public class EventService {
         Event event = eventDAO.findById(eventId).orElseThrow(NoSuchEventException::new);
         return event.getComments();
     }
+
     @Transactional
     public EventComment getComment(Integer commentId) throws BaseCoreException {
         return eventCommentDAO.findById(commentId).orElseThrow(NoSuchCommentException::new);
@@ -96,6 +108,7 @@ public class EventService {
         eventDAO.save(event);
         return comment;
     }
+
     @Transactional
     public void removeComment(Long eventId, EventComment comment) throws BaseCoreException {
         Event event = eventDAO.findById(eventId).orElseThrow(NoSuchEventException::new);
