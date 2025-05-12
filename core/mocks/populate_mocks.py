@@ -28,7 +28,7 @@ with conn:
         cursor.execute("TRUNCATE TABLE locations RESTART IDENTITY CASCADE")
         cursor.execute("TRUNCATE TABLE User_interest RESTART IDENTITY CASCADE")
         cursor.execute("TRUNCATE TABLE Events RESTART IDENTITY CASCADE")
-        cursor.execute("TRUNCATE TABLE Events_attribute_value RESTART IDENTITY CASCADE")
+        cursor.execute("TRUNCATE TABLE event_tags RESTART IDENTITY CASCADE")
         
         for file in sorted(glob.glob("*.sql")):
             print(file)
