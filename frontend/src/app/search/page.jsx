@@ -3,7 +3,6 @@ import { getIsLoggedIn, tokenType } from '@/services/authService';
 import { authed, unauthed } from '@/services/axiosInstance';
 import Card from '@components/Card';
 import CardNavigation from '@components/Pagination';
-import SDropdown from '@components/SDropdown';
 import Search from '@components/Search';
 import routes from '@routes';
 import { fetchAllTags } from '@store/tagStore';
@@ -72,6 +71,8 @@ const SearchSection = () => {
     setQuery(squery);
   };
 
+  console.log(events);
+
   useEffect(() => {
     const instance = Cookies.get(tokenType.ACCESS_TOKEN) ? authed : unauthed;
     instance
@@ -89,7 +90,7 @@ const SearchSection = () => {
   }, [page, query]);
 
   return (
-    <>
+    <div className={styles.wrapper}>
       <section className={styles.controls}>
         <Search
           placeholder="Название,  описание,  #тег"
@@ -98,29 +99,26 @@ const SearchSection = () => {
           onSearch={onSearch}
           suggestions={suggestions}
         />
-        <SDropdown
-          placeholder={'Платно?'}
-          data={[
-            { key: 'pay', text: 'Платно' },
-            { key: 'free', text: 'Бесплатно' }
-          ]}
-          className={styles.dbar}
-        />
+
         {getIsLoggedIn() && (
           <Link className={styles.create_event} href={routes.CREATE_EVENT}>
             Создать событие
           </Link>
         )}
       </section>
-      <div className={styles.events}>
-        {events?.map((el, index) => (
-          <Card key={el.id} event={el} />
-        ))}
-      </div>
+      {events.length != 0 ? (
+        <div className={styles.events}>
+          {events.map((el) => (
+            <Card key={el.id} event={el} />
+          ))}
+        </div>
+      ) : (
+        <div className={styles.no_events}>Пусто</div>
+      )}
       <div className={styles.pages}>
         <CardNavigation current={page} setCurrent={setPage} total={totalPages} />
       </div>
-    </>
+    </div>
   );
 };
 

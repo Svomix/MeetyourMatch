@@ -1,24 +1,24 @@
 'use client';
+import { authed } from '@/services/axiosInstance';
 import DateInput from '@components/Inputs/DateInput';
 import LabelInput from '@components/Inputs/LabelInput';
 import NumberInput from '@components/Inputs/NumberInput';
 import TextInput from '@components/Inputs/TextInput';
 import mock_event_img from '@public/mock_event_img.gif';
 import routes from '@routes';
-import { authed } from '@/services/axiosInstance';
-import { useRouter } from 'next/navigation';
 import { ModalPage, setModal, setModalData } from '@store/modalSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styles from './page.module.css';
 
 export default () => {
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
-  const place = useSelector((state) => state.modal.data.currentLocation)
+  const place = useSelector((state) => state.modal.data.currentLocation);
   //const [place, setPlace] = useState('');
   const [price, setPrice] = useState('');
   const [desc, setDesc] = useState('');
@@ -26,7 +26,6 @@ export default () => {
   const [link, setLink] = useState('');
   const [img, setImg] = useState('');
   const [imgid, setImgid] = useState(null);
-  
 
   const dispatch = useDispatch();
 
@@ -35,13 +34,13 @@ export default () => {
 
     let loc = location;
 
-    if(place){
-      if(place.id === '?'){
+    if (place) {
+      if (place.id === '?') {
         const new_place = {
           title: place.title,
           address: place.address,
           latitude: place.latitude,
-          longitude: place.longitude,
+          longitude: place.longitude
         };
 
         loc = (await authed.post('maps/locations', new_place)).data;
@@ -56,7 +55,7 @@ export default () => {
     body['locationId'] = loc?.id;
 
     const resp = await authed.post('v1/events/uploadEvent', body);
-    dispatch(setModalData({key: 'currentLocation', data: undefined}))
+    dispatch(setModalData({ key: 'currentLocation', data: undefined }));
     router.push(`/events/${resp.data.id}`);
   };
 
@@ -118,7 +117,9 @@ export default () => {
 
           <div className={styles.input_wrapper}>
             <label className={styles.meta}>Место: </label>
-            <button onClick={onChangePlace} className={styles.place_select}>{place ? place.title : 'Не указано'}</button>
+            <button onClick={onChangePlace} className={styles.place_select}>
+              {place ? place.title : 'Не указано'}
+            </button>
           </div>
 
           <div className={styles.input_wrapper}>

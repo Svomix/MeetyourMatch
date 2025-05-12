@@ -9,18 +9,35 @@ export default ({ placeholder, className, value, onChange, onSearch, suggestions
         className={classNames(styles.search, className)}
         onClick={(e) => e.stopPropagation()}
       >
-        <input className={styles.input} placeholder={placeholder} value={value} onChange={onChange}/>
+        <input
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') onSearch?.(e);
+          }}
+          className={styles.input}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+        />
         <div className={styles.border} />
         <button className={styles.magnifier} onClick={onSearch}>
           <Magnifier />
         </button>
-        {suggestions && suggestions.length > 0 &&
+        {suggestions && suggestions.length > 0 && (
           <div className={styles.suggest_box}>
-            {suggestions.map((s) =>
-              <div key={s.name} className={styles.suggest_item} onClick={(e) => {e.target.value = s.rep; onChange(e)}}>{s.name}</div>
-            )}
+            {suggestions.map((s) => (
+              <div
+                key={s.name}
+                className={styles.suggest_item}
+                onClick={(e) => {
+                  e.target.value = s.rep;
+                  onChange(e);
+                }}
+              >
+                {s.name}
+              </div>
+            ))}
           </div>
-        }
+        )}
       </section>
     </div>
   );

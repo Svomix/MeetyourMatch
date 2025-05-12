@@ -1,11 +1,13 @@
 'use client';
 import { getIsLoggedIn } from '@/services/authService';
-import { authed } from '@/services/axiosInstance';
+import { authed, unauthed } from '@/services/axiosInstance';
 import BrokenHeart from '@components/Buttons/BrokenHeart';
 import Calendar from '@components/Buttons/CalendarButton';
 import Heart from '@components/Buttons/HeartButton';
 import CommentBox from '@components/CommentBox';
+import ParticipantsList from '@components/ParticipantsList';
 import mock_event_img from '@public/mock_event_img.gif';
+import default_user_logo from '@public/user_logo.jpg';
 import { fetchEventInfo } from '@store/eventStore';
 import { ModalPage, setModal } from '@store/modalSlice/index';
 import Image from 'next/image';
@@ -18,6 +20,7 @@ import styles from './index.module.css';
 export default ({ path, event }) => {
   const dispatch = useDispatch();
   const router = useRouter();
+
   let is_logged = getIsLoggedIn();
   let [liked, setLiked] = useState(false);
   let [disliked, setDisliked] = useState(false);
@@ -25,14 +28,16 @@ export default ({ path, event }) => {
   let [likeCount, setLikeCount] = useState();
   let [dislikeCount, setDislikeCount] = useState();
   let [calendarCount, setCalendarCount] = useState();
+  let [participants, setParticipants] = useState([]);
+
+  const myId = useSelector((state) => state.profileInfo)?.id;
+  const is_created_by_me = myId != null && myId == event?.createdBy?.id;
   const is_admin = useSelector((state) => state.profileInfo)?.authorities.filter(
     (el) => el.authority == 'ROLE_ADMIN'
   ).length;
-  const myId = useSelector((state) => state.profileInfo)?.id;
-  const is_created_by_me = myId != null && myId == event?.createdBy?.id;
-  console.log(event?.createdBy);
 
   useEffect(() => {
+    unauthed.get(`/v1/events/${event.id}/participants`).then((resp) => setParticipants(resp.data));
     event.userAction && setLiked(event.userAction?.isLiked);
     event.userAction && setDisliked(event.userAction?.isDisliked);
     event.userAction && setCalendar(event.userAction?.inCalendar);
@@ -75,6 +80,7 @@ export default ({ path, event }) => {
       setCalendarCount((prev) => prev + calendar * -2 + 1);
       authed.post(`/account/events/${event.id}/calendar`).then((resp) => {
         setCalendar(resp.data.inCalendar);
+        dispatch(fetchEventInfo(event.id));
       });
     } else dispatch(setModal(ModalPage.Login));
   };
@@ -110,7 +116,7 @@ export default ({ path, event }) => {
       date: c.date
     };
   });
-
+  console.log(participants);
   return (
     <>
       {event && (
@@ -162,13 +168,14 @@ export default ({ path, event }) => {
             {event.tags && (
               <p className={styles.tags}>{event.tags.map((t) => '#' + t.name).join(' ')}</p>
             )}
-            {event?.createdBy?.username && (
+            {participants.length != 0 && <ParticipantsList participants={participants} />}
+            {event?.createdBy && (
               <>
-                <p className={styles.created_by}>Создано пользователем:</p>
+                <p className={styles.created_by}>Создатель:</p>
                 <Link className={styles.created_by_wrapper} href={'/user/' + event.createdBy.id}>
                   <Image
                     className={styles.created_by_img}
-                    src={event.createdBy.avatarPath}
+                    src={event.createdBy.avatarPath || default_user_logo}
                     width={48}
                     height={48}
                   />
