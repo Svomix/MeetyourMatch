@@ -78,7 +78,7 @@ public class User implements UserDetails {
     @Column(name = "last_seen_at")
     private Timestamp lastSeenAt;
 
-    @ManyToMany(mappedBy = "members")
+    @ManyToMany(mappedBy = "members", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<GroupChat> chats = new ArrayList<>();
 }

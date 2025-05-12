@@ -5,6 +5,7 @@ import com.javanostra.spring.core.dto.ChatNotificationDTO;
 import com.javanostra.spring.core.dto.GroupChatMessageNotificationDTO;
 import com.javanostra.spring.core.dto.GroupMessageRequestDTO;
 import com.javanostra.spring.core.entities.ChatMessage;
+import com.javanostra.spring.core.entities.GroupChat;
 import com.javanostra.spring.core.entities.GroupMessage;
 import com.javanostra.spring.core.entities.User;
 import com.javanostra.spring.core.dto.NewMessageNotificationDTO;
@@ -118,5 +119,17 @@ public class ChatController {
     public ResponseEntity<List<GroupMessage>> findGroupChatHistory(@RequestParam Long groupChatId) {
         List<GroupMessage> middle = groupChatService.getGroupMessages(groupChatId);
         return ResponseEntity.ok(middle);
+    }
+    @GetMapping("/groupExit")
+    public ResponseEntity<Integer> exitGroupChat(@RequestParam Long groupChatId) {
+        User user = userService.getCurrentUser();
+        return ResponseEntity.ok(groupChatService.exitGroupChat(groupChatId, user));
+    }
+    @GetMapping("/groupAdd")
+    public ResponseEntity<Integer> addGroupChat(@RequestParam Long groupChatId) {
+        User user = userService.getCurrentUser();
+        ResponseEntity.ok(groupChatService.addGroupChat(groupChatId, user));
+        var a = user.getChats();
+        return ResponseEntity.ok(a.size());
     }
 }

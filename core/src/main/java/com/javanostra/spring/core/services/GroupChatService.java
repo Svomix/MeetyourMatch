@@ -23,6 +23,7 @@ public class GroupChatService {
     private final UserService userService;
     private final UserDAO userDAO;
     private final GroupMessageDAO groupMessageDAO;
+
     public Long createGroupChat(List<Long> memberIds, String name, String avatar) {
         List<User> members = new ArrayList<>();
         for (Long memberId : memberIds) {
@@ -46,11 +47,18 @@ public class GroupChatService {
         if (!chat.getMembers().contains(user)) {
             throw new IllegalStateException("User is not a member of this group chat");
         }
-         GroupMessage message = new GroupMessage();
+        GroupMessage message = new GroupMessage();
         message.setChat(chat);
         message.setUser(user);
         message.setContent(content);
         message.setTimestamp(new Timestamp(System.currentTimeMillis()));
         return groupMessageDAO.save(message);
+    }
+
+    public int exitGroupChat(Long groupChatId, User user) {
+        return groupChatDao.exitFromChat(groupChatId, user.getId());
+    }
+    public int addGroupChat(Long groupChatId, User user) {
+        return groupChatDao.addUserToChat(groupChatId, user.getId());
     }
 }
