@@ -4,10 +4,12 @@ import com.javanostra.spring.core.entities.Call;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface CallDAO extends JpaRepository<Call, Long> {
     Optional<Call> findByCallId(String callId);
     List<Call> findByCallerIdOrCalleeIdAndStatus(String callerId, String calleeId, Call.CallStatus status);

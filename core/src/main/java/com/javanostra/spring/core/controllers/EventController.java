@@ -15,9 +15,8 @@ import com.javanostra.spring.core.specifications.EventSpecification;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -118,6 +117,34 @@ public class EventController {
         Page<Event> events = eventService.findAllEventsRaw(PageRequest.of(page - 1, limit), specification);
         return userActionsService.populateUserActions(events, user);
     }
+
+    @GetMapping("/orgEvents")
+    public Page<EventDTO> findAllOrgEvents(
+            @RequestParam(value = "page", defaultValue = "1") @Min(1) Integer page,
+            @RequestParam(value = "limit", defaultValue = "30") @Min(1) Integer limit,
+            @RequestParam(value = "sortBy", required = false) String sortBy,
+            @RequestParam(value = "direction", required = false) String direction,
+            @RequestParam(value = "s", required = false) String search) {
+
+        Sort sort = Sort.by(
+                direction == null || direction.equalsIgnoreCase("asc")
+                        ? Sort.Direction.ASC
+                        : Sort.Direction.DESC,
+                sortBy == null ? "id" : sortBy
+        );
+
+        Pageable pageable = PageRequest.of(page - 1, limit, sort);
+        User user = userService.getCurrentUser();
+
+        Specification<Event> spec = (root, query, cb) -> cb.isNull(root.get("createdBy"));
+        if (search != null) {
+            spec = spec.and(new EventSpecification(EventSearchCriteria.fromString(search, tagService)));
+        }
+
+        Page<Event> events = eventService.findOrgEvents(pageable, spec);
+        return userActionsService.populateUserActions(events, user);
+    }
+
 
     @GetMapping("/pageout")
     public List<EventDTO> findAllEventsPageout(

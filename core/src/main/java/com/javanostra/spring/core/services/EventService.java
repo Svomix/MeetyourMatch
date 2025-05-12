@@ -62,6 +62,12 @@ public class EventService {
         return eventDAO.findAllByTagId(t.getId());
     }
 
+    @Transactional
+    public Page<Event> findOrgEvents(Pageable pageable, Specification<Event> spec) {
+        return eventDAO.findAll(spec, pageable);
+    }
+
+
     public Event findEventById(Long eventId) throws BaseCoreException {
         return eventDAO.findById(eventId).orElseThrow(NoSuchEventException::new);
     }
@@ -78,7 +84,7 @@ public class EventService {
     }
 
     public Event getRandEvent(String tagName, ArrayList<Event> availableEvents) {
-        List<Event>filteredEvents = availableEvents.stream()
+        List<Event> filteredEvents = availableEvents.stream()
                 .filter(event -> event.getTags().stream()
                         .anyMatch(tag -> tag.getName().equals(tagName)))
                 .collect(Collectors.toList());
