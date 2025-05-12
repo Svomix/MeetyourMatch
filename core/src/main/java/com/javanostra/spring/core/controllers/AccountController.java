@@ -7,9 +7,6 @@ import com.javanostra.spring.core.dto.*;
 import com.javanostra.spring.core.entities.*;
 import com.javanostra.spring.core.enums.Relation;
 import com.javanostra.spring.core.exceptions.*;
-import com.javanostra.spring.core.dto.FriendAcceptNotificationDTO;
-import com.javanostra.spring.core.dto.FriendRequestNotificationDTO;
-import com.javanostra.spring.core.services.NotificationService;
 import com.javanostra.spring.core.services.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -150,6 +147,11 @@ public class AccountController {
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    }
+
+    @PostMapping("/description")
+    public ResponseEntity<String> setDescription(@RequestParam("description") String desc) {
+        return userService.setDescription(desc);
     }
 
     @PostMapping("/events/{event_id}/calendar")
