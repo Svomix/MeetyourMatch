@@ -1,9 +1,13 @@
 package com.javanostra.meetyourmatch.activity;
 
+import static android.Manifest.permission.POST_NOTIFICATIONS;
+
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.Button;
 import android.content.SharedPreferences;
 import android.widget.EditText;
@@ -12,6 +16,8 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -63,6 +69,12 @@ public class LoginActivity extends AppCompatActivity {
         VKAuth vkAuth = VKAuth.Companion.getInstance();
         vkAuth.vkInit(this);
         vkAuth.vkAuth(this, findViewById(R.id.buttonLoginVK));
+
+        if (ContextCompat.checkSelfPermission(this, POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            Log.d("Main", "Request permission");
+            ActivityCompat.requestPermissions(this, new String[]{POST_NOTIFICATIONS}, 101);
+        }
+
 
         inputUserName = findViewById(R.id.inputUserName);
         inputPassword = findViewById(R.id.inputPassword);

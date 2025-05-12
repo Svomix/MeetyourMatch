@@ -1,6 +1,9 @@
 package com.javanostra.meetyourmatch.activity;
 
+import static android.Manifest.permission.POST_NOTIFICATIONS;
+
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -10,6 +13,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -76,6 +81,11 @@ public class MainScreenActivity extends AppCompatActivity implements Recomendati
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
+
+        if (ContextCompat.checkSelfPermission(this, POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            Log.d("Main", "Request permission");
+            ActivityCompat.requestPermissions(this, new String[]{POST_NOTIFICATIONS}, 101);
+        }
 
         recomendationsFragment = new RecomendationsFragment();
         chatFragment = new ChatFragment();
