@@ -1,10 +1,14 @@
 package com.javanostra.spring.core.controllers;
 
-import com.javanostra.spring.core.dto.*;
+import com.javanostra.spring.core.dto.ChatInfoDTO;
+import com.javanostra.spring.core.dto.ChatNotificationDTO;
+import com.javanostra.spring.core.dto.GroupChatMessageNotificationDTO;
+import com.javanostra.spring.core.dto.GroupMessageRequestDTO;
 import com.javanostra.spring.core.entities.ChatMessage;
 import com.javanostra.spring.core.entities.GroupChat;
 import com.javanostra.spring.core.entities.GroupMessage;
 import com.javanostra.spring.core.entities.User;
+import com.javanostra.spring.core.dto.NewMessageNotificationDTO;
 import com.javanostra.spring.core.services.ChatMessageService;
 import com.javanostra.spring.core.services.GroupChatService;
 import com.javanostra.spring.core.services.NotificationService;
@@ -104,21 +108,6 @@ public class ChatController {
         String destination = "/topic/group/" + messageRequest.getGroupChatId();
         messagingTemplate.convertAndSend(destination, notification);
 
-        List<User> groupUsers = groupChatService.findAllGroupMembers(savedMessage.getChat().getId());
-        groupUsers.stream()
-                .filter(
-                        user -> !user.getId().equals(savedMessage.getUser().getId())
-                ).forEach(
-                        user -> notificationService.sendNotification(
-                                new NewGroupMessageNotificationDTO(
-                                        savedMessage.getUser().getUsername(),
-                                        savedMessage.getChat().getName(),
-                                        savedMessage.getContent()
-                                ),
-                                user
-                        )
-                );
-
         messagingTemplate.convertAndSendToUser(
                 savedMessage.getUser().getUsername(),
                 "/queue/groupMessageReceipt",
@@ -131,16 +120,16 @@ public class ChatController {
         List<GroupMessage> middle = groupChatService.getGroupMessages(groupChatId);
         return ResponseEntity.ok(middle);
     }
+
     @GetMapping("/groupExit")
-    public ResponseEntity<Integer> exitGroupChat(@RequestParam Long groupChatId) {
+    public ResponseEntity<Long> exitGroupChat(@RequestParam Long groupChatId) {
         User user = userService.getCurrentUser();
         return ResponseEntity.ok(groupChatService.exitGroupChat(groupChatId, user));
     }
+
     @GetMapping("/groupAdd")
-    public ResponseEntity<Integer> addGroupChat(@RequestParam Long groupChatId) {
+    public ResponseEntity<Long> addGroupChat(@RequestParam Long groupChatId) {
         User user = userService.getCurrentUser();
-        ResponseEntity.ok(groupChatService.addGroupChat(groupChatId, user));
-        var a = user.getChats();
-        return ResponseEntity.ok(a.size());
+        return ResponseEntity.ok(groupChatService.addGroupChat(groupChatId, user));
     }
 }

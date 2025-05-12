@@ -59,10 +59,23 @@ public class GroupChatService {
         return groupMessageDAO.save(message);
     }
 
-    public int exitGroupChat(Long groupChatId, User user) {
-        return groupChatDao.exitFromChat(groupChatId, user.getId());
+    public Long exitGroupChat(Long groupChatId, User user) {
+        GroupChat groupChat = groupChatDao.findById(groupChatId).orElse(null);
+        if(groupChat != null)
+        {
+            groupChat.getMembers().remove(user);
+            groupChatDao.save(groupChat);
+            return groupChat.getId();
+        }
+        return null;
     }
-    public int addGroupChat(Long groupChatId, User user) {
-        return groupChatDao.addUserToChat(groupChatId, user.getId());
+    public Long addGroupChat(Long groupChatId, User user) {
+        GroupChat groupChat = groupChatDao.findById(groupChatId).orElse(null);
+        if (groupChat != null && !groupChat.getMembers().contains(user)) {
+            groupChat.getMembers().add(user);
+            groupChatDao.save(groupChat);
+            return groupChat.getId();
+        }
+        return groupChatId;
     }
 }
