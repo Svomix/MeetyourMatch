@@ -337,8 +337,10 @@ public class UserService implements UserDetailsManager {
                         .max(Comparator.comparing(ChatMessage::getTimestamp))
                         .orElse(null);
 
+                User otherUserClass = userDAO.findByUsername(chatRoom.getSenderId());
                 ChatInfoDTO chat = ChatInfoDTO.builder()
-                        .id(userDAO.findByUsername(chatRoom.getRecipientId()).getId())
+                        .id(otherUserClass.getId())
+                        .avatarPath(otherUserClass.getAvatarPath())
                         .isGroup(false)
                         .username(otherUser)
                         .lastMessage(lastMessage != null ? lastMessage.getContent() : null)
@@ -353,8 +355,10 @@ public class UserService implements UserDetailsManager {
                         .max(Comparator.comparing(ChatMessage::getTimestamp))
                         .orElse(null);
 
+                User otherUserClass = userDAO.findByUsername(chatRoom.getRecipientId());
                 ChatInfoDTO chat = ChatInfoDTO.builder()
-                        .id(userDAO.findByUsername(chatRoom.getRecipientId()).getId())
+                        .id(otherUserClass.getId())
+                        .avatarPath(otherUserClass.getAvatarPath())
                         .isGroup(false)
                         .username(otherUser)
                         .lastMessage(lastMessage != null ? lastMessage.getContent() : null)
