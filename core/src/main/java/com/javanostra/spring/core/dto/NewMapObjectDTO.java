@@ -1,20 +1,20 @@
 package com.javanostra.spring.core.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewMapObjectDTO {
-    @NonNull
+    @NotNull
     private String title;
-    @NonNull
+    @NotNull
     private String address;
-    @NonNull
+    @NotNull
     private Double latitude;
-    @NonNull
+    @NotNull
     private Double longitude;
 }

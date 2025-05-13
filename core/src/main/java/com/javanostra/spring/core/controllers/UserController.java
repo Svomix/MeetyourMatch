@@ -5,9 +5,15 @@ import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.javanostra.spring.core.dto.RelationUserDTO;
 import com.javanostra.spring.core.dto.ResponseDTO;
 import com.javanostra.spring.core.dto.UserProfileDTO;
-import com.javanostra.spring.core.entities.*;
+import com.javanostra.spring.core.entities.Token;
+import com.javanostra.spring.core.entities.User;
+import com.javanostra.spring.core.entities.UserActions;
+import com.javanostra.spring.core.entities.UserAuthority;
 import com.javanostra.spring.core.enums.TokenType;
-import com.javanostra.spring.core.exceptions.*;
+import com.javanostra.spring.core.exceptions.BaseCoreException;
+import com.javanostra.spring.core.exceptions.EmailVerificationCodeException;
+import com.javanostra.spring.core.exceptions.TokenStateException;
+import com.javanostra.spring.core.exceptions.UserDoesNotExistException;
 import com.javanostra.spring.core.mail.MailService;
 import com.javanostra.spring.core.security.ContextRepository;
 import com.javanostra.spring.core.services.AuthenticationService;
@@ -43,6 +49,7 @@ public class UserController {
     private final ContextRepository contextRepository;
 
     ObjectMapper mapper = new ObjectMapper();
+
     {
         mapper.registerModule(new Hibernate6Module()); //TODO: move to a bean / class
     }
@@ -69,7 +76,7 @@ public class UserController {
                             user,
                             userService.getRelation(currentUser.getId(), user.getId()),
                             userService.getRelation(user.getId(), currentUser.getId())
-                            )
+                    )
             ); //TODO: remove current user from page
         }
         return users;
@@ -78,7 +85,9 @@ public class UserController {
     @GetMapping("/{user_id}")
     public ResponseEntity<UserProfileDTO> findUserById(@PathVariable("user_id") Long userId) {
         User user = userService.findUserById(userId);
-        if(Objects.isNull(user)){ return ResponseEntity.notFound().build(); }
+        if (Objects.isNull(user)) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(mapper.convertValue(user, UserProfileDTO.class));
     }
 
@@ -137,7 +146,7 @@ public class UserController {
 
         Token token = Token.createTokenForUser(user, TokenType.PASSWORD_RESET);
         tokenService.saveToken(token);
-        mailService.sendTokenInformationEmail(user.getEmail(),"Сброс пароля", token, user.getUsername());
+        mailService.sendTokenInformationEmail(user.getEmail(), "Сброс пароля", token, user.getUsername());
 
         return new ResponseDTO(HttpStatus.OK.value(), "Код был успешно отправлен");
     }
@@ -163,8 +172,7 @@ public class UserController {
                 tokenService.deleteToken(validToken);
                 authenticationService.ChangePassword(user, password);
                 return new ResponseDTO(HttpStatus.OK.value(), "Введен правильный код");
-            }
-            else {
+            } else {
                 throw new EmailVerificationCodeException("Введен неправильный код");
             }
         } else {
@@ -188,8 +196,7 @@ public class UserController {
             tokenService.updateToken(token);
             mailService.sendTokenInformationEmail(user.getEmail(), "Сброс пароля", token, user.getUsername());
             return new ResponseDTO(HttpStatus.OK.value(), "Код был выслан на вашу электронную почту");
-        }
-        else {
+        } else {
             throw new UserDoesNotExistException("Пользователя с данной электронной почтой не существует");
         }
     }

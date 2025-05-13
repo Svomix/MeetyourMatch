@@ -48,6 +48,10 @@ public class UserActionsService {
                 .toList();
     }
 
+    public List<User> findUsersByEventInCalendar(Event event) {
+        return usersEventDAO.findUsersByEventInCalendar(event);
+    }
+
     public Integer getLikes(Event event) {
         List<UserActions> userEvents = usersEventDAO.findUserEventByEvent(event);
         int counter = 0;

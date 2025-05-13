@@ -23,6 +23,7 @@ public class GroupChatService {
     private final UserService userService;
     private final UserDAO userDAO;
     private final GroupMessageDAO groupMessageDAO;
+
     public Long createGroupChat(List<Long> memberIds, String name, String avatar) {
         List<User> members = new ArrayList<>();
         for (Long memberId : memberIds) {
@@ -39,6 +40,10 @@ public class GroupChatService {
         return groupChatDao.findAllByChatId(id);
     }
 
+    public List<User> findAllGroupMembers(Long chatId) {
+        return groupChatDao.findMembersById(chatId);
+    }
+
     public GroupMessage saveGroupMessage(Long groupChatId, Long userId, String content) {
         User user = userDAO.findUserById(userId);
         if (user == null) throw new EntityNotFoundException("User not found with id: " + userId);
@@ -46,11 +51,31 @@ public class GroupChatService {
         if (!chat.getMembers().contains(user)) {
             throw new IllegalStateException("User is not a member of this group chat");
         }
-         GroupMessage message = new GroupMessage();
+        GroupMessage message = new GroupMessage();
         message.setChat(chat);
         message.setUser(user);
         message.setContent(content);
         message.setTimestamp(new Timestamp(System.currentTimeMillis()));
         return groupMessageDAO.save(message);
+    }
+
+    public Long exitGroupChat(Long groupChatId, User user) {
+        GroupChat groupChat = groupChatDao.findById(groupChatId).orElse(null);
+        if(groupChat != null)
+        {
+            groupChat.getMembers().remove(user);
+            groupChatDao.save(groupChat);
+            return groupChat.getId();
+        }
+        return null;
+    }
+    public Long addGroupChat(Long groupChatId, User user) {
+        GroupChat groupChat = groupChatDao.findById(groupChatId).orElse(null);
+        if (groupChat != null && !groupChat.getMembers().contains(user)) {
+            groupChat.getMembers().add(user);
+            groupChatDao.save(groupChat);
+            return groupChat.getId();
+        }
+        return groupChatId;
     }
 }

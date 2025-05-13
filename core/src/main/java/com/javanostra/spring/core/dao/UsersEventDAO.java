@@ -30,6 +30,9 @@ public interface UsersEventDAO extends JpaRepository<UserActions, Long>, PagingA
 
     List<UserActions> findUserEventByEvent(Event event);
 
+    @Query("select a.user from UserActions a where a.inCalendar")
+    List<User> findUsersByEventInCalendar(Event event);
+
     List<UserActions> findUserEventByUserIdAndInCalendarIsTrue(Long userId);
     List<UserActions> findUserEventByUserAndInCalendarIsTrue(User user);
 
