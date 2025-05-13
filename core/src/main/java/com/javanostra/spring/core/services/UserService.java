@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -368,7 +369,7 @@ public class UserService implements UserDetailsManager {
             GroupMessage lastMessage = messages.stream()
                     .max(Comparator.comparing(GroupMessage::getTimestamp))
                     .orElse(null);
-            ChatInfoDTO chat = ChatInfoDTO.builder().isGroup(true).id(groupChat.getId()).username(groupChat.getName()).lastMessage(lastMessage != null ? lastMessage.getContent() : null).lastMessageTime(lastMessage != null ? lastMessage.getTimestamp() : null).build();
+            ChatInfoDTO chat = ChatInfoDTO.builder().avatarPath(groupChat.getAvatarPath()).isGroup(true).id(groupChat.getId()).username(groupChat.getName()).lastMessage(lastMessage != null ? lastMessage.getContent() : null).lastMessageTime(lastMessage != null ? lastMessage.getTimestamp() : null).build();
             chats.add(chat);
         }
         return chats;
@@ -406,6 +407,17 @@ public class UserService implements UserDetailsManager {
             }
         }
         return null;
+    }
+
+    @Transactional
+    public ResponseEntity<String> setDescription(String description) {
+        User currentUser = getCurrentUser();
+        if (currentUser != null) {
+            currentUser.setDescription(description);
+            userDAO.save(currentUser);
+            return ResponseEntity.ok(description);
+        }
+        return ResponseEntity.noContent().build();
     }
 
     @Transactional
