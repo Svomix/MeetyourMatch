@@ -10,6 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -77,5 +78,17 @@ public class GroupChatService {
             return groupChat.getId();
         }
         return groupChatId;
+    }
+
+    public Long addMembersToGroup(Long groupChatId, List<Long> memberIdsToAdd) {
+        GroupChat groupChat = groupChatDao.findById(groupChatId).orElse(null);
+        assert groupChat != null;
+
+        for (Long memberId : memberIdsToAdd) {
+            if (!groupChat.getMembers().contains(userService.findUserById(memberId)))
+                groupChat.getMembers().add(userService.findUserById(memberId));
+        }
+        groupChatDao.save(groupChat);
+        return groupChat.getId();
     }
 }

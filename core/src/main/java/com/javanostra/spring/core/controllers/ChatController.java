@@ -127,9 +127,8 @@ public class ChatController {
         return ResponseEntity.ok(groupChatService.exitGroupChat(groupChatId, user));
     }
 
-    @GetMapping("/groupAdd")
-    public ResponseEntity<Long> addGroupChat(@RequestParam Long groupChatId) {
-        User user = userService.getCurrentUser();
-        return ResponseEntity.ok(groupChatService.addGroupChat(groupChatId, user));
+    @PostMapping("/groupAddMembers")
+    public ResponseEntity<Long> addMembersToGroupChat(@RequestParam Long groupChatId, @RequestBody List<Long> memberIdsToAdd) {
+        return ResponseEntity.ok(groupChatService.addMembersToGroup(groupChatId, memberIdsToAdd));
     }
 }
