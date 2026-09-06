@@ -24,38 +24,26 @@ with conn:
             cursor.execute("ALTER SEQUENCE cities_id_seq RESTART WITH %d;" % last_id)
 
         
-        cursor.execute("TRUNCATE TABLE tags RESTART IDENTITY CASCADE")
-        cursor.execute("TRUNCATE TABLE locations RESTART IDENTITY CASCADE")
-        cursor.execute("TRUNCATE TABLE User_interest RESTART IDENTITY CASCADE")
-        cursor.execute("TRUNCATE TABLE Events RESTART IDENTITY CASCADE")
-        cursor.execute("TRUNCATE TABLE event_tags RESTART IDENTITY CASCADE")
-        
+        cursor.execute("TRUNCATE TABLE users, user_authority, user_authorities, tags, locations, User_interest, Events, event_tags RESTART IDENTITY CASCADE")
+
+        #1257
+        #$2a$10$PaiePy.c9ynQumHOH/QFeOP/9j1WbWyIBZ7ggCoG9V.gaYHRrbkvO
+        cursor.execute("INSERT INTO users (id, email, username, password, is_enabled) VALUES (%s, %s, %s, %s, TRUE);", (1, "test@example.org", "user", "$2a$10$PaiePy.c9ynQumHOH/QFeOP/9j1WbWyIBZ7ggCoG9V.gaYHRrbkvO"))
+        cursor.execute("INSERT INTO users (id, email, username, password, is_enabled) VALUES (%s, %s, %s, %s, TRUE);", (2, "admin@example.org", "admin", "$2a$10$PaiePy.c9ynQumHOH/QFeOP/9j1WbWyIBZ7ggCoG9V.gaYHRrbkvO"))
+        cursor.execute("ALTER SEQUENCE users_id_seq RESTART WITH 3;")
+
+        cursor.execute("INSERT INTO user_authority (id, authority) VALUES (%s, %s);", (1, "ROLE_USER"))
+        cursor.execute("INSERT INTO user_authority (id, authority) VALUES (%s, %s);", (2, "ROLE_ADMIN"))
+        cursor.execute("ALTER SEQUENCE user_authority_id_seq RESTART WITH 3;")
+
+        cursor.execute("INSERT INTO user_authorities (user_id, authority_id) VALUES (%s, %s);", (1, 1))
+        cursor.execute("INSERT INTO user_authorities (user_id, authority_id) VALUES (%s, %s);", (2, 1))
+        cursor.execute("INSERT INTO user_authorities (user_id, authority_id) VALUES (%s, %s);", (2, 2))
+
         for file in sorted(glob.glob("*.sql")):
             print(file)
             with open(file, "r", encoding="utf-8") as f:
                 cursor.execute(f.read())
-        
-        #1257
-        #$2a$10$PaiePy.c9ynQumHOH/QFeOP/9j1WbWyIBZ7ggCoG9V.gaYHRrbkvO
-        cursor.execute("TRUNCATE TABLE users RESTART IDENTITY CASCADE")
-        
-        cursor.execute("INSERT INTO users (id, email, username, password, is_enabled) VALUES (%s, %s, %s, %s, TRUE);", (1, "test@example.org", "user", "$2a$10$PaiePy.c9ynQumHOH/QFeOP/9j1WbWyIBZ7ggCoG9V.gaYHRrbkvO"))
-        cursor.execute("INSERT INTO users (id, email, username, password, is_enabled) VALUES (%s, %s, %s, %s, TRUE);", (2, "admin@example.org", "admin", "$2a$10$PaiePy.c9ynQumHOH/QFeOP/9j1WbWyIBZ7ggCoG9V.gaYHRrbkvO"))
-
-        cursor.execute("ALTER SEQUENCE users_id_seq RESTART WITH 2;")
-
-        cursor.execute("TRUNCATE TABLE user_authority RESTART IDENTITY CASCADE")
-        
-        cursor.execute("INSERT INTO user_authority (id, authority) VALUES (%s, %s);", (1, "ROLE_USER"))
-        cursor.execute("INSERT INTO user_authority (id, authority) VALUES (%s, %s);", (2, "ROLE_ADMIN"))
-
-        cursor.execute("ALTER SEQUENCE user_authority_id_seq RESTART WITH 2;")
-        
-        cursor.execute("TRUNCATE TABLE user_authorities RESTART IDENTITY CASCADE")
-        
-        cursor.execute("INSERT INTO user_authorities (user_id, authority_id) VALUES (%s, %s);", (1, 1))
-        cursor.execute("INSERT INTO user_authorities (user_id, authority_id) VALUES (%s, %s);", (2, 1))
-        cursor.execute("INSERT INTO user_authorities (user_id, authority_id) VALUES (%s, %s);", (2, 2))
         
     conn.commit()
 
