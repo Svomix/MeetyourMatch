@@ -33,6 +33,9 @@ public class NotificationService {
 
 
         if (!messages.isEmpty()) {
+            if (com.google.firebase.FirebaseApp.getApps().isEmpty()) {
+                return;
+            }
             try {
                 FirebaseMessaging.getInstance().sendEach(messages);
             } catch (FirebaseMessagingException e) {
