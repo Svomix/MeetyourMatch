@@ -12,8 +12,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Service
 @AllArgsConstructor
@@ -22,25 +22,24 @@ public class MailService {
 
     @Async
     public void sendTokenInformationEmail(String to, String subject, Token token, String username) {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
-
         try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+
             helper.setTo(to);
             helper.setSubject(subject);
-            mimeMessage.setContent(buildTokenInformationEmail(token.getToken(), username, subject), "text/html;charset=UTF-8");
+            helper.setText(buildTokenInformationEmail(token.getToken(), username, subject), true);
+            mailSender.send(mimeMessage);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-        mailSender.send(mimeMessage);
     }
 
 
     private String buildTokenInformationEmail(String token, String username, String subject) {
         Document doc = null;
-        try {
-            File file = new ClassPathResource("static/tokenInformationEmail.html").getFile();
-            doc = Jsoup.parse(file);
+        try (InputStream is = new ClassPathResource("static/tokenInformationEmail.html").getInputStream()) {
+            doc = Jsoup.parse(is, "UTF-8", "");
             doc.getElementById("greetingUser").appendText("Здравствуйте, %s".formatted(username));
             doc.getElementById("code").appendText(token);
             doc.getElementById("subject").appendText(subject);
@@ -48,6 +47,6 @@ public class MailService {
             e.printStackTrace();
         }
 
-        return doc.html();
+        return doc != null ? doc.html() : "";
     }
 }

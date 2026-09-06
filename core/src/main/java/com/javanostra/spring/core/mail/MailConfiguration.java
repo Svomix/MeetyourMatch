@@ -17,11 +17,13 @@ public class MailConfiguration {
 
         mailSender.setUsername("javanostra42@gmail.com");
         mailSender.setPassword("ngircwqpxuvnldgi");
+        mailSender.setDefaultEncoding("UTF-8");
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.mime.charset", "UTF-8");
 
         return mailSender;
     }
