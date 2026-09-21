@@ -4,13 +4,26 @@
   height: 100%;
   border: var(--border-width) solid var(--gold);
   border-radius: var(--border-radius);
+  background: #121212;
+  overflow: hidden;
+}
+
+.map :global(.leaflet-container) {
+  width: 100%;
+  height: 100%;
+  background: #121212;
+}
+
+.map :global(.leaflet-tile-pane) {
+  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
 }
 
 .new_marker_container {
-  position: relative;
-  width: 100%;
   position: absolute;
-  z-index: 10000;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
 }
 
 .new_marker_div {
@@ -52,7 +65,7 @@
   background-color: var(--grey);
   border-radius: 100%;
   border: 3px solid var(--gold);
-  color: var(--white)
+  color: var(--white);
 }
 
 .icon_active {
